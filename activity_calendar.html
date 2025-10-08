@@ -1,1456 +1,1651 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <title>幹部行事曆 - 科學會管理系統</title>
-  <!-- FontAwesome CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      height: 100%;
-      font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-    }
-
-    /* 頂部區域 */
-    .header {
-      height: 70px;
-      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 30px;
-      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-      position: relative;
-      z-index: 100;
-    }
-
-    .header::before {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
-    }
-
-    /* Logo 和標題區域 */
-    .header-left {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .header-left:hover {
-      transform: scale(1.02);
-    }
-
-    .header img.logo {
-      height: 50px;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
-      transition: transform 0.3s ease;
-      margin-right: 15px;
-    }
-
-    .header-title {
-      font-size: 24px;
-      font-weight: 300;
-      color: #333;
-      transition: color 0.3s ease;
-    }
-
-    .header-left:hover .header-title {
-      color: #8360c3;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 25px;
-      position: relative;
-    }
-
-    .icon {
-      position: relative;
-      padding: 10px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .icon:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(131, 96, 195, 0.4);
-    }
-
-    .icon i {
-      font-size: 18px;
-      color: white;
-    }
-
-    .icon::after {
-      content: '3';
-      position: absolute;
-      top: -2px;
-      right: -2px;
-      background: #ff4757;
-      color: white;
-      border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      font-size: 11px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-
-    .avatar {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 3px solid #fff;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-
-    .avatar:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
-    }
-
-    .avatar i {
-      font-size: 20px;
-      color: white;
-    }
-
-    /* 下拉選單 */
-    .dropdown {
-      position: absolute;
-      top: 65px;
-      right: 0;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      display: none;
-      min-width: 120px;
-      z-index: 1000;
-      overflow: hidden;
-      animation: dropdownFade 0.3s ease;
-    }
-
-    @keyframes dropdownFade {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .dropdown a {
-      display: flex;
-      align-items: center;
-      padding: 12px 16px;
-      text-decoration: none;
-      color: #333;
-      font-size: 14px;
-      transition: all 0.2s ease;
-    }
-
-    .dropdown a:hover {
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      color: white;
-    }
-
-    .dropdown a i {
-      margin-right: 8px;
-      width: 16px;
-    }
-
-    /* 主體區域 */
-    .main {
-      display: flex;
-      height: calc(100% - 70px);
-      gap: 0;
-    }
-
-    .sidebar {
-      width: 280px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 30px 0;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 2px 0 20px rgba(0,0,0,0.1);
-      position: relative;
-      overflow-y: auto;
-    }
-
-    .sidebar::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 4px;
-      height: 100%;
-      background: linear-gradient(180deg, #8360c3 0%, #2ebf91 100%);
-    }
-
-    .menu {
-      flex: 1;
-      margin-top: 20px;
-    }
-
-    .menu-item {
-      display: block;
-      position: relative;
-    }
-
-    .menu-link {
-      display: flex;
-      align-items: center;
-      padding: 15px 25px;
-      text-decoration: none;
-      color: #555;
-      font-size: 15px;
-      transition: all 0.3s ease;
-      border-left: 4px solid transparent;
-      cursor: pointer;
-    }
-
-    .menu-link:hover, .menu-link.active {
-      color: #8360c3;
-      background: rgba(131, 96, 195, 0.1);
-      border-left: 4px solid #8360c3;
-      transform: translateX(5px);
-    }
-
-    .menu-link i {
-      margin-right: 12px;
-      width: 20px;
-      font-size: 16px;
-    }
-
-    .menu-arrow {
-      margin-left: auto;
-      font-size: 12px;
-      transition: transform 0.3s ease;
-    }
-
-    .menu-item.expanded .menu-arrow {
-      transform: rotate(180deg);
-    }
-
-    /* 二級選單 */
-    .submenu {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-      background: rgba(131, 96, 195, 0.05);
-    }
-
-    .submenu.show {
-      max-height: 500px;
-    }
-
-    .submenu-item {
-      position: relative;
-    }
-
-    .submenu-link {
-      display: flex;
-      align-items: center;
-      padding: 12px 25px 12px 45px;
-      text-decoration: none;
-      color: #666;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      border-left: 4px solid transparent;
-      cursor: pointer;
-    }
-
-    .submenu-link:hover {
-      color: #8360c3;
-      background: rgba(131, 96, 195, 0.1);
-      border-left: 4px solid #8360c3;
-      transform: translateX(5px);
-    }
-
-    .submenu-link i {
-      margin-right: 10px;
-      width: 16px;
-      font-size: 14px;
-    }
-
-    .content {
-      flex: 1;
-      padding: 40px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-
-    /* 頁面標題 */
-    .page-header {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      padding: 30px 40px;
-      margin-bottom: 30px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .page-title-section h1 {
-      font-size: 28px;
-      color: #333;
-      margin-bottom: 10px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-    }
-
-    .page-title-section h1 i {
-      margin-right: 15px;
-      color: #8360c3;
-      font-size: 32px;
-    }
-
-    .page-title-section p {
-      color: #666;
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    /* 時間顯示區域 */
-    .time-display {
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 25px;
-      font-size: 14px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 2px 10px rgba(131, 96, 195, 0.3);
-      white-space: nowrap;
-    }
-
-    .time-display i {
-      font-size: 16px;
-      color: white;
-    }
-
-    /* 行事曆控制區 */
-    .calendar-controls {
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 15px;
-      padding: 20px;
-      margin-bottom: 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-
-    .calendar-nav {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .nav-btn {
-      padding: 10px 15px;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .nav-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(131, 96, 195, 0.4);
-    }
-
-    .current-month {
-      font-size: 20px;
-      font-weight: 600;
-      color: #333;
-      margin: 0 20px;
-      min-width: 200px;
-      text-align: center;
-    }
-
-    .view-toggle {
-      display: flex;
-      background: #f8f9fa;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .view-btn {
-      padding: 10px 15px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 14px;
-    }
-
-    .view-btn.active {
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      color: white;
-    }
-
-    /* 行事曆主體 */
-    .calendar-container {
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      margin-bottom: 30px;
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 1px;
-      background: #e9ecef;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .calendar-header {
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .calendar-day {
-      background: white;
-      min-height: 120px;
-      padding: 10px;
-      position: relative;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .calendar-day:hover {
-      background: rgba(131, 96, 195, 0.05);
-    }
-
-    .calendar-day.other-month {
-      color: #ccc;
-      background: #f8f9fa;
-    }
-
-    .calendar-day.today {
-      background: rgba(131, 96, 195, 0.1);
-      border: 2px solid #8360c3;
-    }
-
-    .calendar-day.has-events {
-      background: rgba(46, 191, 145, 0.05);
-    }
-
-    .calendar-day.selected {
-      background: rgba(131, 96, 195, 0.2) !important;
-      border: 2px solid #2ebf91 !important;
-    }
-
-    .day-number {
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 8px;
-    }
-
-    .calendar-day.other-month .day-number {
-      color: #999;
-    }
-
-    .calendar-day.today .day-number {
-      color: #8360c3;
-      font-weight: 700;
-    }
-
-    .event-item {
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      color: white;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 11px;
-      margin-bottom: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .event-item:hover {
-      transform: scale(1.05);
-      box-shadow: 0 2px 8px rgba(131, 96, 195, 0.4);
-    }
-
-    .event-item.meeting {
-      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-    }
-
-    .event-item.training {
-      background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-    }
-
-    .event-item.deadline {
-      background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
-    }
-
-    /* 側邊事件列表 */
-    .events-sidebar {
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .events-sidebar h3 {
-      font-size: 20px;
-      color: #333;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      font-weight: 600;
-    }
-
-    .events-sidebar h3 i {
-      margin-right: 10px;
-      color: #8360c3;
-    }
-
-    .event-list {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .event-card {
-      background: white;
-      border-radius: 10px;
-      padding: 15px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-      border-left: 4px solid #8360c3;
-      cursor: pointer;
-    }
-
-    .event-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    }
-
-    .event-card.meeting {
-      border-left-color: #e74c3c;
-    }
-
-    .event-card.training {
-      border-left-color: #f39c12;
-    }
-
-    .event-card.deadline {
-      border-left-color: #9b59b6;
-    }
-
-    .event-time {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 5px;
-    }
-
-    .event-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 5px;
-    }
-
-    .event-desc {
-      font-size: 12px;
-      color: #666;
-      line-height: 1.4;
-    }
-
-    /* 新增事件按鈕 */
-    .add-event-btn {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      color: white;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(131, 96, 195, 0.4);
-      transition: all 0.3s ease;
-      z-index: 1000;
-    }
-
-    .add-event-btn:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(131, 96, 195, 0.5);
-    }
-
-    /* 模態框 */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      backdrop-filter: blur(5px);
-    }
-
-    .modal-content {
-      background-color: white;
-      margin: 5% auto;
-      padding: 30px;
-      border-radius: 20px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-      animation: modalFadeIn 0.3s ease;
-    }
-
-    @keyframes modalFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-50px) scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .modal-header h2 {
-      color: #333;
-      font-size: 24px;
-      font-weight: 600;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: #999;
-      transition: color 0.3s ease;
-    }
-
-    .close-btn:hover {
-      color: #e74c3c;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #333;
-    }
-
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      width: 100%;
-      padding: 12px;
-      border: 2px solid #e1e8ed;
-      border-radius: 10px;
-      font-size: 14px;
-      transition: border-color 0.3s ease;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus {
-      outline: none;
-      border-color: #8360c3;
-    }
-
-    .form-group textarea {
-      min-height: 80px;
-      resize: vertical;
-    }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .modal-btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-
-    .modal-btn.primary {
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      color: white;
-    }
-
-    .modal-btn.secondary {
-      background: #f8f9fa;
-      color: #666;
-      border: 1px solid #e1e8ed;
-    }
-
-    .modal-btn:hover {
-      transform: translateY(-1px);
-    }
-
-    /* 響應式設計 */
-    @media (max-width: 768px) {
-      .main { flex-direction: column; }
-      .sidebar { width: 100%; height: auto; }
-      .content { padding: 20px; }
-      .page-header { flex-direction: column; align-items: flex-start; gap: 20px; }
-      .time-display { align-self: stretch; justify-content: center; }
-      .calendar-controls { flex-direction: column; }
-      .calendar-day { min-height: 80px; padding: 5px; }
-      .add-event-btn { bottom: 20px; right: 20px; }
-      .modal-content { margin: 10% auto; padding: 20px; }
-    }
-
-    /* 滾動條美化 */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      border-radius: 4px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科學會管理系統-行事曆</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            overflow: hidden;
+        }
+
+        .header {
+            height: 70px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 100;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .header-left:hover {
+            transform: scale(1.02);
+        }
+
+        .header img.logo {
+            height: 50px;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+            margin-right: 15px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 300;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .header-left:hover .header-title {
+            color: #8360c3;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            position: relative;
+        }
+
+        .icon {
+            position: relative;
+            padding: 12px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        .icon:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 12px 35px rgba(131, 96, 195, 0.5);
+            background: linear-gradient(135deg, #9d7ce6 0%, #3dd5a3 100%);
+        }
+
+        .icon:active {
+            transform: translateY(-1px) scale(1.05);
+            transition: all 0.1s ease;
+        }
+
+        .icon i {
+            font-size: 20px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            animation: bellShake 0.5s ease-in-out infinite alternate;
+        }
+
+        .icon::after {
+            content: '3';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+            border: 2px solid white;
+            animation: bounce 1s ease-in-out infinite;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3); }
+            50% { box-shadow: 0 4px 25px rgba(131, 96, 195, 0.6); }
+            100% { box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3); }
+        }
+
+        @keyframes bellShake {
+            0% { transform: rotate(-5deg); }
+            100% { transform: rotate(5deg); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-3px); }
+            60% { transform: translateY(-2px); }
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
+        }
+
+        .avatar i {
+            font-size: 20px;
+            color: white;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 65px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            min-width: 120px;
+            z-index: 1000;
+            overflow: hidden;
+            animation: dropdownFade 0.3s ease;
+        }
+
+        @keyframes dropdownFade {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown a {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown a:hover {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+        }
+
+        .dropdown a i {
+            margin-right: 8px;
+            width: 16px;
+        }
+
+        /* 通知面板樣式 */
+        .notification-panel {
+            position: absolute;
+            top: 65px;
+            right: 80px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+            width: 380px;
+            max-height: 500px;
+            z-index: 1000;
+            animation: dropdownFade 0.3s ease;
+            overflow: hidden;
+        }
+
+        .notification-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .notification-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .notification-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .notification-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            gap: 12px;
+        }
+
+        .notification-item:hover {
+            background: rgba(131, 96, 195, 0.05);
+        }
+
+        .notification-item.unread {
+            background: rgba(131, 96, 195, 0.08);
+        }
+
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: #e74c3c;
+            border-radius: 50%;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.activity {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+        }
+
+        .notification-icon.deadline {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        .notification-icon.announcement {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .notification-text {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .notification-time {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .notification-delete {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:hover .notification-delete {
+            opacity: 1;
+        }
+
+        .notification-delete:hover {
+            background: #e74c3c;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .notification-empty {
+            padding: 60px 20px;
+            text-align: center;
+            color: #999;
+        }
+
+        .notification-empty i {
+            font-size: 48px;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+
+        .notification-list::-webkit-scrollbar { width: 6px; }
+        .notification-list::-webkit-scrollbar-track { background: #f0f0f0; }
+        .notification-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            border-radius: 3px;
+        }
+
+        .main {
+            display: flex;
+            height: calc(100% - 70px);
+            width: 100%;
+            gap: 0;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #8360c3 0%, #2ebf91 100%);
+        }
+
+        .menu {
+            flex: 1;
+            margin-top: 20px;
+        }
+
+        .menu-item {
+            display: block;
+            position: relative;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            text-decoration: none;
+            color: #555;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .menu-link:hover, .menu-link.active {
+            color: #8360c3;
+            background: rgba(131, 96, 195, 0.1);
+            border-left: 4px solid #8360c3;
+            transform: translateX(5px);
+        }
+
+        .menu-link i {
+            margin-right: 12px;
+            width: 20px;
+            font-size: 16px;
+        }
+
+        .menu-arrow {
+            margin-left: auto;
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-item.expanded .menu-arrow {
+            transform: rotate(180deg);
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(131, 96, 195, 0.05);
+        }
+
+        .submenu.show {
+            max-height: 500px;
+        }
+
+        .submenu-item {
+            position: relative;
+        }
+
+        .submenu-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 25px 12px 45px;
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .submenu-link:hover {
+            color: #8360c3;
+            background: rgba(131, 96, 195, 0.1);
+            border-left: 4px solid #8360c3;
+            transform: translateX(5px);
+        }
+
+        .submenu-link i {
+            margin-right: 10px;
+            width: 16px;
+            font-size: 14px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .calendar-controls {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(131, 96, 195, 0.4);
+        }
+
+        .current-month {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin: 0 20px;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .calendar-right-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .current-time {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+        }
+
+        .current-time i {
+            font-size: 16px;
+        }
+
+        .today-btn {
+            padding: 10px 20px;
+            border: 2px solid #8360c3;
+            border-radius: 10px;
+            background: white;
+            color: #8360c3;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .today-btn:hover {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(131, 96, 195, 0.4);
+        }
+
+        .calendar-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .calendar-header {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .calendar-day {
+            background: white;
+            height: 120px;
+            padding: 6px;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .calendar-day:hover {
+            background: rgba(131, 96, 195, 0.05);
+        }
+
+        .calendar-day.other-month {
+            color: #ccc;
+            background: #f8f9fa;
+        }
+
+        .calendar-day.today {
+            background: rgba(131, 96, 195, 0.1);
+            border: 2px solid #8360c3;
+        }
+
+        .calendar-day.has-events {
+            background: rgba(46, 191, 145, 0.05);
+        }
+
+        .calendar-day.selected {
+            background: rgba(131, 96, 195, 0.2) !important;
+            border: 2px solid #2ebf91 !important;
+        }
+
+        .day-number {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+
+        .calendar-day.other-month .day-number {
+            color: #999;
+        }
+
+        .calendar-day.today .day-number {
+            color: #8360c3;
+            font-weight: 700;
+        }
+
+        .event-item {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .event-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(131, 96, 195, 0.4);
+        }
+
+        .event-item.meeting {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .event-item.training {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+
+        .event-item.deadline {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        }
+        
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.5);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            border: 3px solid white;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 12px 35px rgba(231, 76, 60, 0.7);
+        }
+
+        /* 彈跳視窗樣式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #8360c3;
+            box-shadow: 0 0 0 3px rgba(131, 96, 195, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .event-type-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .event-type-option {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .event-type-option:hover {
+            border-color: #8360c3;
+            background: rgba(131, 96, 195, 0.05);
+        }
+
+        .event-type-option.selected {
+            border-color: #8360c3;
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+        }
+
+        .event-type-option i {
+            display: block;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(131, 96, 195, 0.4);
+        }
+
+        .modal::-webkit-scrollbar { width: 6px; }
+        .modal::-webkit-scrollbar-track { background: #f0f0f0; }
+        .modal::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            border-radius: 4px;
+        }
+        
+        .content::-webkit-scrollbar { width: 8px; }
+        .content::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+        .content::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            border-radius: 4px;
+        }
+        
+        .calendar-day::-webkit-scrollbar { width: 4px; }
+        .calendar-day::-webkit-scrollbar-track { background: transparent; }
+        .calendar-day::-webkit-scrollbar-thumb {
+            background: rgba(131, 96, 195, 0.3);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 1024px) { 
+            .calendar-grid { grid-template-columns: repeat(7, 1fr); }
+            .fab { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 24px; }
+        }
+        
+        @media (max-width: 768px) {
+            .main { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; }
+            .content { padding: 20px; }
+            .calendar-controls { flex-direction: column; }
+            .calendar-day { height: 100px; padding: 5px; }
+            .calendar-grid { grid-template-columns: repeat(2, 1fr); }
+            .calendar-header { display:none; }
+        }
+    </style>
 </head>
 <body>
-  <!-- 頂部欄 -->
-  <div class="header">
-    <div class="header-left" onclick="location.href='admin_dashboard.html';">
-      <img src="image/logo1.gif" alt="Logo" class="logo">
+    <div class="header">
+        <div class="header-left" onclick="location.href='activity_calendar.html';">
+            <img src="image/logo1.gif" alt="Logo" class="logo">
+        </div>
+        <div class="header-right">
+            <div class="icon" id="notificationIcon"><i class="fas fa-bell"></i></div>
+            <div class="notification-panel" id="notificationPanel">
+                <div class="notification-header">
+                    <h3>通知</h3>
+                    <div class="notification-actions">
+                        <button class="notification-btn" onclick="markAllAsRead()">全部已讀</button>
+                        <button class="notification-btn" onclick="clearAllNotifications()">清除全部</button>
+                    </div>
+                </div>
+                <div class="notification-list" id="notificationList">
+                    <!-- 通知項目將由 JavaScript 動態生成 -->
+                </div>
+            </div>
+            <div class="avatar" id="avatar">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div class="dropdown" id="dropdown">
+                <a href="login_admin.html">
+                    <i class="fas fa-sign-out-alt"></i>
+                    登出
+                </a>
+            </div>
+        </div>
     </div>
-    <div class="header-right">
-      <div class="icon"><i class="fas fa-bell"></i></div>
-      <div class="avatar" id="avatar">
-        <i class="fas fa-user-shield"></i>
-      </div>
-      <div class="dropdown" id="dropdown">
-        <a href="login_admin.html">
-          <i class="fas fa-sign-out-alt"></i>
-          登出
-        </a>
-      </div>
-    </div>
-  </div>
 
-  <!-- 主區塊 -->
-  <div class="main">
-    <div class="sidebar">
-      <div class="menu">
-        <!-- 科學會首頁 -->
-        <div class="menu-item">
-          <a href="admin_dashboard.html" class="menu-link">
-            <i class="fas fa-home"></i>
-            科學會首頁
-          </a>
-        </div>
+    <div class="main">
+        <div class="sidebar">
+            <div class="menu">
+                <div class="menu-item">
+                    <a href="activity_calendar.html" class="menu-link active">
+                        <i class="fas fa-calendar"></i>
+                        行事曆
+                    </a>
+                </div>
 
-        <!-- 活動行事曆 -->
-        <div class="menu-item">
-          <a href="activity_calendar.html" class="menu-link">
-            <i class="fas fa-calendar"></i>
-            活動行事曆
-          </a>
-        </div>
+                <div class="menu-item">
+                    <a href="admin_event_album.html" class="menu-link">
+                        <i class="fas fa-image"></i>
+                        活動相簿
+                    </a>
+                </div>
 
-        <!-- 幹部行事曆 -->
-        <div class="menu-item">
-          <a href="admin_executive.html" class="menu-link active">
-            <i class="fas fa-calendar-alt"></i>
-            幹部行事曆
-          </a>
-        </div>
+                <div class="menu-item">
+                    <div class="menu-link" onclick="toggleMenu(this); return false;">
+                        <i class="fas fa-bullhorn"></i>
+                        發佈公告/活動/表單
+                        <i class="fas fa-chevron-down menu-arrow"></i>
+                    </div>
+                    <div class="submenu">
+                        <div class="submenu-item">
+                            <a href="publish_announcement.html" class="submenu-link">
+                                <i class="fas fa-bullhorn"></i>
+                                發佈公告
+                            </a>
+                        </div>
+                        <div class="submenu-item">
+                            <a href="admin_activity_publish.html" class="submenu-link">
+                                <i class="fas fa-plus-circle"></i>
+                                發佈比賽及活動
+                            </a>
+                        </div>
+                        <div class="submenu-item">
+                            <a href="admin_table_publish.html" class="submenu-link">
+                                <i class="fas fa-comment-alt"></i>
+                                發佈活動反饋表單
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- 發布公告 -->
-        <div class="menu-item">
-          <a href="publish_announcement.html" class="menu-link">
-            <i class="fas fa-bullhorn"></i>
-            發布公告
-          </a>
-        </div>
+                <div class="menu-item">
+                    <a href="admin_name_manage.html" class="menu-link">
+                        <i class="fas fa-user-edit"></i>
+                        報名人員名單管理
+                    </a>
+                </div>
 
-        <!-- 活動管理 -->
-        <div class="menu-item">
-          <div class="menu-link" onclick="toggleMenu(this); return false;">
-            <i class="fas fa-tasks"></i>
-            活動管理
-            <i class="fas fa-chevron-down menu-arrow"></i>
-          </div>
-          <div class="submenu">
-            <div class="submenu-item">
-              <a href="admin_activity_publish.html" class="submenu-link">
-                <i class="fas fa-plus-circle"></i>
-                發布活動
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="admin_name_manage.html" class="submenu-link">
-                <i class="fas fa-user-edit"></i>
-                報名人員名單管理
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="admin_table_publish.html" class="submenu-link">
-                <i class="fas fa-comment-alt"></i>
-                發布活動反饋表單
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="admin_statistics.html" class="submenu-link">
-                <i class="fas fa-trophy"></i>
-                統計活動/比賽名次結果
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="admin_analysis.html" class="submenu-link">
-                <i class="fas fa-chart-bar"></i>
-                活動分析
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="activity_achievements.html" class="submenu-link">
-                <i class="fas fa-images"></i>
-                活動成果牆
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="admin_upload_files.html" class="submenu-link">
-                <i class="fas fa-eye"></i>
-                圖片識別
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="auto_notification.html" class="submenu-link">
-                <i class="fas fa-bell"></i>
-                自動通知推播
-              </a>
-            </div>
-          </div>
-        </div>
+                <div class="menu-item">
+                    <a href="admin_statistics.html" class="menu-link">
+                        <i class="fas fa-trophy"></i>
+                        統計比賽名次
+                    </a>
+                </div>
 
-        <!-- 開會紀錄 -->
-        <div class="menu-item">
-          <a href="meeting_records.html" class="menu-link">
-            <i class="fas fa-clipboard"></i>
-            開會紀錄
-          </a>
-        </div>
+                <div class="menu-item">
+                    <a href="admin_upload_files.html" class="menu-link">
+                        <i class="fas fa-upload"></i>
+                        開放上傳檔案
+                    </a>
+                </div>
 
-        <!-- 線上排班 -->
-        <div class="menu-item">
-          <a href="online_scheduling.html" class="menu-link">
-            <i class="fas fa-user-clock"></i>
-            線上排班
-          </a>
-        </div>
+                <div class="menu-item">
+                    <a href="online_scheduling.html" class="menu-link">
+                        <i class="fas fa-user-check"></i>
+                        線上簽到表
+                    </a>
+                </div>
 
-        <!-- 內部請假審核&簽到表 -->
-        <div class="menu-item">
-          <a href="admin_request_review.html" class="menu-link">
-            <i class="fas fa-file-signature"></i>
-            內部請假審核&簽到表
-          </a>
-        </div>
+                <div class="menu-item">
+                    <a href="admin_request_review.html" class="menu-link">
+                        <i class="fas fa-file-signature"></i>
+                        請假申請
+                    </a>
+                </div>
 
-        <!-- 幹部工作時數&出席紀錄 -->
-        <div class="menu-item">
-          <a href="admin_department_manage.html" class="menu-link">
-            <i class="fas fa-clock"></i>
-            幹部工作時數&出席紀錄
-          </a>
-        </div>
+                <div class="menu-item">
+                    <a href="meeting_records.html" class="menu-link">
+                        <i class="fas fa-clipboard"></i>
+                        開會紀錄
+                    </a>
+                </div>
 
-        <!-- 各類審核單 -->
-        <div class="menu-item">
-          <a href="approval_forms.html" class="menu-link">
-            <i class="fas fa-file-check"></i>
-            各類審核單
-          </a>
-        </div>
+                <div class="menu-item">
+                    <a href="auto_notification.html" class="menu-link">
+                        <i class="fas fa-bell"></i>
+                        自動推播通知
+                    </a>
+                </div>
 
-        <!-- 各組管理事項 -->
-        <div class="menu-item">
-          <div class="menu-link" onclick="toggleMenu(this); return false;">
-            <i class="fas fa-users-cog"></i>
-            各組管理事項
-            <i class="fas fa-chevron-down menu-arrow"></i>
-          </div>
-          <div class="submenu">
-            <div class="submenu-item">
-              <a href="secretariat_management.html" class="submenu-link">
-                <i class="fas fa-file-alt"></i>
-                文書組
-              </a>
+                <div class="menu-item">
+                    <a href="image_recognition.html" class="menu-link">
+                        <i class="fas fa-eye"></i>
+                        圖片識別
+                    </a>
+                </div>
             </div>
-            <div class="submenu-item">
-              <a href="publicity_management.html" class="submenu-link">
-                <i class="fas fa-paint-brush"></i>
-                美宣組
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="activity_management.html" class="submenu-link">
-                <i class="fas fa-calendar-plus"></i>
-                活動組
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="finance_management.html" class="submenu-link">
-                <i class="fas fa-coins"></i>
-                總務組
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="admin_customer_service.html" class="submenu-link">
-                <i class="fas fa-handshake"></i>
-                公關組
-              </a>
-            </div>
-          </div>
         </div>
-      </div>
+        
+        <div class="content">
+            <div class="calendar-controls">
+                <div class="calendar-nav">
+                    <button class="nav-btn" onclick="previousMonth()">
+                        <i class="fas fa-chevron-left"></i> 上個月
+                    </button>
+                    <div class="current-month" id="currentMonth">2025年10月</div>
+                    <button class="nav-btn" onclick="nextMonth()">
+                        下個月 <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="calendar-right-controls">
+                    <div class="current-time" id="currentTime">
+                        <i class="fas fa-clock"></i>
+                        <span id="timeDisplay">2025年10月08日 星期三 下午01:35:14</span>
+                    </div>
+                    <button class="today-btn" onclick="goToToday()">
+                        <i class="fas fa-calendar-day"></i>
+                        返回今天
+                    </button>
+                </div>
+            </div>
+
+            <div class="calendar-container">
+                <div class="calendar-grid" id="calendarGrid">
+                    <div class="calendar-header">日</div>
+                    <div class="calendar-header">一</div>
+                    <div class="calendar-header">二</div>
+                    <div class="calendar-header">三</div>
+                    <div class="calendar-header">四</div>
+                    <div class="calendar-header">五</div>
+                    <div class="calendar-header">六</div>
+                </div>
+            </div>
+        </div>
     </div>
     
-    <div class="content">
-      <!-- 頁面標題 -->
-      <div class="page-header">
-        <div class="page-title-section">
-          <h1><i class="fas fa-calendar-alt"></i>幹部行事曆</h1>
-          <p>管理幹部會議、活動安排與重要事項，確保團隊運作順暢</p>
-        </div>
-        <div class="time-display">
-          <i class="fas fa-clock"></i>
-          <span id="timeDisplay">2025年09月18日 星期四 上午10:41:27</span>
-        </div>
-      </div>
-
-      <!-- 行事曆控制區 -->
-      <div class="calendar-controls">
-        <div class="calendar-nav">
-          <button class="nav-btn" onclick="previousMonth()">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <div class="current-month" id="currentMonth">2025年09月</div>
-          <button class="nav-btn" onclick="nextMonth()">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>
-        <div class="view-toggle">
-          <button class="view-btn active" onclick="switchView('month')">月檢視</button>
-          <button class="view-btn" onclick="switchView('week')">週檢視</button>
-          <button class="view-btn" onclick="switchView('day')">日檢視</button>
-        </div>
-      </div>
-
-      <!-- 行事曆主體 -->
-      <div class="calendar-container">
-        <div class="calendar-grid">
-          <!-- 星期標題 -->
-          <div class="calendar-header">日</div>
-          <div class="calendar-header">一</div>
-          <div class="calendar-header">二</div>
-          <div class="calendar-header">三</div>
-          <div class="calendar-header">四</div>
-          <div class="calendar-header">五</div>
-          <div class="calendar-header">六</div>
-          
-          <!-- 日期格子將由JavaScript動態生成 -->
-          <div id="calendarDays"></div>
-        </div>
-      </div>
-
-      <!-- 今日事件列表 -->
-      <div class="events-sidebar">
-        <h3><i class="fas fa-list-ul"></i>今日行程</h3>
-        <div class="event-list" id="todayEvents">
-          <!-- 事件將由JavaScript動態生成 -->
-        </div>
-      </div>
+    <div class="fab" onclick="openAddEventModal()">
+        <i class="fas fa-plus"></i>
     </div>
-  </div>
 
-  <!-- 新增事件按鈕 -->
-  <button class="add-event-btn" onclick="showAddEventModal()">
-    <i class="fas fa-plus"></i>
-  </button>
+    <!-- 新增活動彈跳視窗 -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>新增活動</h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="eventForm">
+                    <div class="form-group">
+                        <label>活動類型</label>
+                        <div class="event-type-selector">
+                            <div class="event-type-option selected" data-type="meeting" onclick="selectEventType('meeting')">
+                                <i class="fas fa-users"></i>
+                                <div>會議</div>
+                            </div>
+                            <div class="event-type-option" data-type="training" onclick="selectEventType('training')">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                <div>培訓</div>
+                            </div>
+                            <div class="event-type-option" data-type="deadline" onclick="selectEventType('deadline')">
+                                <i class="fas fa-flag"></i>
+                                <div>截止日期</div>
+                            </div>
+                        </div>
+                    </div>
 
-  <!-- 新增事件模態框 -->
-  <div id="eventModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2><i class="fas fa-plus"></i> 新增事件</h2>
-        <button class="close-btn" onclick="closeModal()">&times;</button>
-      </div>
-      
-      <form id="eventForm">
-        <div class="form-group">
-          <label for="eventTitle">事件標題 *</label>
-          <input type="text" id="eventTitle" name="title" required placeholder="請輸入事件標題">
+                    <div class="form-group">
+                        <label>活動標題 *</label>
+                        <input type="text" id="eventTitle" placeholder="請輸入活動標題" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>日期 *</label>
+                            <input type="date" id="eventDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>時間</label>
+                            <input type="time" id="eventTime">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>活動描述</label>
+                        <textarea id="eventDesc" placeholder="請輸入活動詳細描述"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn btn-submit" onclick="submitEvent()">確定新增</button>
+            </div>
         </div>
-        
-        <div class="form-group">
-          <label for="eventDate">日期 *</label>
-          <input type="date" id="eventDate" name="date" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="eventTime">時間</label>
-          <input type="text" id="eventTime" name="time" placeholder="例如：09:00-10:00 或 全天">
-        </div>
-        
-        <div class="form-group">
-          <label for="eventType">事件類型</label>
-          <select id="eventType" name="type">
-            <option value="meeting">會議</option>
-            <option value="training">培訓</option>
-            <option value="deadline">截止日期</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label for="eventDesc">描述</label>
-          <textarea id="eventDesc" name="desc" placeholder="請輸入事件描述..."></textarea>
-        </div>
-        
-        <div class="modal-actions">
-          <button type="button" class="modal-btn secondary" onclick="closeModal()">取消</button>
-          <button type="submit" class="modal-btn primary">新增事件</button>
-        </div>
-      </form>
     </div>
-  </div>
+    
+    <script>
+        let currentDate = new Date();
 
-  <!-- JavaScript -->
-  <script>
-    // 全域變數
-    let currentDate = new Date();
-    let currentView = 'month';
+        const eventsData = {
+            '2025-10-07': [
+                { time: '09:00-10:30', title: '科學營活動', type: 'meeting', desc: '年度大型活動執行' },
+                { time: '14:00-16:00', title: '活動籌備會議', type: 'training', desc: '討論下月活動安排' }
+            ],
+            '2025-10-15': [
+                { time: '10:00-11:00', title: '月會', type: 'meeting', desc: '各組進度報告' }
+            ],
+            '2025-10-20': [
+                { time: '15:00-17:00', title: '志工培訓', type: 'training', desc: '新進志工培訓課程' }
+            ],
+            '2025-10-25': [
+                { time: '全天', title: '校慶活動', type: 'meeting', desc: '校慶攤位活動' }
+            ],
+            '2025-10-28': [
+                { time: '16:00', title: '報名截止', type: 'deadline', desc: '下月活動報名截止日' }
+            ],
+            '2025-09-28': [
+                { time: '10:00', title: '九月月會', type: 'meeting', desc: '九月份各組報告' }
+            ],
+            '2025-09-29': [
+                { time: '15:00', title: '美宣組會議', type: 'training', desc: '海報設計審核' }
+            ]
+        };
 
-    // 模擬事件數據
-    const eventsData = {
-      '2025-09-18': [
-        { time: '09:00-10:30', title: '幹部會議', type: 'meeting', desc: '討論本月活動安排與預算規劃' },
-        { time: '14:00-16:00', title: '新進幹部培訓', type: 'training', desc: '介紹科學會運作模式與各組職責' },
-        { time: '18:00', title: '活動企劃書截止', type: 'deadline', desc: '下週活動企劃需今日前完成' }
-      ],
-      '2025-09-19': [
-        { time: '10:00-11:00', title: '部長會議', type: 'meeting', desc: '各組進度報告' }
-      ],
-      '2025-09-20': [
-        { time: '15:00-17:00', title: '活動籌備', type: 'training', desc: '科學營前置作業' }
-      ],
-      '2025-09-25': [
-        { time: '全天', title: '科學營活動', type: 'meeting', desc: '年度大型活動執行' }
-      ],
-      '2025-09-28': [
-        { time: '16:00', title: '月報告截止', type: 'deadline', desc: '各組月度報告繳交' }
-      ]
-    };
+        // 通知數據
+        let notifications = [
+            {
+                id: 1,
+                type: 'activity',
+                icon: 'fa-calendar-check',
+                title: '新活動發布',
+                text: '科學營活動已發布，請查看詳情並報名',
+                time: '2小時前',
+                read: false
+            },
+            {
+                id: 2,
+                type: 'deadline',
+                icon: 'fa-clock',
+                title: '報名即將截止',
+                text: '下月活動報名將於今日16:00截止',
+                time: '5小時前',
+                read: false
+            },
+            {
+                id: 3,
+                type: 'announcement',
+                icon: 'fa-bullhorn',
+                title: '系統公告',
+                text: '月會時間調整至10月15日上午10點',
+                time: '1天前',
+                read: false
+            }
+        ];
 
-    // 頁面載入後執行
-    document.addEventListener('DOMContentLoaded', function() {
-      updateTime();
-      setInterval(updateTime, 1000);
-      renderCalendar();
-      showTodayEvents();
-      
-      // 設定今天日期為預設選擇
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('eventDate').value = today;
-    });
-
-    // 更新時間顯示
-    function updateTime() {
-      const now = new Date();
-      const options = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        weekday: 'long',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      };
-      
-      let timeString = now.toLocaleDateString('zh-TW', options);
-      timeString = timeString.replace(/(\d{4})\/(\d{1,2})\/(\d{1,2})/, '$1年$2月$3日').replace(/\s+/g, ' ');
-      document.getElementById('timeDisplay').textContent = timeString;
-    }
-
-    // 頭像下拉選單控制
-    const avatar = document.getElementById('avatar');
-    const dropdown = document.getElementById('dropdown');
-
-    avatar.addEventListener('click', () => {
-      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    });
-
-    window.addEventListener('click', function(e) {
-      if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.style.display = 'none';
-      }
-    });
-
-    // 選單控制
-    function toggleMenu(element) {
-      const menuItem = element.parentElement;
-      const submenu = menuItem.querySelector('.submenu');
-      const isExpanded = menuItem.classList.contains('expanded');
-      
-      document.querySelectorAll('.menu-item').forEach(item => {
-        if (item !== menuItem) {
-          item.classList.remove('expanded');
-          const otherSubmenu = item.querySelector('.submenu');
-          if (otherSubmenu) {
-            otherSubmenu.classList.remove('show');
-          }
-        }
-      });
-      
-      if (isExpanded) {
-        menuItem.classList.remove('expanded');
-        submenu.classList.remove('show');
-      } else {
-        menuItem.classList.add('expanded');
-        submenu.classList.add('show');
-      }
-    }
-
-    // 渲染行事曆
-    function renderCalendar() {
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-      
-      // 更新標題
-      document.getElementById('currentMonth').textContent = `${year}年${String(month + 1).padStart(2, '0')}月`;
-      
-      // 獲取當月第一天和最後一天
-      const firstDay = new Date(year, month, 1);
-      const lastDay = new Date(year, month + 1, 0);
-      const firstDayOfWeek = firstDay.getDay();
-      
-      // 獲取上個月的最後幾天
-      const prevMonthLastDay = new Date(year, month, 0).getDate();
-      
-      const calendarDays = document.getElementById('calendarDays');
-      calendarDays.innerHTML = '';
-      
-      // 生成日期格子
-      let dayCount = 1;
-      let nextMonthDay = 1;
-      
-      for (let i = 0; i < 42; i++) { // 6週 x 7天
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'calendar-day';
-        
-        let dayNumber, dateString;
-        
-        if (i < firstDayOfWeek) {
-          // 上個月的日期
-          dayNumber = prevMonthLastDay - firstDayOfWeek + i + 1;
-          dayDiv.classList.add('other-month');
-          const prevMonth = month === 0 ? 11 : month - 1;
-          const prevYear = month === 0 ? year - 1 : year;
-          dateString = `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
-        } else if (dayCount <= lastDay.getDate()) {
-          // 當月的日期
-          dayNumber = dayCount;
-          dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
-          dayCount++;
-          
-          // 檢查是否為今天
-          const today = new Date();
-          if (year === today.getFullYear() && month === today.getMonth() && dayNumber === today.getDate()) {
-            dayDiv.classList.add('today');
-          }
-        } else {
-          // 下個月的日期
-          dayNumber = nextMonthDay;
-          dayDiv.classList.add('other-month');
-          const nextMonth = month === 11 ? 0 : month + 1;
-          const nextYear = month === 11 ? year + 1 : year;
-          dateString = `${nextYear}-${String(nextMonth + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
-          nextMonthDay++;
-        }
-        
-        dayDiv.innerHTML = `<div class="day-number">${dayNumber}</div>`;
-        dayDiv.setAttribute('data-date', dateString);
-        
-        // 添加事件
-        if (eventsData[dateString]) {
-          dayDiv.classList.add('has-events');
-          eventsData[dateString].forEach(event => {
-            const eventDiv = document.createElement('div');
-            eventDiv.className = `event-item ${event.type}`;
-            eventDiv.textContent = event.title;
-            eventDiv.title = `${event.time} - ${event.desc}`;
-            eventDiv.onclick = (e) => {
-              e.stopPropagation();
-              showEventDetail(event);
-            };
-            dayDiv.appendChild(eventDiv);
-          });
-        }
-        
-        // 添加點擊事件
-        dayDiv.onclick = () => selectDate(dateString);
-        
-        calendarDays.appendChild(dayDiv);
-      }
-    }
-
-    // 上一個月
-    function previousMonth() {
-      currentDate.setMonth(currentDate.getMonth() - 1);
-      renderCalendar();
-    }
-
-    // 下一個月
-    function nextMonth() {
-      currentDate.setMonth(currentDate.getMonth() + 1);
-      renderCalendar();
-    }
-
-    // 切換檢視模式
-    function switchView(view) {
-      currentView = view;
-      document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      
-      switch(view) {
-        case 'month':
-          renderCalendar();
-          break;
-        case 'week':
-          alert('週檢視功能開發中...');
-          break;
-        case 'day':
-          alert('日檢視功能開發中...');
-          break;
-      }
-    }
-
-    // 選擇日期
-    function selectDate(dateString) {
-      // 移除之前選中的日期
-      document.querySelectorAll('.calendar-day').forEach(day => {
-        day.classList.remove('selected');
-      });
-      
-      // 選中當前日期
-      const selectedDay = document.querySelector(`[data-date="${dateString}"]`);
-      if (selectedDay) {
-        selectedDay.classList.add('selected');
-      }
-      
-      // 顯示該日的事件
-      showDayEvents(dateString);
-    }
-
-    // 顯示今日事件
-    function showTodayEvents() {
-      const today = new Date().toISOString().split('T')[0];
-      showDayEvents(today);
-    }
-
-    // 顯示指定日期的事件
-    function showDayEvents(dateString) {
-      const events = eventsData[dateString] || [];
-      const todayEventsDiv = document.getElementById('todayEvents');
-      const selectedDate = new Date(dateString + 'T00:00:00');
-      const formattedDate = selectedDate.toLocaleDateString('zh-TW', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        weekday: 'long'
-      }).replace(/(\d{4})\/(\d{1,2})\/(\d{1,2})/, '$1年$2月$3日');
-      
-      // 更新標題
-      document.querySelector('.events-sidebar h3').innerHTML = `<i class="fas fa-list-ul"></i>${formattedDate} 行程`;
-      
-      if (events.length === 0) {
-        todayEventsDiv.innerHTML = `
-          <div style="text-align: center; color: #666; padding: 30px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-            <i class="fas fa-calendar-times" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
-            <p>該日無安排事項</p>
-          </div>
-        `;
-        return;
-      }
-      
-      todayEventsDiv.innerHTML = '';
-      events.forEach(event => {
-        const eventCard = document.createElement('div');
-        eventCard.className = `event-card ${event.type}`;
-        eventCard.innerHTML = `
-          <div class="event-time">${event.time}</div>
-          <div class="event-title">${event.title}</div>
-          <div class="event-desc">${event.desc}</div>
-        `;
-        eventCard.onclick = () => showEventDetail(event);
-        todayEventsDiv.appendChild(eventCard);
-      });
-    }
-
-    // 顯示事件詳情
-    function showEventDetail(event) {
-      const typeText = {
-        'meeting': '會議',
-        'training': '培訓',
-        'deadline': '截止日期'
-      };
-      
-      alert(`📅 事件詳情\n\n標題：${event.title}\n類型：${typeText[event.type]}\n時間：${event.time}\n描述：${event.desc}`);
-    }
-
-    // 顯示新增事件模態框
-    function showAddEventModal() {
-      document.getElementById('eventModal').style.display = 'block';
-      // 如果有選中的日期，設為預設日期
-      const selectedDay = document.querySelector('.calendar-day.selected');
-      if (selectedDay) {
-        const selectedDate = selectedDay.getAttribute('data-date');
-        document.getElementById('eventDate').value = selectedDate;
-      }
-    }
-
-    // 關閉模態框
-    function closeModal() {
-      document.getElementById('eventModal').style.display = 'none';
-      document.getElementById('eventForm').reset();
-    }
-
-    // 處理表單提交
-    document.getElementById('eventForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const formData = new FormData(e.target);
-      const eventData = {
-        title: formData.get('title'),
-        date: formData.get('date'),
-        time: formData.get('time') || '全天',
-        type: formData.get('type'),
-        desc: formData.get('desc') || ''
-      };
-      
-      // 新增事件到數據中
-      if (!eventsData[eventData.date]) {
-        eventsData[eventData.date] = [];
-      }
-      
-      eventsData[eventData.date].push({
-        time: eventData.time,
-        title: eventData.title,
-        type: eventData.type,
-        desc: eventData.desc
-      });
-      
-      // 重新渲染行事曆和事件列表
-      renderCalendar();
-      showDayEvents(eventData.date);
-      selectDate(eventData.date);
-      
-      // 關閉模態框
-      closeModal();
-      
-      alert('✅ 事件已成功新增！');
-    });
-
-    // 點擊模態框外部關閉
-    window.addEventListener('click', function(event) {
-      const modal = document.getElementById('eventModal');
-      if (event.target === modal) {
-        closeModal();
-      }
-    });
-
-    // 點擊其他地方關閉選單
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('.menu')) {
-        document.querySelectorAll('.menu-item').forEach(item => {
-          item.classList.remove('expanded');
-          const submenu = item.querySelector('.submenu');
-          if (submenu) {
-            submenu.classList.remove('show');
-          }
+        document.addEventListener('DOMContentLoaded', function() {
+            currentDate = new Date(2025, 9, 1);
+            renderCalendar();
+            renderNotifications();
+            updateNotificationBadge();
+            updateTime();
+            setInterval(updateTime, 1000); // 每秒更新時間
         });
-      }
-    });
 
-    // ESC 鍵關閉模態框
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape') {
-        closeModal();
-      }
-    });
-  </script>
+        // 更新即時時間
+        function updateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const date = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const weekday = weekdays[now.getDay()];
+            
+            const period = now.getHours() >= 12 ? '下午' : '上午';
+            
+            const timeString = `${year}年${month}月${date}日 ${weekday} ${period}${hours}:${minutes}:${seconds}`;
+            document.getElementById('timeDisplay').textContent = timeString;
+        }
+
+        // 返回今天
+        function goToToday() {
+            currentDate = new Date();
+            renderCalendar();
+        }
+
+        // 渲染通知列表
+        function renderNotifications() {
+            const notificationList = document.getElementById('notificationList');
+            
+            if (notifications.length === 0) {
+                notificationList.innerHTML = `
+                    <div class="notification-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <div>暫無通知</div>
+                    </div>
+                `;
+                return;
+            }
+
+            notificationList.innerHTML = notifications.map(notif => `
+                <div class="notification-item ${notif.read ? '' : 'unread'}" onclick="markAsRead(${notif.id})">
+                    <div class="notification-icon ${notif.type}">
+                        <i class="fas ${notif.icon}"></i>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${notif.title}</div>
+                        <div class="notification-text">${notif.text}</div>
+                        <div class="notification-time">${notif.time}</div>
+                    </div>
+                    <button class="notification-delete" onclick="deleteNotification(event, ${notif.id})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // 更新通知數量徽章
+        function updateNotificationBadge() {
+            const unreadCount = notifications.filter(n => !n.read).length;
+            const icon = document.querySelector('.icon');
+            
+            if (unreadCount > 0) {
+                icon.setAttribute('data-count', unreadCount);
+                // 更新 ::after 偽元素內容需要動態修改樣式
+                const style = document.createElement('style');
+                style.textContent = `.icon::after { content: '${unreadCount}'; }`;
+                document.head.appendChild(style);
+            } else {
+                // 移除徽章
+                const style = document.createElement('style');
+                style.textContent = `.icon::after { display: none; }`;
+                document.head.appendChild(style);
+            }
+        }
+
+        // 標記單個通知為已讀
+        function markAsRead(id) {
+            const notification = notifications.find(n => n.id === id);
+            if (notification && !notification.read) {
+                notification.read = true;
+                renderNotifications();
+                updateNotificationBadge();
+            }
+        }
+
+        // 標記全部為已讀
+        function markAllAsRead() {
+            notifications.forEach(n => n.read = true);
+            renderNotifications();
+            updateNotificationBadge();
+        }
+
+        // 刪除單個通知
+        function deleteNotification(event, id) {
+            event.stopPropagation();
+            notifications = notifications.filter(n => n.id !== id);
+            renderNotifications();
+            updateNotificationBadge();
+        }
+
+        // 清除全部通知
+        function clearAllNotifications() {
+            if (confirm('確定要清除所有通知嗎？')) {
+                notifications = [];
+                renderNotifications();
+                updateNotificationBadge();
+            }
+        }
+
+        // 通知面板控制
+        const notificationIcon = document.getElementById('notificationIcon');
+        const notificationPanel = document.getElementById('notificationPanel');
+
+        notificationIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notificationPanel.style.display = notificationPanel.style.display === 'block' ? 'none' : 'block';
+            // 關閉其他面板
+            dropdown.style.display = 'none';
+        });
+
+        const avatar = document.getElementById('avatar');
+        const dropdown = document.getElementById('dropdown');
+
+        avatar.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            // 關閉通知面板
+            notificationPanel.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(e) {
+            if (!notificationIcon.contains(e.target) && !notificationPanel.contains(e.target)) {
+                notificationPanel.style.display = 'none';
+            }
+            if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        function toggleMenu(element) {
+            const menuItem = element.parentElement;
+            const submenu = menuItem.querySelector('.submenu');
+            const isExpanded = menuItem.classList.contains('expanded');
+            
+            document.querySelectorAll('.menu-item').forEach(item => {
+                if (item !== menuItem) {
+                    item.classList.remove('expanded');
+                    const otherSubmenu = item.querySelector('.submenu');
+                    if (otherSubmenu) {
+                        otherSubmenu.classList.remove('show');
+                    }
+                }
+            });
+            
+            if (isExpanded) {
+                menuItem.classList.remove('expanded');
+                submenu.classList.remove('show');
+            } else {
+                menuItem.classList.add('expanded');
+                submenu.classList.add('show');
+            }
+        }
+        
+        function createDayElement(dayNumber, dateString, classes, parentElement) {
+            const dayDiv = document.createElement('div');
+            dayDiv.className = `calendar-day ${classes}`;
+            dayDiv.setAttribute('data-date', dateString);
+            dayDiv.innerHTML = `<div class="day-number">${dayNumber}</div>`;
+
+            if (eventsData[dateString]) {
+                dayDiv.classList.add('has-events');
+                eventsData[dateString].forEach(event => {
+                    const eventDiv = document.createElement('div');
+                    eventDiv.className = `event-item ${event.type}`;
+                    eventDiv.textContent = event.title;
+                    eventDiv.title = `${event.time} - ${event.desc}`;
+                    eventDiv.onclick = (e) => {
+                        e.stopPropagation();
+                        showEventDetail(event);
+                    };
+                    dayDiv.appendChild(eventDiv);
+                });
+            }
+
+            dayDiv.onclick = () => selectDate(dateString);
+            parentElement.appendChild(dayDiv);
+        }
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            document.getElementById('currentMonth').textContent = `${year}年${String(month + 1).padStart(2, '0')}月`;
+            
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const firstDayOfWeek = firstDay.getDay();
+            
+            const calendarGrid = document.getElementById('calendarGrid');
+            
+            while (calendarGrid.children.length > 7) {
+                calendarGrid.removeChild(calendarGrid.lastChild);
+            }
+            
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+            const totalCells = 42;
+            let dayCounter = 0;
+
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                const dayNumber = prevMonthLastDay - firstDayOfWeek + i + 1;
+                const prevMonth = month === 0 ? 11 : month - 1;
+                const prevYear = month === 0 ? year - 1 : year;
+                const dateString = `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
+                
+                createDayElement(dayNumber, dateString, 'other-month', calendarGrid);
+                dayCounter++;
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                let classes = '';
+                
+                const today = new Date();
+                if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+                    classes += 'today';
+                }
+
+                createDayElement(day, dateString, classes, calendarGrid);
+                dayCounter++;
+            }
+
+            let nextMonthDay = 1;
+            while (dayCounter < totalCells) {
+                const nextMonth = month === 11 ? 0 : month + 1;
+                const nextYear = month === 11 ? year + 1 : year;
+                const dateString = `${nextYear}-${String(nextMonth + 1).padStart(2, '0')}-${String(nextMonthDay).padStart(2, '0')}`;
+                
+                createDayElement(nextMonthDay, dateString, 'other-month', calendarGrid);
+                nextMonthDay++;
+                dayCounter++;
+            }
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function selectDate(dateString) {
+            document.querySelectorAll('.calendar-day').forEach(day => {
+                day.classList.remove('selected');
+            });
+            
+            const selectedDay = document.querySelector(`[data-date="${dateString}"]`);
+            if (selectedDay) {
+                selectedDay.classList.add('selected');
+            }
+        }
+
+        function showEventDetail(event) {
+            const typeText = {
+                'meeting': '會議',
+                'training': '培訓',
+                'deadline': '截止日期'
+            };
+            
+            alert(`📅 事件詳情\n\n標題：${event.title}\n類型：${typeText[event.type]}\n時間：${event.time}\n描述：${event.desc}`);
+        }
+
+        // 新增活動彈跳視窗相關功能
+        let selectedEventType = 'meeting';
+
+        function openAddEventModal() {
+            document.getElementById('modalOverlay').classList.add('show');
+            // 設置默認日期為今天
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
+            document.getElementById('eventDate').value = dateString;
+        }
+
+        function closeModal(event) {
+            if (!event || event.target.id === 'modalOverlay') {
+                document.getElementById('modalOverlay').classList.remove('show');
+                // 清空表單
+                document.getElementById('eventForm').reset();
+                selectedEventType = 'meeting';
+                // 重置類型選擇器
+                document.querySelectorAll('.event-type-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                document.querySelector('[data-type="meeting"]').classList.add('selected');
+            }
+        }
+
+        function selectEventType(type) {
+            selectedEventType = type;
+            document.querySelectorAll('.event-type-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('selected');
+        }
+
+        function submitEvent() {
+            const title = document.getElementById('eventTitle').value.trim();
+            const date = document.getElementById('eventDate').value;
+            const time = document.getElementById('eventTime').value;
+            const desc = document.getElementById('eventDesc').value.trim();
+
+            if (!title || !date) {
+                alert('請填寫活動標題和日期！');
+                return;
+            }
+
+            // 格式化日期
+            const dateString = date; // 格式: YYYY-MM-DD
+            const timeString = time || '全天';
+
+            // 添加到事件數據
+            if (!eventsData[dateString]) {
+                eventsData[dateString] = [];
+            }
+
+            eventsData[dateString].push({
+                time: timeString,
+                title: title,
+                type: selectedEventType,
+                desc: desc || '無描述'
+            });
+
+            // 重新渲染日曆
+            renderCalendar();
+
+            // 關閉彈窗
+            closeModal();
+
+            // 顯示成功提示
+            alert(`✅ 活動已成功新增！\n\n標題：${title}\n日期：${dateString}\n時間：${timeString}`);
+        }
+        
+        function addNewEvent() {
+            openAddEventModal();
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.menu')) {
+                document.querySelectorAll('.menu-item').forEach(item => {
+                    if (!item.querySelector('.menu-link.active')) {
+                        item.classList.remove('expanded');
+                        const submenu = item.querySelector('.submenu');
+                        if (submenu) {
+                            submenu.classList.remove('show');
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -26,7 +26,7 @@ if ($_GET['action'] == "login") {
         if ($row['role'] === $role) {
             // 登入成功，身分一致
             if ($role == 'admin') {
-                $redirect = "admin_dashboard.html";
+                $redirect = "activity_calendar.html";
             } elseif ($role == 'teacher') {
                 $redirect = "teacher_dashboard.html";
             } elseif ($role == 'student') {

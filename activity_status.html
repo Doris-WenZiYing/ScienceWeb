@@ -18,7 +18,6 @@
       background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
     }
 
-    /* 頂部區域 */
     .header {
       height: 70px;
       background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -118,7 +117,6 @@
       color: white;
     }
 
-    /* 下拉選單 */
     .dropdown {
       position: absolute;
       top: 65px;
@@ -164,7 +162,6 @@
       width: 16px;
     }
 
-    /* 主體區域 */
     .main {
       display: flex;
       height: calc(100% - 70px);
@@ -190,34 +187,6 @@
       width: 4px;
       height: 100%;
       background: linear-gradient(180deg, #11998e 0%, #38ef7d 100%);
-    }
-
-    .sidebar h2 {
-      font-size: 24px;
-      margin: 0 30px 40px;
-      color: #333;
-      font-weight: 300;
-      text-align: center;
-      position: relative;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .sidebar h2:hover {
-      color: #11998e;
-      transform: scale(1.05);
-    }
-
-    .sidebar h2::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px;
-      height: 3px;
-      background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
-      border-radius: 2px;
     }
 
     .menu a {
@@ -255,7 +224,6 @@
       overflow-y: auto;
     }
 
-    /* 活動情況專用樣式 */
     .activity-container {
       background: rgba(255, 255, 255, 0.9);
       border-radius: 20px;
@@ -287,7 +255,6 @@
       font-size: 32px;
     }
 
-    /* 時間顯示樣式調整 */
     .header-time {
       background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
       color: white;
@@ -305,7 +272,6 @@
       font-size: 16px;
     }
 
-    /* 篩選和搜尋區域 */
     .filter-section {
       background: rgba(248, 249, 250, 0.8);
       border-radius: 15px;
@@ -375,7 +341,6 @@
       transform: translateY(-2px);
     }
 
-    /* 統計概覽 */
     .stats-overview {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -411,7 +376,6 @@
       font-size: 14px;
     }
 
-    /* 活動列表 */
     .activity-list {
       display: grid;
       gap: 20px;
@@ -543,7 +507,6 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
 
-    /* 響應式設計 */
     @media (max-width: 768px) {
       .main {
         flex-direction: column;
@@ -599,7 +562,6 @@
       }
     }
 
-    /* 滾動條美化 */
     ::-webkit-scrollbar {
       width: 8px;
     }
@@ -617,7 +579,6 @@
       background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
     }
 
-    /* 模態框樣式 */
     .modal {
       display: none;
       position: fixed;
@@ -668,20 +629,13 @@
   </style>
 </head>
 <body>
-  <!-- 頂部欄 -->
   <div class="header">
     <img src="image/logo1.gif" alt="Logo" class="logo">
-    
     <div class="header-right">
-      <!-- 通知圖標 -->
       <div class="icon"><i class="fas fa-bell"></i></div>
-      
-      <!-- 頭像 -->
       <div class="avatar" id="avatar">
         <i class="fas fa-user"></i>
       </div>
-      
-      <!-- 下拉選單 -->
       <div class="dropdown" id="dropdown">
         <a href="login_teacher.html">
           <i class="fas fa-sign-out-alt"></i>
@@ -691,11 +645,13 @@
     </div>
   </div>
 
-  <!-- 主區塊 -->
   <div class="main">
     <div class="sidebar">
-      <h2 onclick="location.href='teacher_dashboard.html';">老師系統</h2>
       <div class="menu">
+        <a href="teacher_dashboard.html">
+          <i class="fas fa-home"></i>
+          老師首頁
+        </a>
         <a href="activity_status.html" class="active">
           <i class="fas fa-chart-bar"></i>
           查看活動情況
@@ -708,25 +664,34 @@
           <i class="fas fa-comments"></i>
           學生表單反饋
         </a>
-      </div>
+         <a href="Teacher_schedules_classes.html">
+          <i class="fas fa-calendar-alt"></i>
+          線上排班
+        </a>
+        <a href="askforleave.html">
+          <i class="fas fa-clipboard-check"></i>
+          請假審核
+        </a>
+        <a href="work_hours_attendance.html">
+          <i class="fas fa-clock"></i>
+          工作時數與出席記錄
+        </a>
+            </div>
     </div>
     
     <div class="content">
-      <!-- 活動情況主體 -->
       <div class="activity-container">
         <div class="activity-header">
           <div class="activity-title">
             <i class="fas fa-chart-line"></i>
             活動情況總覽
           </div>
-          <!-- 移動後的時間顯示 -->
           <div class="header-time" id="currentTime">
             <i class="fas fa-clock"></i>
             <span id="timeText"></span>
           </div>
         </div>
 
-        <!-- 搜尋和篩選 -->
         <div class="filter-section">
           <input type="text" class="search-input" placeholder="搜尋活動名稱..." id="searchInput">
           <select class="filter-select" id="statusFilter">
@@ -753,7 +718,6 @@
           </button>
         </div>
 
-        <!-- 統計概覽 -->
         <div class="stats-overview">
           <div class="stat-item">
             <div class="stat-number" id="ongoingCount">8</div>
@@ -773,27 +737,19 @@
           </div>
         </div>
 
-        <!-- 活動列表 -->
-        <div class="activity-list" id="activityList">
-          <!-- 活動項目將由JavaScript動態生成 -->
-        </div>
+        <div class="activity-list" id="activityList"></div>
       </div>
     </div>
   </div>
 
-  <!-- 活動詳情模態框 -->
   <div id="activityModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
-      <div id="modalContent">
-        <!-- 模態框內容將由JavaScript動態填充 -->
-      </div>
+      <div id="modalContent"></div>
     </div>
   </div>
 
-  <!-- JS 控制 -->
   <script>
-    // 模擬活動數據
     const activitiesData = [
       {
         id: 1,
@@ -806,7 +762,7 @@
         participants: 25,
         maxParticipants: 30,
         instructor: '王老師',
-        description: '透過有趣的科學實驗，讓學生深入了解化學和物理原理，培養科學思維和動手能力。'
+        description: '透過有趣的科學實驗,讓學生深入了解化學和物理原理,培養科學思維和動手能力。'
       },
       {
         id: 2,
@@ -819,7 +775,7 @@
         participants: 18,
         maxParticipants: 20,
         instructor: '李老師',
-        description: '提升學生邏輯思維能力，通過趣味數學題目和遊戲，讓學習數學變得更加有趣。'
+        description: '提升學生邏輯思維能力,通過趣味數學題目和遊戲,讓學習數學變得更加有趣。'
       },
       {
         id: 3,
@@ -832,7 +788,7 @@
         participants: 22,
         maxParticipants: 25,
         instructor: '張老師',
-        description: '專注於提升學生英語口語表達能力，通過情境對話和角色扮演練習。'
+        description: '專注於提升學生英語口語表達能力,通過情境對話和角色扮演練習。'
       },
       {
         id: 4,
@@ -845,7 +801,7 @@
         participants: 20,
         maxParticipants: 20,
         instructor: '陳老師',
-        description: '引導學生發揮創意，學習各種繪畫技巧和藝術表現形式。'
+        description: '引導學生發揮創意,學習各種繪畫技巧和藝術表現形式。'
       },
       {
         id: 5,
@@ -858,7 +814,7 @@
         participants: 15,
         maxParticipants: 25,
         instructor: '劉老師',
-        description: '教授基礎程式設計概念，讓學生體驗編程的樂趣。'
+        description: '教授基礎程式設計概念,讓學生體驗編程的樂趣。'
       },
       {
         id: 6,
@@ -871,13 +827,12 @@
         participants: 0,
         maxParticipants: 30,
         instructor: '吳老師',
-        description: '因設備故障暫時取消，將重新安排時間。'
+        description: '因設備故障暫時取消,將重新安排時間。'
       }
     ];
 
     let filteredActivities = [...activitiesData];
 
-    // 狀態映射
     const statusMap = {
       'ongoing': { text: '進行中', class: 'status-ongoing' },
       'upcoming': { text: '即將開始', class: 'status-upcoming' },
@@ -885,7 +840,6 @@
       'cancelled': { text: '已取消', class: 'status-cancelled' }
     };
 
-    // 類別映射
     const categoryMap = {
       'science': '科學實驗',
       'math': '數學課程',
@@ -893,20 +847,17 @@
       'art': '藝術創作'
     };
 
-    // 頁面載入後執行
     window.addEventListener('load', () => {
       updateTime();
       setInterval(updateTime, 1000);
       renderActivities();
       updateStats();
       
-      // 設置搜尋輸入框即時搜尋
       document.getElementById('searchInput').addEventListener('input', filterActivities);
       document.getElementById('statusFilter').addEventListener('change', filterActivities);
       document.getElementById('categoryFilter').addEventListener('change', filterActivities);
     });
 
-    // 下拉選單控制
     const avatar = document.getElementById('avatar');
     const dropdown = document.getElementById('dropdown');
 
@@ -920,7 +871,6 @@
       }
     });
 
-    // 時間顯示
     function updateTime() {
       const now = new Date();
       const options = {
@@ -937,7 +887,6 @@
       document.getElementById('timeText').textContent = timeString;
     }
 
-    // 渲染活動列表
     function renderActivities() {
       const activityList = document.getElementById('activityList');
       activityList.innerHTML = '';
@@ -1019,7 +968,6 @@
       });
     }
 
-    // 篩選活動
     function filterActivities() {
       const searchTerm = document.getElementById('searchInput').value.toLowerCase();
       const statusFilter = document.getElementById('statusFilter').value;
@@ -1039,7 +987,6 @@
       updateStats();
     }
 
-    // 重設篩選器
     function resetFilters() {
       document.getElementById('searchInput').value = '';
       document.getElementById('statusFilter').value = '';
@@ -1049,21 +996,18 @@
       updateStats();
     }
 
-    // 更新統計數據
     function updateStats() {
       const ongoing = filteredActivities.filter(a => a.status === 'ongoing').length;
       const upcoming = filteredActivities.filter(a => a.status === 'upcoming').length;
       const completed = filteredActivities.filter(a => a.status === 'completed').length;
       const totalParticipants = filteredActivities.reduce((sum, a) => sum + a.participants, 0);
 
-      // 動畫更新數字
       animateNumber('ongoingCount', ongoing);
       animateNumber('upcomingCount', upcoming);
       animateNumber('completedCount', completed);
       animateNumber('totalParticipants', totalParticipants);
     }
 
-    // 數字動畫效果
     function animateNumber(elementId, targetValue) {
       const element = document.getElementById(elementId);
       const startValue = parseInt(element.textContent) || 0;
@@ -1083,7 +1027,6 @@
       }, 50);
     }
 
-    // 查看活動詳情
     function viewDetails(activityId) {
       const activity = activitiesData.find(a => a.id === activityId);
       if (!activity) return;
@@ -1143,7 +1086,6 @@
       document.getElementById('activityModal').style.display = 'block';
     }
 
-    // 編輯活動
     function editActivity(activityId) {
       const activity = activitiesData.find(a => a.id === activityId);
       if (!activity) return;
@@ -1151,33 +1093,26 @@
       alert(`編輯活動功能開發中...\n活動：${activity.title}`);
     }
 
-    // 確認取消活動
     function confirmCancel(activityId) {
       const activity = activitiesData.find(a => a.id === activityId);
       if (!activity) return;
 
       const action = activity.status === 'ongoing' ? '暫停' : '取消';
       if (confirm(`確定要${action}活動「${activity.title}」嗎？`)) {
-        // 更新活動狀態
         activity.status = 'cancelled';
         if (activity.status === 'cancelled') {
-          activity.participants = 0; // 取消時清空參與人數
+          activity.participants = 0;
         }
         
-        // 重新渲染
         filterActivities();
-        
-        // 顯示成功訊息
         showNotification(`活動「${activity.title}」已${action}`, 'success');
       }
     }
 
-    // 關閉模態框
     function closeModal() {
       document.getElementById('activityModal').style.display = 'none';
     }
 
-    // 點擊模態框外部關閉
     window.addEventListener('click', function(event) {
       const modal = document.getElementById('activityModal');
       if (event.target === modal) {
@@ -1185,9 +1120,7 @@
       }
     });
 
-    // 顯示通知
     function showNotification(message, type = 'info') {
-      // 創建通知元素
       const notification = document.createElement('div');
       notification.style.cssText = `
         position: fixed;
@@ -1205,13 +1138,11 @@
       `;
       notification.textContent = message;
       
-      // 添加關閉功能
       notification.addEventListener('click', () => {
         notification.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => notification.remove(), 300);
       });
       
-      // 添加樣式
       if (!document.querySelector('#notificationStyles')) {
         const style = document.createElement('style');
         style.id = 'notificationStyles';
@@ -1230,7 +1161,6 @@
       
       document.body.appendChild(notification);
       
-      // 3秒後自動消失
       setTimeout(() => {
         if (notification.parentNode) {
           notification.style.animation = 'slideOut 0.3s ease';
@@ -1239,7 +1169,6 @@
       }, 3000);
     }
 
-    // ESC鍵關閉模態框
     document.addEventListener('keydown', function(event) {
       if (event.key === 'Escape') {
         closeModal();

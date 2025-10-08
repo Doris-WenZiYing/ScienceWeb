@@ -80,38 +80,259 @@
 
     .icon {
       position: relative;
-      padding: 10px;
+      padding: 12px;
       border-radius: 50%;
       background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       cursor: pointer;
+      box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      animation: pulse 2s infinite;
     }
 
     .icon:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(131, 96, 195, 0.4);
+      transform: translateY(-3px) scale(1.1);
+      box-shadow: 0 12px 35px rgba(131, 96, 195, 0.5);
+      background: linear-gradient(135deg, #9d7ce6 0%, #3dd5a3 100%);
+    }
+
+    .icon:active {
+      transform: translateY(-1px) scale(1.05);
+      transition: all 0.1s ease;
     }
 
     .icon i {
-      font-size: 18px;
+      font-size: 20px;
       color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      animation: bellShake 0.5s ease-in-out infinite alternate;
     }
 
     .icon::after {
-      content: '5';
+      content: '3';
       position: absolute;
-      top: -2px;
-      right: -2px;
-      background: #ff4757;
+      top: -5px;
+      right: -5px;
+      background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
       color: white;
       border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      font-size: 11px;
+      width: 22px;
+      height: 22px;
+      font-size: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
+      box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+      border: 2px solid white;
+      animation: bounce 1s ease-in-out infinite;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-3px); }
+      60% { transform: translateY(-2px); }
+    }
+
+    /* 通知面板樣式 */
+    .notification-panel {
+      position: absolute;
+      top: 65px;
+      right: 80px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      display: none;
+      width: 380px;
+      max-height: 500px;
+      z-index: 1000;
+      animation: dropdownFade 0.3s ease;
+      overflow: hidden;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3); }
+      50% { box-shadow: 0 4px 25px rgba(131, 96, 195, 0.6); }
+      100% { box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3); }
+    }
+
+    @keyframes bellShake {
+      0% { transform: rotate(-5deg); }
+      100% { transform: rotate(5deg); }
+    }
+
+    .notification-header {
+      padding: 20px;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 15px 15px 0 0;
+    }
+
+    .notification-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .notification-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .notification-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .notification-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+
+    .notification-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      padding: 15px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      gap: 12px;
+    }
+
+    .notification-item:hover {
+      background: rgba(131, 96, 195, 0.05);
+    }
+
+    .notification-item.unread {
+      background: rgba(131, 96, 195, 0.08);
+    }
+
+    .notification-item.unread::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      background: #e74c3c;
+      border-radius: 50%;
+    }
+
+    .notification-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .notification-icon.activity {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+    }
+
+    .notification-icon.deadline {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+    }
+
+    .notification-icon.announcement {
+      background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+      color: white;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .notification-text {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .notification-time {
+      font-size: 11px;
+      color: #999;
+    }
+
+    .notification-delete {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(231, 76, 60, 0.1);
+      color: #e74c3c;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .notification-item:hover .notification-delete {
+      opacity: 1;
+    }
+
+    .notification-delete:hover {
+      background: #e74c3c;
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .notification-empty {
+      padding: 60px 20px;
+      text-align: center;
+      color: #999;
+    }
+
+    .notification-empty i {
+      font-size: 48px;
+      color: #ddd;
+      margin-bottom: 15px;
+    }
+
+    .notification-list::-webkit-scrollbar { width: 6px; }
+    .notification-list::-webkit-scrollbar-track { background: #f0f0f0; }
+    .notification-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      border-radius: 3px;
     }
 
     .avatar {
@@ -606,12 +827,23 @@
 <body>
   <!-- 頂部欄 -->
   <div class="header">
-    <div class="header-left" onclick="location.href='admin_dashboard.html';">
+    <div class="header-left" onclick="location.href='activity_calendar.html';">
       <img src="image/logo1.gif" alt="Logo" class="logo">
-      <span class="header-title">科學會管理系統</span>
     </div>
     <div class="header-right">
-      <div class="icon"><i class="fas fa-bell"></i></div>
+      <div class="icon" id="notificationIcon"><i class="fas fa-bell"></i></div>
+      <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+          <h3>通知</h3>
+          <div class="notification-actions">
+            <button class="notification-btn" onclick="markAllAsRead()">全部已讀</button>
+            <button class="notification-btn" onclick="clearAllNotifications()">清除全部</button>
+          </div>
+        </div>
+        <div class="notification-list" id="notificationList">
+          <!-- 通知項目將由 JavaScript 動態生成 -->
+        </div>
+      </div>
       <div class="avatar" id="avatar">
         <i class="fas fa-user-shield"></i>
       </div>
@@ -628,98 +860,83 @@
   <div class="main">
     <div class="sidebar">
       <div class="menu">
-        <!-- 科學會首頁 -->
-        <div class="menu-item">
-          <a href="admin_dashboard.html" class="menu-link">
-            <i class="fas fa-home"></i>
-            科學會首頁
-          </a>
-        </div>
-
-        <!-- 活動行事曆 -->
         <div class="menu-item">
           <a href="activity_calendar.html" class="menu-link">
             <i class="fas fa-calendar"></i>
-            活動行事曆
+            行事曆
           </a>
         </div>
 
-        <!-- 幹部行事曆 -->
         <div class="menu-item">
-          <a href="admin_executive.html" class="menu-link">
-            <i class="fas fa-calendar-alt"></i>
-            幹部行事曆
+          <a href="admin_dashboard.html" class="menu-link">
+            <i class="fas fa-home"></i>
+            活動相簿
           </a>
         </div>
 
-        <!-- 發布公告 -->
-        <div class="menu-item">
-          <a href="publish_announcement.html" class="menu-link">
-            <i class="fas fa-bullhorn"></i>
-            發布公告
-          </a>
-        </div>
-
-        <!-- 活動管理 -->
         <div class="menu-item expanded">
-          <div class="menu-link active" onclick="toggleMenu(this); return false;">
-            <i class="fas fa-tasks"></i>
-            活動管理
+          <div class="menu-link" onclick="toggleMenu(this); return false;">
+            <i class="fas fa-bullhorn"></i>
+            發佈公告/活動/表單
             <i class="fas fa-chevron-down menu-arrow"></i>
           </div>
           <div class="submenu show">
             <div class="submenu-item">
-              <a href="admin_activity_publish.html" class="submenu-link active">
-                <i class="fas fa-plus-circle"></i>
-                發布活動
+              <a href="publish_announcement.html" class="submenu-link">
+                <i class="fas fa-bullhorn"></i>
+                發佈公告
               </a>
             </div>
             <div class="submenu-item">
-              <a href="admin_name_manage.html" class="submenu-link">
-                <i class="fas fa-user-edit"></i>
-                報名人員名單管理
+              <a href="admin_activity_publish.html" class="submenu-link active">
+                <i class="fas fa-plus-circle"></i>
+                發佈比賽及活動
               </a>
             </div>
             <div class="submenu-item">
               <a href="admin_table_publish.html" class="submenu-link">
                 <i class="fas fa-comment-alt"></i>
-                發布活動反饋表單
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="admin_statistics.html" class="submenu-link">
-                <i class="fas fa-trophy"></i>
-                統計活動/比賽名次結果
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="admin_analysis.html" class="submenu-link">
-                <i class="fas fa-chart-bar"></i>
-                活動分析
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="activity_achievements.html" class="submenu-link">
-                <i class="fas fa-images"></i>
-                活動成果牆
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="admin_upload_files.html" class="submenu-link">
-                <i class="fas fa-eye"></i>
-                圖片識別
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="auto_notification.html" class="submenu-link">
-                <i class="fas fa-bell"></i>
-                自動通知推播
+                發佈活動反饋表單
               </a>
             </div>
           </div>
         </div>
 
-        <!-- 開會紀錄 -->
+        <div class="menu-item">
+          <a href="admin_name_manage.html" class="menu-link">
+            <i class="fas fa-user-edit"></i>
+            報名人員名單管理
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="admin_statistics.html" class="menu-link">
+            <i class="fas fa-trophy"></i>
+            統計比賽名次
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="admin_upload_files.html" class="menu-link">
+            <i class="fas fa-upload"></i>
+            開放上傳檔案
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="online_scheduling.html" class="menu-link">
+            <i class="fas fa-user-check"></i>
+            線上簽到表
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="admin_request_review.html" class="menu-link">
+            <i class="fas fa-file-signature"></i>
+            請假申請
+          </a>
+        </div>
+
         <div class="menu-item">
           <a href="meeting_records.html" class="menu-link">
             <i class="fas fa-clipboard"></i>
@@ -727,77 +944,18 @@
           </a>
         </div>
 
-        <!-- 線上排班 -->
         <div class="menu-item">
-          <a href="online_scheduling.html" class="menu-link">
-            <i class="fas fa-user-clock"></i>
-            線上排班
+          <a href="auto_notification.html" class="menu-link">
+            <i class="fas fa-bell"></i>
+            自動推播通知
           </a>
         </div>
 
-        <!-- 內部請假審核&簽到表 -->
         <div class="menu-item">
-          <a href="admin_request_review.html" class="menu-link">
-            <i class="fas fa-file-signature"></i>
-            內部請假審核&簽到表
+          <a href="image_recognition.html" class="menu-link">
+            <i class="fas fa-eye"></i>
+            圖片識別
           </a>
-        </div>
-
-        <!-- 幹部工作時數&出席紀錄 -->
-        <div class="menu-item">
-          <a href="admin_department_manage.html" class="menu-link">
-            <i class="fas fa-clock"></i>
-            幹部工作時數&出席紀錄
-          </a>
-        </div>
-
-        <!-- 各類審核單 -->
-        <div class="menu-item">
-          <a href="approval_forms.html" class="menu-link">
-            <i class="fas fa-file-check"></i>
-            各類審核單
-          </a>
-        </div>
-
-        <!-- 各組管理事項 -->
-        <div class="menu-item">
-          <div class="menu-link" onclick="toggleMenu(this); return false;">
-            <i class="fas fa-users-cog"></i>
-            各組管理事項
-            <i class="fas fa-chevron-down menu-arrow"></i>
-          </div>
-          <div class="submenu">
-            <div class="submenu-item">
-              <a href="secretariat_management.html" class="submenu-link">
-                <i class="fas fa-file-alt"></i>
-                文書組
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="publicity_management.html" class="submenu-link">
-                <i class="fas fa-paint-brush"></i>
-                美宣組
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="activity_management.html" class="submenu-link">
-                <i class="fas fa-calendar-plus"></i>
-                活動組
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="finance_management.html" class="submenu-link">
-                <i class="fas fa-coins"></i>
-                總務組
-              </a>
-            </div>
-            <div class="submenu-item">
-              <a href="admin_customer_service.html" class="submenu-link">
-                <i class="fas fa-handshake"></i>
-                公關組
-              </a>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -1008,19 +1166,151 @@
     document.addEventListener('DOMContentLoaded', function() {
       updateTime();
       setInterval(updateTime, 1000);
+      renderNotifications();
+      updateNotificationBadge();
     });
+
+    // 通知數據
+    let notifications = [
+      {
+        id: 1,
+        type: 'activity',
+        icon: 'fa-calendar-check',
+        title: '新活動發布',
+        text: '科學營活動已發布，請查看詳情並報名',
+        time: '2小時前',
+        read: false
+      },
+      {
+        id: 2,
+        type: 'deadline',
+        icon: 'fa-clock',
+        title: '報名即將截止',
+        text: '下月活動報名將於今日16:00截止',
+        time: '5小時前',
+        read: false
+      },
+      {
+        id: 3,
+        type: 'announcement',
+        icon: 'fa-bullhorn',
+        title: '系統公告',
+        text: '月會時間調整至10月15日上午10點',
+        time: '1天前',
+        read: false
+      }
+    ];
+
+    // 渲染通知列表
+    function renderNotifications() {
+      const notificationList = document.getElementById('notificationList');
+      
+      if (notifications.length === 0) {
+        notificationList.innerHTML = `
+          <div class="notification-empty">
+            <i class="fas fa-bell-slash"></i>
+            <div>暫無通知</div>
+          </div>
+        `;
+        return;
+      }
+
+      notificationList.innerHTML = notifications.map(notif => `
+        <div class="notification-item ${notif.read ? '' : 'unread'}" onclick="markAsRead(${notif.id})">
+          <div class="notification-icon ${notif.type}">
+            <i class="fas ${notif.icon}"></i>
+          </div>
+          <div class="notification-content">
+            <div class="notification-title">${notif.title}</div>
+            <div class="notification-text">${notif.text}</div>
+            <div class="notification-time">${notif.time}</div>
+          </div>
+          <button class="notification-delete" onclick="deleteNotification(event, ${notif.id})">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // 更新通知徽章
+    function updateNotificationBadge() {
+      const unreadCount = notifications.filter(n => !n.read).length;
+      const icon = document.querySelector('.icon');
+      
+      if (unreadCount > 0) {
+        icon.setAttribute('data-count', unreadCount);
+        // 更新 ::after 偽元素內容需要動態修改樣式
+        const style = document.createElement('style');
+        style.textContent = `.icon::after { content: '${unreadCount}'; }`;
+        document.head.appendChild(style);
+      } else {
+        // 移除徽章
+        const style = document.createElement('style');
+        style.textContent = `.icon::after { display: none; }`;
+        document.head.appendChild(style);
+      }
+    }
+
+    // 標記為已讀
+    function markAsRead(id) {
+      const notification = notifications.find(n => n.id === id);
+      if (notification && !notification.read) {
+        notification.read = true;
+        renderNotifications();
+        updateNotificationBadge();
+      }
+    }
+
+    // 全部標記為已讀
+    function markAllAsRead() {
+      notifications.forEach(notification => {
+        notification.read = true;
+      });
+      renderNotifications();
+      updateNotificationBadge();
+    }
+
+    // 刪除通知
+    function deleteNotification(event, id) {
+      event.stopPropagation();
+      notifications = notifications.filter(n => n.id !== id);
+      renderNotifications();
+      updateNotificationBadge();
+    }
+
+    // 清空所有通知
+    function clearAllNotifications() {
+      if (confirm('確定要清除所有通知嗎？')) {
+        notifications = [];
+        renderNotifications();
+        updateNotificationBadge();
+      }
+    }
 
     // 頭像下拉選單控制
     const avatar = document.getElementById('avatar');
     const dropdown = document.getElementById('dropdown');
+    const notificationIcon = document.getElementById('notificationIcon');
+    const notificationPanel = document.getElementById('notificationPanel');
 
-    avatar.addEventListener('click', () => {
+    avatar.addEventListener('click', (e) => {
+      e.stopPropagation();
       dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+      notificationPanel.style.display = 'none';
+    });
+
+    notificationIcon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      notificationPanel.style.display = notificationPanel.style.display === 'block' ? 'none' : 'block';
+      dropdown.style.display = 'none';
     });
 
     window.addEventListener('click', function(e) {
       if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.style.display = 'none';
+      }
+      if (!notificationIcon.contains(e.target) && !notificationPanel.contains(e.target)) {
+        notificationPanel.style.display = 'none';
       }
     });
 

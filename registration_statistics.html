@@ -195,31 +195,37 @@
     }
 
     .sidebar h2 {
-      font-size: 24px;
-      margin: 0 30px 40px;
-      color: #333;
-      font-weight: 300;
-      text-align: center;
+      font-size: 16px;
+      margin: 0 0 0 0;
+      padding: 18px 30px;
+      color: #555;
+      font-weight: 400;
+      text-align: left;
       position: relative;
       cursor: pointer;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-left: 4px solid transparent;
+    }
+
+    .sidebar h2 i {
+      font-size: 17px;
+      color: #555;
+      width: 20px;
+      text-align: center;
     }
 
     .sidebar h2:hover {
       color: #11998e;
-      transform: scale(1.05);
+      background: rgba(17, 153, 142, 0.1);
+      border-left: 4px solid #11998e;
+      transform: translateX(5px);
     }
 
-    .sidebar h2::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px;
-      height: 3px;
-      background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
-      border-radius: 2px;
+    .sidebar h2:hover i {
+      color: #11998e;
     }
 
     .menu a {
@@ -495,7 +501,7 @@
 
     .table-header {
       display: flex;
-      justify-content: between;
+      justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
       flex-wrap: wrap;
@@ -682,7 +688,10 @@
   <!-- 主區塊 -->
   <div class="main">
     <div class="sidebar">
-      <h2 onclick="location.href='teacher_dashboard.html';">老師系統</h2>
+      <h2 onclick="location.href='teacher_dashboard.html';">
+        <i class="fas fa-home"></i>
+        老師首頁
+      </h2>
       <div class="menu">
         <a href="activity_status.html">
           <i class="fas fa-chart-bar"></i>
@@ -696,7 +705,19 @@
           <i class="fas fa-comments"></i>
           學生表單反饋
         </a>
-      </div>
+         <a href="Teacher_schedules_classes.html">
+          <i class="fas fa-calendar-alt"></i>
+          線上排班
+        </a>
+        <a href="askforleave.html">
+          <i class="fas fa-clipboard-check"></i>
+          請假審核
+        </a>
+        <a href="work_hours_attendance.html">
+          <i class="fas fa-clock"></i>
+          工作時數與出席記錄
+        </a>
+            </div>
     </div>
     
     <div class="content">
@@ -981,8 +1002,7 @@
             tension: 0.4,
             fill: true
           }]
-        },
-        options: {
+        },options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {

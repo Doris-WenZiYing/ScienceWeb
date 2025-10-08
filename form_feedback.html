@@ -193,31 +193,37 @@
     }
 
     .sidebar h2 {
-      font-size: 24px;
-      margin: 0 30px 40px;
-      color: #333;
-      font-weight: 300;
-      text-align: center;
+      font-size: 16px;
+      margin: 0 0 0 0;
+      padding: 18px 30px;
+      color: #555;
+      font-weight: 400;
+      text-align: left;
       position: relative;
       cursor: pointer;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-left: 4px solid transparent;
+    }
+
+    .sidebar h2 i {
+      font-size: 17px;
+      color: #555;
+      width: 20px;
+      text-align: center;
     }
 
     .sidebar h2:hover {
       color: #11998e;
-      transform: scale(1.05);
+      background: rgba(17, 153, 142, 0.1);
+      border-left: 4px solid #11998e;
+      transform: translateX(5px);
     }
 
-    .sidebar h2::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px;
-      height: 3px;
-      background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
-      border-radius: 2px;
+    .sidebar h2:hover i {
+      color: #11998e;
     }
 
     .menu a {
@@ -733,7 +739,10 @@
   <!-- 主區塊 -->
   <div class="main">
     <div class="sidebar">
-      <h2 onclick="location.href='teacher_dashboard.html';">老師系統</h2>
+      <h2 onclick="location.href='teacher_dashboard.html';">
+        <i class="fas fa-home"></i>
+        老師首頁
+      </h2>
       <div class="menu">
         <a href="activity_status.html">
           <i class="fas fa-chart-bar"></i>
@@ -747,11 +756,23 @@
           <i class="fas fa-comments"></i>
           學生表單反饋
         </a>
-      </div>
+         <a href="Teacher_schedules_classes.html">
+          <i class="fas fa-calendar-alt"></i>
+          線上排班
+        </a>
+        <a href="askforleave.html">
+          <i class="fas fa-clipboard-check"></i>
+          請假審核
+        </a>
+        <a href="work_hours_attendance.html">
+          <i class="fas fa-clock"></i>
+          工作時數與出席記錄
+        </a>
+             </div>
     </div>
     
     <div class="content">
-              <!-- 反饋頁面主體 -->
+      <!-- 反饋頁面主體 -->
       <div class="feedback-container">
         <div class="page-header">
           <div class="page-title">
@@ -854,9 +875,9 @@
         rating: 5,
         date: '2025-09-10',
         feedback: {
-          overall: '這次的科學實驗課程非常有趣！老師講解得很清楚，讓我對化學反應有了更深的理解。',
-          improvements: '希望能有更多動手實驗的機會，理論課程可以稍微減少一些。',
-          favorite: '最喜歡的是火山爆發實驗，看到泡沫噴出來的瞬間真的很興奮！',
+          overall: '這次的科學實驗課程非常有趣！老師講解得很清楚,讓我對化學反應有了更深的理解。',
+          improvements: '希望能有更多動手實驗的機會,理論課程可以稍微減少一些。',
+          favorite: '最喜歡的是火山爆發實驗,看到泡沫噴出來的瞬間真的很興奮！',
           suggestions: '建議可以安排參觀實驗室或科學博物館。'
         },
         tags: ['互動性強', '內容豐富', '老師專業'],
@@ -870,9 +891,9 @@
         rating: 4,
         date: '2025-09-09',
         feedback: {
-          overall: '數學課程設計得很好，透過遊戲的方式學習數學讓我覺得很有趣。',
-          improvements: '有些題目對我來說還是太難了，希望能有不同難度的選擇。',
-          favorite: '邏輯推理遊戲最好玩，讓我學會了用不同角度思考問題。',
+          overall: '數學課程設計得很好,透過遊戲的方式學習數學讓我覺得很有趣。',
+          improvements: '有些題目對我來說還是太難了,希望能有不同難度的選擇。',
+          favorite: '邏輯推理遊戲最好玩,讓我學會了用不同角度思考問題。',
           suggestions: '可以增加一些數學競賽的內容。'
         },
         tags: ['寓教於樂', '思維訓練', '需要分級'],
@@ -886,9 +907,9 @@
         rating: 5,
         date: '2025-09-08',
         feedback: {
-          overall: '外師很親切，創造了很好的英語環境。我的口語能力確實有提升。',
-          improvements: '希望能有更多小組討論的機會，增加與同學的互動。',
-          favorite: '角色扮演活動很棒，讓我更有信心開口說英語。',
+          overall: '外師很親切,創造了很好的英語環境。我的口語能力確實有提升。',
+          improvements: '希望能有更多小組討論的機會,增加與同學的互動。',
+          favorite: '角色扮演活動很棒,讓我更有信心開口說英語。',
           suggestions: '建議可以安排英語電影欣賞或英語歌曲學習。'
         },
         tags: ['外師教學', '口語提升', '環境良好'],
@@ -902,9 +923,9 @@
         rating: 4,
         date: '2025-09-07',
         feedback: {
-          overall: '美術課很有創意，老師教我們很多不同的繪畫技巧。',
-          improvements: '教室空間有點小，希望能有更大的創作空間。',
-          favorite: '水彩風景畫是我最喜歡的，畫出來的效果超美！',
+          overall: '美術課很有創意,老師教我們很多不同的繪畫技巧。',
+          improvements: '教室空間有點小,希望能有更大的創作空間。',
+          favorite: '水彩風景畫是我最喜歡的,畫出來的效果超美！',
           suggestions: '希望能舉辦學生作品展覽。'
         },
         tags: ['創意豐富', '技巧實用', '空間不足'],
@@ -918,9 +939,9 @@
         rating: 3,
         date: '2025-09-06',
         feedback: {
-          overall: '課程內容不錯，但是進度有點快，有些地方沒有完全理解。',
-          improvements: '希望老師能放慢一點速度，給我們更多時間消化內容。',
-          favorite: '顯微鏡觀察細胞很有趣，第一次看到這麼微小的世界。',
+          overall: '課程內容不錯,但是進度有點快,有些地方沒有完全理解。',
+          improvements: '希望老師能放慢一點速度,給我們更多時間消化內容。',
+          favorite: '顯微鏡觀察細胞很有趣,第一次看到這麼微小的世界。',
           suggestions: '可以提供課後複習資料。'
         },
         tags: ['進度較快', '內容充實', '需要復習'],

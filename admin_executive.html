@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>幹部行事曆 - 科學會管理系統</title>
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+    }
+
+    /* 頂部區域 */
+    .header {
+      height: 70px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 100;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+    }
+
+    /* Logo 和標題區域 */
+    .header-left {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .header-left:hover {
+      transform: scale(1.02);
+    }
+
+    .header img.logo {
+      height: 50px;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+      transition: transform 0.3s ease;
+      margin-right: 15px;
+    }
+
+    .header-title {
+      font-size: 24px;
+      font-weight: 300;
+      color: #333;
+      transition: color 0.3s ease;
+    }
+
+    .header-left:hover .header-title {
+      color: #8360c3;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      position: relative;
+    }
+
+    .icon {
+      position: relative;
+      padding: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .icon:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(131, 96, 195, 0.4);
+    }
+
+    .icon i {
+      font-size: 18px;
+      color: white;
+    }
+
+    .icon::after {
+      content: '3';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: #ff4757;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .avatar:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
+    }
+
+    .avatar i {
+      font-size: 20px;
+      color: white;
+    }
+
+    /* 下拉選單 */
+    .dropdown {
+      position: absolute;
+      top: 65px;
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: none;
+      min-width: 120px;
+      z-index: 1000;
+      overflow: hidden;
+      animation: dropdownFade 0.3s ease;
+    }
+
+    @keyframes dropdownFade {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropdown a {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .dropdown a:hover {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+    }
+
+    .dropdown a i {
+      margin-right: 8px;
+      width: 16px;
+    }
+
+    /* 主體區域 */
+    .main {
+      display: flex;
+      height: calc(100% - 70px);
+      gap: 0;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 30px 0;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, #8360c3 0%, #2ebf91 100%);
+    }
+
+    .menu {
+      flex: 1;
+      margin-top: 20px;
+    }
+
+    .menu-item {
+      display: block;
+      position: relative;
+    }
+
+    .menu-link {
+      display: flex;
+      align-items: center;
+      padding: 15px 25px;
+      text-decoration: none;
+      color: #555;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      cursor: pointer;
+    }
+
+    .menu-link:hover, .menu-link.active {
+      color: #8360c3;
+      background: rgba(131, 96, 195, 0.1);
+      border-left: 4px solid #8360c3;
+      transform: translateX(5px);
+    }
+
+    .menu-link i {
+      margin-right: 12px;
+      width: 20px;
+      font-size: 16px;
+    }
+
+    .menu-arrow {
+      margin-left: auto;
+      font-size: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    .menu-item.expanded .menu-arrow {
+      transform: rotate(180deg);
+    }
+
+    /* 二級選單 */
+    .submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      background: rgba(131, 96, 195, 0.05);
+    }
+
+    .submenu.show {
+      max-height: 500px;
+    }
+
+    .submenu-item {
+      position: relative;
+    }
+
+    .submenu-link {
+      display: flex;
+      align-items: center;
+      padding: 12px 25px 12px 45px;
+      text-decoration: none;
+      color: #666;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      cursor: pointer;
+    }
+
+    .submenu-link:hover {
+      color: #8360c3;
+      background: rgba(131, 96, 195, 0.1);
+      border-left: 4px solid #8360c3;
+      transform: translateX(5px);
+    }
+
+    .submenu-link i {
+      margin-right: 10px;
+      width: 16px;
+      font-size: 14px;
+    }
+
+    /* 三級選單 */
+    .sub-submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      background: rgba(131, 96, 195, 0.03);
+    }
+
+    .sub-submenu.show {
+      max-height: 300px;
+    }
+
+    .sub-submenu-link {
+      display: flex;
+      align-items: center;
+      padding: 10px 25px 10px 65px;
+      text-decoration: none;
+      color: #777;
+      font-size: 13px;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+    }
+
+    .sub-submenu-link:hover {
+      color: #8360c3;
+      background: rgba(131, 96, 195, 0.08);
+      border-left: 4px solid #8360c3;
+      transform: translateX(5px);
+    }
+
+    .sub-submenu-link i {
+      margin-right: 8px;
+      width: 14px;
+      font-size: 12px;
+    }
+
+    .content {
+      flex: 1;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* 頁面標題 */
+    .page-header {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .page-title-section h1 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+
+    .page-title-section h1 i {
+      margin-right: 15px;
+      color: #8360c3;
+      font-size: 32px;
+    }
+
+    .page-title-section p {
+      color: #666;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* 時間顯示區域 */
+    .time-display {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 10px rgba(131, 96, 195, 0.3);
+      white-space: nowrap;
+    }
+
+    .time-display i {
+      font-size: 16px;
+      color: white;
+    }
+
+    /* 行事曆控制區 */
+    .calendar-controls {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .nav-btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(131, 96, 195, 0.4);
+    }
+
+    .current-month {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin: 0 20px;
+      min-width: 200px;
+      text-align: center;
+    }
+
+    .view-toggle {
+      display: flex;
+      background: #f8f9fa;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .view-btn {
+      padding: 10px 15px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .view-btn.active {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+    }
+
+    /* 行事曆主體 */
+    .calendar-container {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 30px;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: #e9ecef;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .calendar-header {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .calendar-day {
+      background: white;
+      min-height: 120px;
+      padding: 10px;
+      position: relative;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .calendar-day:hover {
+      background: rgba(131, 96, 195, 0.05);
+    }
+
+    .calendar-day.other-month {
+      color: #ccc;
+      background: #f8f9fa;
+    }
+
+    .calendar-day.today {
+      background: rgba(131, 96, 195, 0.1);
+      border: 2px solid #8360c3;
+    }
+
+    .calendar-day.has-events {
+      background: rgba(46, 191, 145, 0.05);
+    }
+
+    .day-number {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .calendar-day.other-month .day-number {
+      color: #999;
+    }
+
+    .calendar-day.today .day-number {
+      color: #8360c3;
+      font-weight: 700;
+    }
+
+    .event-item {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .event-item:hover {
+      transform: scale(1.05);
+      box-shadow: 0 2px 8px rgba(131, 96, 195, 0.4);
+    }
+
+    .event-item.meeting {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    }
+
+    .event-item.training {
+      background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    }
+
+    .event-item.deadline {
+      background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    }
+
+    /* 側邊事件列表 */
+    .events-sidebar {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .events-sidebar h3 {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+    }
+
+    .events-sidebar h3 i {
+      margin-right: 10px;
+      color: #8360c3;
+    }
+
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .event-card {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      border-left: 4px solid #8360c3;
+    }
+
+    .event-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    .event-card.meeting {
+      border-left-color: #e74c3c;
+    }
+
+    .event-card.training {
+      border-left-color: #f39c12;
+    }
+
+    .event-card.deadline {
+      border-left-color: #9b59b6;
+    }
+
+    .event-time {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .event-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .event-desc {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    /* 新增事件按鈕 */
+    .add-event-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(131, 96, 195, 0.4);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .add-event-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(131, 96, 195, 0.5);
+    }
+
+    /* 響應式設計 */
+    @media (max-width: 768px) {
+      .main { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; }
+      .content { padding: 20px; }
+      .page-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .time-display { align-self: stretch; justify-content: center; }
+      .calendar-controls { flex-direction: column; }
+      .calendar-grid { grid-template-columns: repeat(7, 1fr); }
+      .calendar-day { min-height: 80px; padding: 5px; }
+      .add-event-btn { bottom: 20px; right: 20px; }
+    }
+
+    /* 滾動條美化 */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #2ebf91 0%, #8360c3 100%);
+    }
+  </style>
+</head>
+<body>
+  <!-- 頂部欄 -->
+  <div class="header">
+    <div class="header-left" onclick="location.href='admin_dashboard.html';">
+      <img src="image/logo1.gif" alt="Logo" class="logo">
+    </div>
+    <div class="header-right">
+      <div class="icon"><i class="fas fa-bell"></i></div>
+      <div class="avatar" id="avatar">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <div class="dropdown" id="dropdown">
+        <a href="login_admin.html">
+          <i class="fas fa-sign-out-alt"></i>
+          登出
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主區塊 -->
+  <div class="main">
+    <div class="sidebar">
+      <div class="menu">
+        <!-- 科學會首頁 -->
+        <div class="menu-item">
+          <a href="admin_dashboard.html" class="menu-link">
+            <i class="fas fa-home"></i>
+            科學會首頁
+          </a>
+        </div>
+
+        <!-- 活動行事曆 -->
+        <div class="menu-item">
+          <a href="activity_calendar.html" class="menu-link">
+            <i class="fas fa-calendar"></i>
+            活動行事曆
+          </a>
+        </div>
+
+        <!-- 幹部行事曆 -->
+        <div class="menu-item">
+          <a href="admin_executive.html" class="menu-link active">
+            <i class="fas fa-calendar-alt"></i>
+            幹部行事曆
+          </a>
+        </div>
+
+        <!-- 發布公告 -->
+        <div class="menu-item">
+          <a href="publish_announcement.html" class="menu-link">
+            <i class="fas fa-bullhorn"></i>
+            發布公告
+          </a>
+        </div>
+
+        <!-- 活動管理 -->
+        <div class="menu-item">
+          <div class="menu-link" onclick="toggleMenu(this); return false;">
+            <i class="fas fa-tasks"></i>
+            活動管理
+            <i class="fas fa-chevron-down menu-arrow"></i>
+          </div>
+          <div class="submenu">
+            <div class="submenu-item">
+              <a href="admin_activity_publish.html" class="submenu-link">
+                <i class="fas fa-plus-circle"></i>
+                發布活動
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="admin_name_manage.html" class="submenu-link">
+                <i class="fas fa-user-edit"></i>
+                報名人員名單管理
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="admin_table_publish.html" class="submenu-link">
+                <i class="fas fa-comment-alt"></i>
+                發布活動反饋表單
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="admin_statistics.html" class="submenu-link">
+                <i class="fas fa-trophy"></i>
+                統計活動/比賽名次結果
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="admin_analysis.html" class="submenu-link">
+                <i class="fas fa-chart-bar"></i>
+                活動分析
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="activity_achievements.html" class="submenu-link">
+                <i class="fas fa-images"></i>
+                活動成果牆
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="admin_upload_files.html" class="submenu-link">
+                <i class="fas fa-eye"></i>
+                圖片識別
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="auto_notification.html" class="submenu-link">
+                <i class="fas fa-bell"></i>
+                自動通知推播
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 開會紀錄 -->
+        <div class="menu-item">
+          <a href="meeting_records.html" class="menu-link">
+            <i class="fas fa-clipboard"></i>
+            開會紀錄
+          </a>
+        </div>
+
+        <!-- 線上排班 -->
+        <div class="menu-item">
+          <a href="online_scheduling.html" class="menu-link">
+            <i class="fas fa-user-clock"></i>
+            線上排班
+          </a>
+        </div>
+
+        <!-- 內部請假審核&簽到表 -->
+        <div class="menu-item">
+          <a href="admin_request_review.html" class="menu-link">
+            <i class="fas fa-file-signature"></i>
+            內部請假審核&簽到表
+          </a>
+        </div>
+
+        <!-- 幹部工作時數&出席紀錄 -->
+        <div class="menu-item">
+          <a href="admin_department_manage.html" class="menu-link">
+            <i class="fas fa-clock"></i>
+            幹部工作時數&出席紀錄
+          </a>
+        </div>
+
+        <!-- 各類審核單 -->
+        <div class="menu-item">
+          <a href="approval_forms.html" class="menu-link">
+            <i class="fas fa-file-check"></i>
+            各類審核單
+          </a>
+        </div>
+
+        <!-- 各組管理事項 -->
+        <div class="menu-item">
+          <div class="menu-link" onclick="toggleMenu(this); return false;">
+            <i class="fas fa-users-cog"></i>
+            各組管理事項
+            <i class="fas fa-chevron-down menu-arrow"></i>
+          </div>
+          <div class="submenu">
+            <div class="submenu-item">
+              <a href="secretariat_management.html" class="submenu-link">
+                <i class="fas fa-file-alt"></i>
+                文書組
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="publicity_management.html" class="submenu-link">
+                <i class="fas fa-paint-brush"></i>
+                美宣組
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="activity_management.html" class="submenu-link">
+                <i class="fas fa-calendar-plus"></i>
+                活動組
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="finance_management.html" class="submenu-link">
+                <i class="fas fa-coins"></i>
+                總務組
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="admin_customer_service.html" class="submenu-link">
+                <i class="fas fa-handshake"></i>
+                公關組
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="content">
+      <!-- 頁面標題 -->
+      <div class="page-header">
+        <div class="page-title-section">
+          <h1><i class="fas fa-calendar-alt"></i>幹部行事曆</h1>
+          <p>管理幹部會議、活動安排與重要事項，確保團隊運作順暢</p>
+        </div>
+        <div class="time-display">
+          <i class="fas fa-clock"></i>
+          <span id="timeDisplay">2025年09月18日 星期四 上午10:41:27</span>
+        </div>
+      </div>
+
+      <!-- 行事曆控制區 -->
+      <div class="calendar-controls">
+        <div class="calendar-nav">
+          <button class="nav-btn" onclick="nextMonth()">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        <div class="view-toggle">
+          <button class="view-btn active" onclick="switchView('month')">月檢視</button>
+          <button class="view-btn" onclick="switchView('week')">週檢視</button>
+          <button class="view-btn" onclick="switchView('day')">日檢視</button>
+        </div>
+      </div>
+
+      <!-- 行事曆主體 -->
+      <div class="calendar-container">
+        <div class="calendar-grid">
+          <!-- 星期標題 -->
+          <div class="calendar-header">日</div>
+          <div class="calendar-header">一</div>
+          <div class="calendar-header">二</div>
+          <div class="calendar-header">三</div>
+          <div class="calendar-header">四</div>
+          <div class="calendar-header">五</div>
+          <div class="calendar-header">六</div>
+          
+          <!-- 日期格子將由JavaScript動態生成 -->
+          <div id="calendarDays"></div>
+        </div>
+      </div>
+
+      <!-- 今日事件列表 -->
+      <div class="events-sidebar">
+        <h3><i class="fas fa-list-ul"></i>今日行程</h3>
+        <div class="event-list" id="todayEvents">
+          <div class="event-card meeting">
+            <div class="event-time">09:00 - 10:30</div>
+            <div class="event-title">幹部會議</div>
+            <div class="event-desc">討論本月活動安排與預算規劃</div>
+          </div>
+          <div class="event-card training">
+            <div class="event-time">14:00 - 16:00</div>
+            <div class="event-title">新進幹部培訓</div>
+            <div class="event-desc">介紹科學會運作模式與各組職責</div>
+          </div>
+          <div class="event-card deadline">
+            <div class="event-time">18:00</div>
+            <div class="event-title">活動企劃書截止</div>
+            <div class="event-desc">下週活動企劃需今日前完成</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增事件按鈕 -->
+  <button class="add-event-btn" onclick="showAddEventModal()">
+    <i class="fas fa-plus"></i>
+  </button>
+
+  <!-- JavaScript -->
+  <script>
+    // 全域變數
+    let currentDate = new Date();
+    let currentView = 'month';
+
+    // 模擬事件數據
+    const eventsData = {
+      '2025-09-18': [
+        { time: '09:00-10:30', title: '幹部會議', type: 'meeting', desc: '討論本月活動安排與預算規劃' },
+        { time: '14:00-16:00', title: '新進幹部培訓', type: 'training', desc: '介紹科學會運作模式與各組職責' },
+        { time: '18:00', title: '活動企劃書截止', type: 'deadline', desc: '下週活動企劃需今日前完成' }
+      ],
+      '2025-09-19': [
+        { time: '10:00-11:00', title: '部長會議', type: 'meeting', desc: '各組進度報告' }
+      ],
+      '2025-09-20': [
+        { time: '15:00-17:00', title: '活動籌備', type: 'training', desc: '科學營前置作業' }
+      ],
+      '2025-09-25': [
+        { time: '全天', title: '科學營活動', type: 'meeting', desc: '年度大型活動執行' }
+      ],
+      '2025-09-28': [
+        { time: '16:00', title: '月報告截止', type: 'deadline', desc: '各組月度報告繳交' }
+      ]
+    };
+
+    // 頁面載入後執行
+    document.addEventListener('DOMContentLoaded', function() {
+      updateTime();
+      setInterval(updateTime, 1000);
+      renderCalendar();
+    });
+
+    // 更新時間顯示
+    function updateTime() {
+      const now = new Date();
+      const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        weekday: 'long',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      };
+      
+      let timeString = now.toLocaleDateString('zh-TW', options);
+      timeString = timeString.replace(/(\d{4})\/(\d{1,2})\/(\d{1,2})/, '$1年$2月$3日').replace(/\s+/g, ' ');
+      document.getElementById('timeDisplay').textContent = timeString;
+    }
+
+    // 頭像下拉選單控制
+    const avatar = document.getElementById('avatar');
+    const dropdown = document.getElementById('dropdown');
+
+    avatar.addEventListener('click', () => {
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    });
+
+    window.addEventListener('click', function(e) {
+      if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
+    });
+
+    // 選單控制
+    function toggleMenu(element) {
+      const menuItem = element.parentElement;
+      const submenu = menuItem.querySelector('.submenu');
+      const isExpanded = menuItem.classList.contains('expanded');
+      
+      document.querySelectorAll('.menu-item').forEach(item => {
+        if (item !== menuItem) {
+          item.classList.remove('expanded');
+          const otherSubmenu = item.querySelector('.submenu');
+          if (otherSubmenu) {
+            otherSubmenu.classList.remove('show');
+          }
+        }
+      });
+      
+      if (isExpanded) {
+        menuItem.classList.remove('expanded');
+        submenu.classList.remove('show');
+      } else {
+        menuItem.classList.add('expanded');
+        submenu.classList.add('show');
+      }
+    }
+
+    // 渲染行事曆
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      // 更新標題
+      document.getElementById('currentMonth').textContent = `${year}年${String(month + 1).padStart(2, '0')}月`;
+      
+      // 獲取當月第一天和最後一天
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const firstDayOfWeek = firstDay.getDay();
+      
+      // 獲取上個月的最後幾天
+      const prevMonthLastDay = new Date(year, month, 0).getDate();
+      
+      const calendarDays = document.getElementById('calendarDays');
+      calendarDays.innerHTML = '';
+      
+      // 生成日期格子
+      let dayCount = 1;
+      let nextMonthDay = 1;
+      
+      for (let i = 0; i < 42; i++) { // 6週 x 7天
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day';
+        
+        let dayNumber, dateString;
+        
+        if (i < firstDayOfWeek) {
+          // 上個月的日期
+          dayNumber = prevMonthLastDay - firstDayOfWeek + i + 1;
+          dayDiv.classList.add('other-month');
+          const prevMonth = month === 0 ? 11 : month - 1;
+          const prevYear = month === 0 ? year - 1 : year;
+          dateString = `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
+        } else if (dayCount <= lastDay.getDate()) {
+          // 當月的日期
+          dayNumber = dayCount;
+          dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
+          dayCount++;
+          
+          // 檢查是否為今天
+          const today = new Date();
+          if (year === today.getFullYear() && month === today.getMonth() && dayNumber === today.getDate()) {
+            dayDiv.classList.add('today');
+          }
+        } else {
+          // 下個月的日期
+          dayNumber = nextMonthDay;
+          dayDiv.classList.add('other-month');
+          const nextMonth = month === 11 ? 0 : month + 1;
+          const nextYear = month === 11 ? year + 1 : year;
+          dateString = `${nextYear}-${String(nextMonth + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
+          nextMonthDay++;
+        }
+        
+        dayDiv.innerHTML = `<div class="day-number">${dayNumber}</div>`;
+        
+        // 添加事件
+        if (eventsData[dateString]) {
+          dayDiv.classList.add('has-events');
+          eventsData[dateString].forEach(event => {
+            const eventDiv = document.createElement('div');
+            eventDiv.className = `event-item ${event.type}`;
+            eventDiv.textContent = event.title;
+            eventDiv.title = `${event.time} - ${event.desc}`;
+            eventDiv.onclick = () => showEventDetail(event);
+            dayDiv.appendChild(eventDiv);
+          });
+        }
+        
+        // 添加點擊事件
+        dayDiv.onclick = () => selectDate(dateString);
+        
+        calendarDays.appendChild(dayDiv);
+      }
+    }
+
+    // 上一個月
+    function previousMonth() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    }
+
+    // 下一個月
+    function nextMonth() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    }
+
+    // 切換檢視模式
+    function switchView(view) {
+      currentView = view;
+      document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // 這裡可以實作不同的檢視模式
+      switch(view) {
+        case 'month':
+          renderCalendar();
+          break;
+        case 'week':
+          alert('週檢視功能開發中...');
+          break;
+        case 'day':
+          alert('日檢視功能開發中...');
+          break;
+      }
+    }
+
+    // 選擇日期
+    function selectDate(dateString) {
+      // 移除之前選中的日期
+      document.querySelectorAll('.calendar-day').forEach(day => {
+        day.classList.remove('selected');
+      });
+      
+      // 選中當前日期
+      event.currentTarget.classList.add('selected');
+      
+      // 顯示該日的事件
+      showDayEvents(dateString);
+    }
+
+    // 顯示指定日期的事件
+    function showDayEvents(dateString) {
+      const events = eventsData[dateString] || [];
+      const todayEventsDiv = document.getElementById('todayEvents');
+      
+      if (events.length === 0) {
+        todayEventsDiv.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">該日無安排事項</p>';
+        return;
+      }
+      
+      todayEventsDiv.innerHTML = '';
+      events.forEach(event => {
+        const eventCard = document.createElement('div');
+        eventCard.className = `event-card ${event.type}`;
+        eventCard.innerHTML = `
+          <div class="event-time">${event.time}</div>
+          <div class="event-title">${event.title}</div>
+          <div class="event-desc">${event.desc}</div>
+        `;
+        eventCard.onclick = () => showEventDetail(event);
+        todayEventsDiv.appendChild(eventCard);
+      });
+    }
+
+    // 顯示事件詳情
+    function showEventDetail(event) {
+      alert(`事件詳情：\n標題：${event.title}\n時間：${event.time}\n描述：${event.desc}`);
+    }
+
+    // 顯示新增事件模態框
+    function showAddEventModal() {
+      // 這裡可以實作新增事件的模態框
+      const title = prompt('請輸入事件標題：');
+      if (title) {
+        const time = prompt('請輸入時間（例如：09:00-10:00）：');
+        if (time) {
+          const desc = prompt('請輸入事件描述：');
+          if (desc) {
+            // 模擬新增事件到今天
+            const today = new Date().toISOString().split('T')[0];
+            if (!eventsData[today]) {
+              eventsData[today] = [];
+            }
+            eventsData[today].push({
+              time: time,
+              title: title,
+              type: 'meeting',
+              desc: desc
+            });
+            renderCalendar();
+            alert('事件已新增！');
+          }
+        }
+      }
+    }
+
+    // 點擊其他地方關閉選單
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.menu')) {
+        document.querySelectorAll('.menu-item').forEach(item => {
+          item.classList.remove('expanded');
+          const submenu = item.querySelector('.submenu');
+          if (submenu) {
+            submenu.classList.remove('show');
+          }
+        });
+      }
+    });
+
+    // 為選中日期添加樣式
+    const style = document.createElement('style');
+    style.textContent = `
+      .calendar-day.selected {
+        background: rgba(131, 96, 195, 0.2) !important;
+        border: 2px solid #2ebf91 !important;
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>="nav-btn" onclick="previousMonth()">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="current-month" id="currentMonth">2025年09月</div>
+          <button class

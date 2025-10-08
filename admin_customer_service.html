@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>公關組管理 - 科學會管理系統</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      overflow: hidden;
+    }
+
+    .header {
+      height: 70px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 100;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .header-left:hover {
+      transform: scale(1.05);
+    }
+
+    .header img.logo {
+      height: 50px;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .avatar:hover {
+      transform: scale(1.1);
+    }
+
+    .avatar i {
+      font-size: 20px;
+      color: white;
+    }
+
+    .main {
+      display: flex;
+      height: calc(100vh - 70px);
+    }
+
+    .sidebar {
+      width: 280px;
+      min-width: 280px;
+      max-width: 280px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, #8360c3 0%, #2ebf91 100%);
+    }
+
+    .menu {
+      height: 100%;
+      overflow-y: auto;
+      padding: 20px 0;
+    }
+
+    .menu::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .menu::-webkit-scrollbar-thumb {
+      background: rgba(131, 96, 195, 0.3);
+      border-radius: 3px;
+    }
+
+    .menu-link {
+      display: flex;
+      align-items: center;
+      padding: 15px 25px;
+      text-decoration: none;
+      color: #555;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .menu-link:hover, .menu-link.active {
+      color: #8360c3;
+      background: rgba(131, 96, 195, 0.1);
+      border-left: 4px solid #8360c3;
+      transform: translateX(5px);
+    }
+
+    .menu-link i {
+      margin-right: 12px;
+      width: 20px;
+      font-size: 16px;
+    }
+
+    .content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    .content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .content::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      border-radius: 4px;
+    }
+
+    .page-header {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    .page-header h1 i {
+      margin-right: 15px;
+      color: #8360c3;
+    }
+
+    .page-header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+    }
+
+    .stat-card i {
+      font-size: 28px;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .stat-card h3 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    .stat-card p {
+      color: #666;
+      font-size: 13px;
+    }
+
+    .function-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .function-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      border-top: 4px solid transparent;
+    }
+
+    .function-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+      border-top: 4px solid #8360c3;
+    }
+
+    .function-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      font-size: 28px;
+      color: white;
+    }
+
+    .function-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .function-desc {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .partner-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      font-size: 20px;
+      color: #333;
+      display: flex;
+      align-items: center;
+    }
+
+    .section-header h2 i {
+      margin-right: 10px;
+      color: #8360c3;
+    }
+
+    .add-btn {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .add-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(131, 96, 195, 0.3);
+    }
+
+    .partner-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .partner-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+    }
+
+    .partner-card:hover {
+      background: rgba(131, 96, 195, 0.05);
+      border-left: 4px solid #8360c3;
+      transform: translateX(5px);
+    }
+
+    .partner-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .partner-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      font-size: 20px;
+      color: white;
+    }
+
+    .partner-info h3 {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 3px;
+    }
+
+    .partner-status {
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .status-active {
+      background: rgba(46, 204, 113, 0.2);
+      color: #27ae60;
+    }
+
+    .status-pending {
+      background: rgba(243, 156, 18, 0.2);
+      color: #f39c12;
+    }
+
+    .partner-details {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .partner-contact {
+      font-size: 12px;
+      color: #999;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .event-timeline {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+
+    .timeline-item {
+      display: flex;
+      padding: 15px;
+      border-left: 3px solid #e0e0e0;
+      margin-left: 20px;
+      position: relative;
+      margin-bottom: 15px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 20px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+    }
+
+    .timeline-item:last-child {
+      border-left-color: transparent;
+    }
+
+    .timeline-date {
+      min-width: 100px;
+      font-size: 13px;
+      color: #999;
+      font-weight: 500;
+    }
+
+    .timeline-content {
+      flex: 1;
+    }
+
+    .timeline-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .timeline-desc {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1200px) {
+      .function-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .partner-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        max-width: none;
+      }
+      .function-grid {
+        grid-template-columns: 1fr;
+      }
+      .partner-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left" onclick="location.href='admin_dashboard.html';">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjUiIGN5PSIyNSIgcj0iMjUiIGZpbGw9InVybCgjZ3JhZGllbnQwXzEyNF8xKSIvPgo8cGF0aCBkPSJNMTUgMjBoMjBsLTEwIDE1TDE1IDIweiIgZmlsbD0id2hpdGUiLz4KPGF0b20gaWQ9ImdyYWRpZW50MF8xMjRfMSI+CjxsaW5lYXJHcmFkaWVudCBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiM4MzYwQzMiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMkVCRjkxIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvYXRvbT4KPC9zdmc+Cg==" alt="Logo" class="logo">
+    </div>
+    <div class="header-right">
+      <div class="avatar">
+        <i class="fas fa-user-shield"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="sidebar">
+      <div class="menu">
+        <div class="menu-item">
+          <a href="admin_dashboard.html" class="menu-link">
+            <i class="fas fa-home"></i>
+            科學會首頁
+          </a>
+        </div>
+        <div class="menu-item">
+          <a href="secretariat_management.html" class="menu-link">
+            <i class="fas fa-file-alt"></i>
+            文書組
+          </a>
+        </div>
+        <div class="menu-item">
+          <a href="publicity_management.html" class="menu-link">
+            <i class="fas fa-paint-brush"></i>
+            美宣組
+          </a>
+        </div>
+        <div class="menu-item">
+          <a href="activity_management.html" class="menu-link">
+            <i class="fas fa-calendar-plus"></i>
+            活動組
+          </a>
+        </div>
+        <div class="menu-item">
+          <a href="finance_management.html" class="menu-link">
+            <i class="fas fa-coins"></i>
+            總務組
+          </a>
+        </div>
+        <div class="menu-item">
+          <a href="admin_customer_service.html" class="menu-link active">
+            <i class="fas fa-handshake"></i>
+            公關組
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-header">
+        <h1><i class="fas fa-handshake"></i>公關組管理</h1>
+        <p>管理對外合作、贊助洽談、社群媒體經營等公關相關事務</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <i class="fas fa-building"></i>
+          <h3>15</h3>
+          <p>合作廠商</p>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-dollar-sign"></i>
+          <h3>8</h3>
+          <p>贊助案件</p>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-users"></i>
+          <h3>2.3K</h3>
+          <p>社群追蹤數</p>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-envelope"></i>
+          <h3>42</h3>
+          <p>待回覆訊息</p>
+        </div>
+      </div>
+
+      <div class="function-grid">
+        <div class="function-card">
+          <div class="function-icon">
+            <i class="fas fa-handshake"></i>
+          </div>
+          <div class="function-title">合作案件管理</div>
+          <div class="function-desc">管理與追蹤各項對外合作案件</div>
+        </div>
+
+        <div class="function-card">
+          <div class="function-icon">
+            <i class="fas fa-gift"></i>
+          </div>
+          <div class="function-title">贊助洽談</div>
+          <div class="function-desc">處理活動贊助申請與廠商洽談</div>
+        </div>
+
+        <div class="function-card">
+          <div class="function-icon">
+            <i class="fas fa-share-alt"></i>
+          </div>
+          <div class="function-title">社群媒體管理</div>
+          <div class="function-desc">經營Facebook、IG等社群平台</div>
+        </div>
+
+        <div class="function-card">
+          <div class="function-icon">
+            <i class="fas fa-bullhorn"></i>
+          </div>
+          <div class="function-title">宣傳策劃</div>
+          <div class="function-desc">規劃活動宣傳策略和執行</div>
+        </div>
+
+        <div class="function-card">
+          <div class="function-icon">
+            <i class="fas fa-envelope-open-text"></i>
+          </div>
+          <div class="function-title">對外信函</div>
+          <div class="function-desc">處理對外公文和合作邀請函</div>
+        </div>
+
+        <div class="function-card">
+          <div class="function-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="function-title">成效分析</div>
+          <div class="function-desc">分析宣傳成效和社群數據</div>
+        </div>
+      </div>
+
+      <div class="partner-section">
+        <div class="section-header">
+          <h2><i class="fas fa-building"></i>合作廠商</h2>
+          <button class="add-btn">
+            <i class="fas fa-plus"></i>
+            新增廠商
+          </button>
+        </div>
+        <div class="partner-grid">
+          <div class="partner-card">
+            <div class="partner-header">
+              <div class="partner-logo">
+                <i class="fas fa-flask"></i>
+              </div>
+              <div class="partner-info">
+                <h3>ABC科技公司</h3>
+                <span class="partner-status status-active">合作中</span>
+              </div>
+            </div>
+            <div class="partner-details">
+              贊助科學週實驗器材及獎品，合作期限至2025年12月
+            </div>
+            <div class="partner-contact">
+              <i class="fas fa-user"></i>
+              聯絡人：張經理 | 02-1234-5678
+            </div>
+          </div>
+
+          <div class="partner-card">
+            <div class="partner-header">
+              <div class="partner-logo">
+                <i class="fas fa-book"></i>
+              </div>
+              <div class="partner-info">
+                <h3>XYZ出版社</h3>
+                <span class="partner-status status-active">合作中</span>
+              </div>
+            </div>
+            <div class="partner-details">
+              提供科普書籍作為競賽獎品，長期合作夥伴
+            </div>
+            <div class="partner-contact">
+              <i class="fas fa-user"></i>
+              聯絡人：李主編 | 02-8765-4321
+            </div>
+          </div>
+
+          <div class="partner-card">
+            <div class="partner-header">
+              <div class="partner-logo">
+                <i class="fas fa-graduation-cap"></i>
+              </div>
+              <div class="partner-info">
+                <h3>教育培訓中心</h3>
+                <span class="partner-status status-pending">洽談中</span>
+              </div>
+            </div>
+            <div class="partner-details">
+              討論科學營隊合作事宜，預計下月確認合作細節
+            </div>
+            <div class="partner-contact">
+              <i class="fas fa-user"></i>
+              聯絡人：王主任 | 02-5555-6666
+            </div>
+          </div>
+
+          <div class="partner-card">
+            <div class="partner-header">
+              <div class="partner-logo">
+                <i class="fas fa-laptop"></i>
+              </div>
+              <div class="partner-info">
+                <h3>資訊科技公司</h3>
+                <span class="partner-status status-active">合作中</span>
+              </div>
+            </div>
+            <div class="partner-details">
+              贊助程式設計競賽場地及設備使用
+            </div>
+            <div class="partner-contact">
+              <i class="fas fa-user"></i>
+              聯絡人：陳經理 | 02-9999-8888
+            </div>
+          </div>
+
+          <div class="partner-card">
+            <div class="partner-header">
+              <div class="partner-logo">
+                <i class="fas fa-microscope"></i>
+              </div>
+              <div class="partner-info">
+                <h3>生物科技研究所</h3>
+                <span class="partner-status status-active">合作中</span>
+              </div>
+            </div>
+            <div class="partner-details">
+              提供實驗室參訪機會及專家演講支援
+            </div>
+            <div class="partner-contact">
+              <i class="fas fa-user"></i>
+              聯絡人：林博士 | 02-7777-3333
+            </div>
+          </div>
+
+          <div class="partner-card">
+            <div class="partner-header">
+              <div class="partner-logo">
+                <i class="fas fa-store"></i>
+              </div>
+              <div class="partner-info">
+                <h3>文具連鎖店</h3>
+                <span class="partner-status status-pending">洽談中</span>
+              </div>
+            </div>
+            <div class="partner-details">
+              商討文具用品贊助合作，提供活動折扣優惠
+            </div>
+            <div class="partner-contact">
+              <i class="fas fa-user"></i>
+              聯絡人：黃店長 | 02-4444-2222
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-timeline">
+        <div class="section-header">
+          <h2><i class="fas fa-history"></i>近期公關活動</h2>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2025-09-25</div>
+          <div class="timeline-content">
+            <div class="timeline-title">科學週宣傳啟動</div>
+            <div class="timeline-desc">在Facebook、Instagram發布科學週活動預告，製作宣傳影片和海報</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2025-09-20</div>
+          <div class="timeline-content">
+            <div class="timeline-title">ABC科技公司贊助簽約</div>
+            <div class="timeline-desc">完成贊助合約簽署，確認器材贊助細節和Logo露出方式</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2025-09-15</div>
+          <div class="timeline-content">
+            <div class="timeline-title">社群粉絲突破2000人</div>
+            <div class="timeline-desc">Instagram追蹤人數達到2000人里程碑，舉辦抽獎活動慶祝</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2025-09-10</div>
+          <div class="timeline-content">
+            <div class="timeline-title">與教育培訓中心會議</div>
+            <div class="timeline-desc">討論科學營隊合作方案，初步達成合作意向</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

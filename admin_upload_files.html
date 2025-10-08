@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>科學會管理系統 - OCR圖片掃描</title>
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      overflow-x: hidden;
+    }
+
+    /* 頂部區域 */
+    .header {
+      height: 70px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 100;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+    }
+
+    .header img.logo {
+      height: 50px;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+      transition: transform 0.3s ease;
+    }
+
+    .header img.logo:hover {
+      transform: scale(1.05);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      position: relative;
+    }
+
+    .icon {
+      position: relative;
+      padding: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .icon:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(131, 96, 195, 0.4);
+    }
+
+    .icon i {
+      font-size: 18px;
+      color: white;
+    }
+
+    .icon::after {
+      content: '5';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: #ff4757;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .avatar:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
+    }
+
+    .avatar i {
+      font-size: 20px;
+      color: white;
+    }
+
+    /* 下拉選單 */
+    .dropdown {
+      position: absolute;
+      top: 65px;
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: none;
+      min-width: 120px;
+      z-index: 1000;
+      overflow: hidden;
+      animation: dropdownFade 0.3s ease;
+    }
+
+    @keyframes dropdownFade {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropdown a {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .dropdown a:hover {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+    }
+
+    .dropdown a i {
+      margin-right: 8px;
+      width: 16px;
+    }
+
+    /* 主體區域 */
+    .main {
+      display: flex;
+      height: calc(100vh - 70px);
+      min-height: calc(100vh - 70px);
+      /* 移除gap，確保sidebar與content緊密貼合 */
+    }
+
+    .sidebar {
+      width: 250px;
+      min-width: 250px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 30px 0;
+      display: flex;
+      flex-direction: column;
+      /* box-shadow: 2px 0 20px rgba(0,0,0,0.1); */ /* 移除右側陰影 */
+      position: relative;
+      overflow-y: auto;
+      height: 100%; /* 讓sidebar與主內容同高 */
+      border-right: 1px solid #e0e0e0; /* 輕微分隔線 */
+      box-shadow: none;
+    }
+
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0px; /* 移除原本的右側漸層條 */
+      height: 100%;
+      /* background: linear-gradient(180deg, #8360c3 0%, #2ebf91 100%); */
+    }
+
+    .sidebar h2 {
+      font-size: 24px;
+      margin: 0 30px 40px;
+      color: #333;
+      font-weight: 300;
+      text-align: center;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar h2:hover {
+      color: #8360c3;
+      transform: scale(1.05);
+    }
+
+    .sidebar h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+      border-radius: 2px;
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      padding: 18px 30px;
+      text-decoration: none;
+      color: #555;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      position: relative;
+    }
+
+    .menu a:hover, .menu a.active {
+      color: #8360c3;
+      background: rgba(131, 96, 195, 0.1);
+      border-left: 4px solid #8360c3;
+      transform: translateX(5px);
+    }
+
+    .menu a.active {
+      font-weight: 600;
+    }
+
+    .menu a i {
+      margin-right: 15px;
+      width: 20px;
+      font-size: 18px;
+    }
+
+    /* 內容區域 */
+    .content {
+      flex: 1;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(15px);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      min-height: 0;
+      height: 100%; /* 讓內容區與sidebar同高 */
+      box-shadow: none;
+      margin: 0;
+      border-radius: 0;
+    }
+
+    /* OCR 標題區 */
+    .ocr-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .ocr-header h1 {
+      font-size: 32px;
+      color: white;
+      margin-bottom: 10px;
+      font-weight: 300;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .ocr-header p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.6;
+    }
+
+    /* OCR 容器 */
+    .ocr-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      flex: 1;
+      min-height: 0;
+      height: fit-content;
+    }
+
+    .upload-section, .result-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      height: fit-content;
+      max-height: calc(100vh - 200px);
+    }
+
+    .upload-section:hover, .result-section:hover {
+      transform: translateY(-3px);
+    }
+
+    .upload-section h2, .result-section h2 {
+      font-size: 22px;
+      color: #333;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+    }
+
+    .upload-section h2 i, .result-section h2 i {
+      margin-right: 10px;
+      color: #8360c3;
+    }
+
+    /* 上傳區域 */
+    .upload-area {
+      border: 3px dashed #8360c3;
+      border-radius: 16px;
+      padding: 30px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(131, 96, 195, 0.05) 0%, rgba(46, 191, 145, 0.05) 100%);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .upload-area input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .upload-area:hover {
+      border-color: #2ebf91;
+      background: linear-gradient(135deg, rgba(131, 96, 195, 0.1) 0%, rgba(46, 191, 145, 0.1) 100%);
+      transform: scale(1.02);
+    }
+
+    .upload-icon {
+      font-size: 40px;
+      color: #8360c3;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .upload-area:hover .upload-icon {
+      color: #2ebf91;
+      transform: scale(1.1);
+    }
+
+    .upload-text {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .upload-hint {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 0;
+    }
+
+    /* 預覽圖片 */
+    .preview {
+      margin-top: 20px;
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+      object-fit: contain;
+    }
+
+    .preview:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+    }
+
+    /* 語言選擇器 */
+    .language-selector {
+      margin: 20px 0;
+    }
+
+    .language-selector label {
+      display: block;
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .language-select {
+      padding: 12px 16px;
+      border: 2px solid #8360c3;
+      border-radius: 10px;
+      font-size: 15px;
+      background: white;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      max-width: 250px;
+    }
+
+    .language-select:hover, .language-select:focus {
+      border-color: #2ebf91;
+      box-shadow: 0 4px 15px rgba(131, 96, 195, 0.2);
+      outline: none;
+    }
+
+    /* 按鈕 */
+    .control-buttons, .result-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(131, 96, 195, 0.4);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(240, 147, 251, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* 進度條 */
+    .progress-container {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e9ecef;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+      border-radius: 10px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+
+    /* 結果輸出 */
+    .result-output {
+      flex: 1;
+      min-height: 300px;
+      max-height: 400px;
+      padding: 20px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      white-space: pre-wrap;
+      font-family: 'Microsoft JhengHei', monospace;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #333;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+
+    .result-output:hover {
+      border-color: #8360c3;
+      box-shadow: 0 4px 15px rgba(131, 96, 195, 0.1);
+    }
+
+    /* 狀態消息 */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8360c3;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .loading i {
+      margin-right: 10px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .success-message {
+      color: #28a745;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .error-message {
+      color: #dc3545;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* 響應式設計 */
+    @media (max-width: 1200px) {
+      .ocr-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .sidebar {
+        min-width: 100%;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: none; /* 移除下方分隔線 */
+      }
+      
+      .upload-section, .result-section {
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+        height: auto;
+        min-height: calc(100vh - 70px);
+      }
+      
+      .sidebar {
+        width: 100%;
+        min-width: 100%;
+        height: auto;
+        padding: 20px 0;
+        border-right: none;
+        border-bottom: none; /* 移除下方分隔線 */
+      }
+      
+      .content {
+        padding: 15px;
+        height: auto;
+      }
+      
+      .ocr-header h1 {
+        font-size: 24px;
+      }
+      
+      .upload-section, .result-section {
+        padding: 20px;
+      }
+      
+      .control-buttons, .result-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* 滾動條美化 */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.1);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #2ebf91 0%, #8360c3 100%);
+    }
+
+    /* 動畫效果 */
+    .fade-in {
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 頂部欄 -->
+  <div class="header">
+    <img src="image/logo1.gif" alt="Logo" class="logo">
+    <div class="header-right">
+      <div class="icon"><i class="fas fa-bell"></i></div>
+      <div class="avatar" id="avatar">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <div class="dropdown" id="dropdown">
+        <a href="login_admin.html">
+          <i class="fas fa-sign-out-alt"></i>
+          登出
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主區塊 -->
+  <div class="main">
+    <div class="sidebar">
+      <h2 onclick="location.href='admin_dashboard.html';">科學會</h2>
+      <div class="menu">
+        <a href="admin_executive.html">
+          <i class="fas fa-users-cog"></i>
+          幹部行事曆
+        </a>
+        <a href="#" class="menu-parent">
+          <i class="fas fa-tasks"></i>
+          活動管理
+        </a>
+        <a href="admin_upload_files.html" class="active">
+          <i class="fas fa-camera"></i>
+          圖片掃描轉文字
+        </a>
+        <a href="admin_department_manage.html">
+          <i class="fas fa-building"></i>
+          內部幹部出席紀錄
+        </a>
+        <a href="admin_request_review.html">
+          <i class="fas fa-clipboard-check"></i>
+          內部請假請審核到表
+        </a>
+        <a href="admin_customer_service.html">
+          <i class="fas fa-headset"></i>
+          各組的客服事項
+        </a>
+      </div>
+    </div>
+    
+    <div class="content">
+      <div class="ocr-header">
+        <h1><i class="fas fa-camera"></i> 圖片文字識別系統</h1>
+        <p>支援多國語言文字識別，智慧圖像處理，提升識別準確度</p>
+      </div>
+
+      <div class="ocr-container">
+        <!-- 上傳區域 -->
+        <div class="upload-section">
+          <h2><i class="fas fa-upload"></i> 圖片上傳</h2>
+          
+          <label class="upload-area" id="uploadLabel">
+            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+            <div class="upload-text">點擊上傳或拖拽圖片到此處</div>
+            <div class="upload-hint">支援 JPG, PNG, GIF, BMP 格式，最大 10MB</div>
+            <input type="file" id="fileInput" accept="image/*" style="display:none;">
+          </label>
+          
+          <img id="preview" class="preview" src="" style="display:none;">
+          
+          <div class="language-selector">
+            <label for="languageSelect">選擇識別語言：</label>
+            <select id="languageSelect" class="language-select">
+              <option value="chi_tra+eng">繁體中文 + 英文</option>
+              <option value="chi_sim+eng">簡體中文 + 英文</option>
+              <option value="eng">純英文</option>
+              <option value="chi_tra">純繁體中文</option>
+              <option value="chi_sim">純簡體中文</option>
+              <option value="jpn">日文</option>
+              <option value="kor">韓文</option>
+            </select>
+          </div>
+          
+          <div class="control-buttons">
+            <button class="btn btn-primary" id="recognizeBtn" onclick="recognize()">
+              <i class="fas fa-eye"></i>
+              開始識別
+            </button>
+            <button class="btn btn-secondary" onclick="clearAll()">
+              <i class="fas fa-trash-alt"></i>
+              清除重置
+            </button>
+          </div>
+        </div>
+
+        <!-- 結果區域 -->
+        <div class="result-section">
+          <h2><i class="fas fa-file-alt"></i> 識別結果</h2>
+          
+          <div class="progress-container" id="progressContainer" style="display:none;">
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">準備中...</div>
+          </div>
+          
+          <div id="output" class="result-output">請先上傳圖片並點擊「開始識別」按鈕</div>
+          
+          <div class="result-actions" id="resultActions" style="display:none;">
+            <button class="btn btn-primary" onclick="copyText()">
+              <i class="fas fa-copy"></i>
+              複製文字
+            </button>
+            <button class="btn btn-secondary" onclick="downloadText()">
+              <i class="fas fa-download"></i>
+              下載文字檔
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tesseract.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+  
+  <script>
+    let selectedFile = null;
+    let recognizedText = '';
+    
+    const fileInput = document.getElementById('fileInput');
+    const previewImg = document.getElementById('preview');
+    const outputDiv = document.getElementById('output');
+    const uploadLabel = document.getElementById('uploadLabel');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const recognizeBtn = document.getElementById('recognizeBtn');
+    const resultActions = document.getElementById('resultActions');
+
+    // 頂部下拉選單控制
+    const avatar = document.getElementById('avatar');
+    const dropdown = document.getElementById('dropdown');
+
+    avatar.addEventListener('click', () => {
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    });
+
+    window.addEventListener('click', function(e) {
+      if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
+    });
+
+    // 點擊上傳區域觸發文件選擇
+    // uploadLabel.addEventListener('click', function(e) {
+    //   e.preventDefault();
+    //   fileInput.click();
+    // });
+
+    // 拖拽事件處理
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      uploadLabel.addEventListener(eventName, preventDefaults, false);
+      document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      uploadLabel.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      uploadLabel.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight(e) {
+      uploadLabel.style.borderColor = '#2ebf91';
+      uploadLabel.style.background = 'linear-gradient(135deg, rgba(131, 96, 195, 0.15) 0%, rgba(46, 191, 145, 0.15) 100%)';
+    }
+
+    function unhighlight(e) {
+      uploadLabel.style.borderColor = '#8360c3';
+      uploadLabel.style.background = 'linear-gradient(135deg, rgba(131, 96, 195, 0.05) 0%, rgba(46, 191, 145, 0.05) 100%)';
+    }
+
+    uploadLabel.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files.length > 0) {
+        handleFile(files[0]);
+      }
+    }
+
+    fileInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        handleFile(file);
+      }
+    });
+
+    function handleFile(file) {
+      console.log('處理文件:', file); // Debug log
+      
+      // 檢查文件大小 (10MB限制)
+      if (file.size > 10 * 1024 * 1024) {
+        showMessage('檔案過大，請選擇小於10MB的圖片', 'error');
+        return;
+      }
+
+      // 檢查文件類型
+      if (!file.type.startsWith('image/')) {
+        showMessage('請選擇有效的圖片檔案', 'error');
+        return;
+      }
+
+      selectedFile = file;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        console.log('文件讀取成功'); // Debug log
+        previewImg.src = e.target.result;
+        previewImg.style.display = 'block';
+        previewImg.classList.add('fade-in');
+        
+        // 更新上傳區域提示
+        uploadLabel.querySelector('.upload-text').textContent = `已選擇：${file.name}`;
+        uploadLabel.querySelector('.upload-hint').textContent = `檔案大小：${(file.size / 1024 / 1024).toFixed(2)} MB`;
+        
+        showMessage('圖片上傳成功！', 'success');
+      };
+      reader.onerror = function() {
+        console.error('文件讀取失敗');
+        showMessage('圖片讀取失敗，請重試', 'error');
+      };
+      reader.readAsDataURL(file);
+
+      // 清除之前的結果
+      outputDiv.innerHTML = '圖片已上傳，點擊「開始識別」按鈕進行文字識別';
+      resultActions.style.display = 'none';
+    }
+
+    function recognize() {
+      if (!selectedFile) {
+        showMessage('請先選擇一張圖片', 'error');
+        return;
+      }
+
+      const language = document.getElementById('languageSelect').value;
+      
+      // 顯示進度條
+      progressContainer.style.display = 'block';
+      progressFill.style.width = '0%';
+      progressText.innerHTML = '<i class="fas fa-spinner"></i> 正在初始化...';
+      
+      // 禁用按鈕
+      recognizeBtn.disabled = true;
+      recognizeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 識別中...';
+      
+      outputDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> 正在分析圖片內容...</div>';
+
+      // 使用 Tesseract.js 進行 OCR 識別
+      Tesseract.recognize(
+        selectedFile,
+        language,
+        {
+          logger: function(m) {
+            console.log('OCR進度:', m); // Debug log
+            if (m.status === 'recognizing text') {
+              const progress = Math.round(m.progress * 100);
+              progressFill.style.width = progress + '%';
+              progressText.innerHTML = `<i class="fas fa-eye"></i> 識別進度：${progress}%`;
+              
+              if (progress > 50) {
+                outputDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> 正在處理文字內容...</div>';
+              }
+            } else if (m.status === 'loading tesseract core') {
+              progressText.innerHTML = '<i class="fas fa-download"></i> 載入識別核心...';
+            } else if (m.status === 'initializing tesseract') {
+              progressText.innerHTML = '<i class="fas fa-cog fa-spin"></i> 初始化引擎...';
+            } else if (m.status === 'loading language traineddata') {
+              progressText.innerHTML = '<i class="fas fa-language"></i> 載入語言模型...';
+            } else if (m.status === 'initializing api') {
+              progressText.innerHTML = '<i class="fas fa-rocket"></i> 準備識別...';
+            }
+          },
+          // OCR 增強設定
+          tessedit_pageseg_mode: Tesseract.PSM.AUTO,
+          tessedit_char_whitelist: null,
+          preserve_interword_spaces: 1
+        }
+      ).then(function(result) {
+        console.log('OCR結果:', result); // Debug log
+        const text = result.data.text.trim();
+        const confidence = result.data.confidence.toFixed(1);
+        
+        if (text && text.length > 0) {
+          recognizedText = text;
+          // 格式化輸出文字，保持換行和段落結構
+          const formattedText = text
+            .replace(/\n\s*\n/g, '\n\n') // 保留段落間距
+            .replace(/([^\n])\n([^\n])/g, '$1 $2') // 將單個換行轉為空格（除非前後都是換行）
+            .replace(/\s+/g, ' ') // 多個空格合併為一個
+            .trim();
+          
+          outputDiv.innerHTML = formattedText || text;
+          progressText.innerHTML = `<i class="fas fa-check-circle"></i> 識別完成！準確度：${confidence}%`;
+          progressText.className = 'progress-text success-message';
+          progressFill.style.width = '100%';
+          resultActions.style.display = 'flex';
+          
+          // 顯示成功提示
+          setTimeout(() => {
+            showMessage(`文字識別完成！共識別出 ${text.length} 個字元，準確度 ${confidence}%`, 'success');
+          }, 500);
+        } else {
+          outputDiv.innerHTML = `⚠️ 未能識別出文字內容
+
+可能的原因：
+• 圖片解析度過低
+• 文字不夠清晰
+• 字體過於複雜或手寫字
+• 背景干擾過多
+• 圖片角度傾斜
+
+建議改善方法：
+• 使用高解析度、清晰的圖片
+• 確保文字與背景對比度足夠
+• 嘗試調整圖片角度
+• 選擇合適的語言模型
+• 如果是手寫字，請盡量選擇印刷體`;
+          
+          progressText.innerHTML = '<i class="fas fa-exclamation-triangle"></i> 識別完成，但未找到有效文字';
+          progressText.className = 'progress-text error-message';
+          showMessage('未能識別出文字，請檢查圖片品質或嘗試其他圖片', 'error');
+        }
+      }).catch(function(error) {
+        console.error('OCR識別錯誤:', error);
+        outputDiv.innerHTML = `❌ 識別過程中發生錯誤
+
+錯誤信息：${error.message}
+
+請嘗試以下解決方法：
+• 重新整理頁面後再試
+• 檢查網路連線狀況
+• 嘗試上傳其他圖片
+• 選擇不同的語言模型
+• 確認瀏覽器支援現代網頁標準
+
+如果問題持續發生，請聯絡技術支援。`;
+        
+        progressText.innerHTML = '<i class="fas fa-times-circle"></i> 識別失敗';
+        progressText.className = 'progress-text error-message';
+        showMessage('識別失敗：' + error.message, 'error');
+      }).finally(function() {
+        // 恢復按鈕狀態
+        recognizeBtn.disabled = false;
+        recognizeBtn.innerHTML = '<i class="fas fa-eye"></i> 開始識別';
+        
+        // 隱藏進度條
+        setTimeout(() => {
+          progressContainer.style.display = 'none';
+          progressText.className = 'progress-text';
+        }, 3000);
+      });
+    }
+
+    function clearAll() {
+      selectedFile = null;
+      recognizedText = '';
+      previewImg.style.display = 'none';
+      previewImg.src = '';
+      fileInput.value = '';
+      outputDiv.innerHTML = '請先上傳圖片並點擊「開始識別」按鈕';
+      progressContainer.style.display = 'none';
+      resultActions.style.display = 'none';
+      
+      // 恢復上傳區域提示
+      uploadLabel.querySelector('.upload-text').textContent = '點擊上傳或拖拽圖片到此處';
+      uploadLabel.querySelector('.upload-hint').textContent = '支援 JPG, PNG, GIF, BMP 格式，最大 10MB';
+      
+      showMessage('已清除所有內容', 'success');
+    }
+
+    function copyText() {
+      if (!recognizedText) {
+        showMessage('沒有可複製的文字', 'error');
+        return;
+      }
+      
+      navigator.clipboard.writeText(recognizedText).then(function() {
+        showMessage('文字已成功複製到剪貼簿', 'success');
+      }).catch(function(error) {
+        // 降級處理：使用舊方法
+        const textArea = document.createElement('textarea');
+        textArea.value = recognizedText;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          showMessage('文字已成功複製到剪貼簿', 'success');
+        } catch (err) {
+          showMessage('複製失敗，請手動選取文字複製', 'error');
+        }
+        document.body.removeChild(textArea);
+      });
+    }
+
+    function downloadText() {
+      if (!recognizedText) {
+        showMessage('沒有可下載的文字', 'error');
+        return;
+      }
+      
+      const blob = new Blob([recognizedText], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      
+      const now = new Date();
+      const timestamp = now.getFullYear() + 
+                       String(now.getMonth() + 1).padStart(2, '0') + 
+                       String(now.getDate()).padStart(2, '0') + '_' +
+                       String(now.getHours()).padStart(2, '0') + 
+                       String(now.getMinutes()).padStart(2, '0');
+      
+      link.href = url;
+      link.download = `OCR識別結果_${timestamp}.txt`;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      showMessage('文字檔下載開始', 'success');
+    }
+
+    function showMessage(message, type) {
+      // 創建提示訊息元素
+      const messageDiv = document.createElement('div');
+      messageDiv.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 30px;
+        padding: 15px 25px;
+        border-radius: 10px;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        z-index: 10000;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        transform: translateX(400px);
+        transition: all 0.4s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        max-width: 320px;
+        word-wrap: break-word;
+      `;
+      
+      if (type === 'success') {
+        messageDiv.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+        messageDiv.innerHTML = '<i class="fas fa-check-circle"></i>' + message;
+      } else if (type === 'error') {
+        messageDiv.style.background = 'linear-gradient(135deg, #dc3545 0%, #fd7e14 100%)';
+        messageDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i>' + message;
+      } else {
+        messageDiv.style.background = 'linear-gradient(135deg, #8360c3 0%, #2ebf91 100%)';
+        messageDiv.innerHTML = '<i class="fas fa-info-circle"></i>' + message;
+      }
+      
+      document.body.appendChild(messageDiv);
+      
+      // 顯示動畫
+      setTimeout(() => {
+        messageDiv.style.transform = 'translateX(0)';
+      }, 100);
+      
+      // 自動隱藏
+      setTimeout(() => {
+        messageDiv.style.transform = 'translateX(400px)';
+        setTimeout(() => {
+          if (document.body.contains(messageDiv)) {
+            document.body.removeChild(messageDiv);
+          }
+        }, 400);
+      }, 4000);
+    }
+
+    // 鍵盤快捷鍵支援
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey || e.metaKey) {
+        switch(e.key) {
+          case 'v': // Ctrl+V 貼上
+            e.preventDefault();
+            pasteFromClipboard();
+            break;
+          case 'c': // Ctrl+C 複製
+            if (recognizedText) {
+              e.preventDefault();
+              copyText();
+            }
+            break;
+          case 's': // Ctrl+S 下載
+            if (recognizedText) {
+              e.preventDefault();
+              downloadText();
+            }
+            break;
+        }
+      }
+      
+      // ESC 清除
+      if (e.key === 'Escape') {
+        clearAll();
+      }
+    });
+
+    function pasteFromClipboard() {
+      if (navigator.clipboard && navigator.clipboard.read) {
+        navigator.clipboard.read().then(function(items) {
+          for (let item of items) {
+            if (item.types.includes('image/png') || item.types.includes('image/jpeg')) {
+              item.getType(item.types.find(type => type.startsWith('image/'))).then(function(blob) {
+                const file = new File([blob], 'pasted-image.png', { type: blob.type });
+                handleFile(file);
+                showMessage('已從剪貼簿貼上圖片', 'success');
+              });
+              break;
+            }
+          }
+        }).catch(function(error) {
+          console.log('無法從剪貼簿讀取圖片:', error);
+          showMessage('無法從剪貼簿貼上圖片', 'error');
+        });
+      }
+    }
+
+    // 頁面載入完成後的初始化
+    window.addEventListener('load', function() {
+      console.log('OCR系統初始化完成');
+      showMessage('OCR圖片識別系統已準備就緒！', 'success');
+      
+      // 檢查 Tesseract.js 是否載入成功
+      if (typeof Tesseract === 'undefined') {
+        showMessage('OCR引擎載入失敗，請重新整理頁面', 'error');
+        console.error('Tesseract.js 未載入');
+      }
+    });
+
+    // 錯誤處理
+    window.addEventListener('error', function(e) {
+      console.error('頁面錯誤:', e.error);
+      showMessage('系統發生錯誤，請重新整理頁面', 'error');
+    });
+
+    // 預防記憶體洩漏
+    window.addEventListener('beforeunload', function() {
+      if (previewImg.src && previewImg.src.startsWith('blob:')) {
+        URL.revokeObjectURL(previewImg.src);
+      }
+    });
+  </script>
+</body>
+</html>

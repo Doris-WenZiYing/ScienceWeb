@@ -192,6 +192,34 @@
       background: linear-gradient(180deg, #11998e 0%, #38ef7d 100%);
     }
 
+    .sidebar h2 {
+      font-size: 24px;
+      margin: 0 30px 40px;
+      color: #333;
+      font-weight: 300;
+      text-align: center;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar h2:hover {
+      color: #11998e;
+      transform: scale(1.05);
+    }
+
+    .sidebar h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+      border-radius: 2px;
+    }
+
     .menu a {
       display: flex;
       align-items: center;
@@ -517,11 +545,8 @@
   <!-- 主區塊 -->
   <div class="main">
     <div class="sidebar">
+      <h2 onclick="location.reload(); window.location.href='teacher_dashboard.html';">老師系統</h2>
       <div class="menu">
-        <a href="teacher_dashboard.html" class="active">
-          <i class="fas fa-home"></i>
-          老師首頁
-        </a>
         <a href="activity_status.html">
           <i class="fas fa-chart-bar"></i>
           查看活動情況
@@ -534,19 +559,7 @@
           <i class="fas fa-comments"></i>
           學生表單反饋
         </a>
-         <a href="Teacher_schedules_classes.html">
-          <i class="fas fa-calendar-alt"></i>
-          線上排班
-        </a>
-        <a href="askforleave.html">
-          <i class="fas fa-clipboard-check"></i>
-          請假審核
-        </a>
-        <a href="work_hours_attendance.html">
-          <i class="fas fa-clock"></i>
-          工作時數與出席記錄
-        </a>
-             </div>
+      </div>
     </div>
     
     <div class="content">

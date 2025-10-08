@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-
 <head>
   <meta charset="UTF-8">
-  <title>線上簽到表 - 科學會管理系統</title>
+  <title>線上排班 - 科學會管理系統</title>
   <!-- FontAwesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -13,8 +12,7 @@
       box-sizing: border-box;
     }
 
-    html,
-    body {
+    html, body {
       height: 100%;
       font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
       background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
@@ -28,7 +26,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 30px;
-      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
       position: relative;
       z-index: 100;
     }
@@ -57,7 +55,7 @@
 
     .header img.logo {
       height: 50px;
-      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
       transition: transform 0.3s ease;
       margin-right: 15px;
     }
@@ -127,7 +125,7 @@
       cursor: pointer;
       transition: all 0.3s ease;
       border: 3px solid #fff;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
     .avatar:hover {
@@ -147,7 +145,7 @@
       right: 0;
       background: white;
       border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
       display: none;
       min-width: 120px;
       z-index: 1000;
@@ -156,15 +154,8 @@
     }
 
     @keyframes dropdownFade {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .dropdown a {
@@ -201,7 +192,7 @@
       padding: 30px 0;
       display: flex;
       flex-direction: column;
-      box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+      box-shadow: 2px 0 20px rgba(0,0,0,0.1);
       position: relative;
       overflow-y: auto;
     }
@@ -238,8 +229,7 @@
       cursor: pointer;
     }
 
-    .menu-link:hover,
-    .menu-link.active {
+    .menu-link:hover, .menu-link.active {
       color: #8360c3;
       background: rgba(131, 96, 195, 0.1);
       border-left: 4px solid #8360c3;
@@ -320,7 +310,7 @@
       border-radius: 20px;
       padding: 30px 40px;
       margin-bottom: 30px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
@@ -352,7 +342,7 @@
       border-radius: 15px;
       padding: 20px 30px;
       margin-bottom: 20px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -407,8 +397,7 @@
       transition: all 0.3s ease;
     }
 
-    .control-btn.active,
-    .control-btn:hover {
+    .control-btn.active, .control-btn:hover {
       background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
       color: white;
       border-color: transparent;
@@ -420,7 +409,7 @@
       background: rgba(255, 255, 255, 0.95);
       border-radius: 20px;
       padding: 30px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
       backdrop-filter: blur(10px);
       margin-bottom: 30px;
       overflow-x: auto;
@@ -505,7 +494,7 @@
       background: rgba(255, 255, 255, 0.95);
       border-radius: 20px;
       padding: 25px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
       backdrop-filter: blur(10px);
     }
 
@@ -533,7 +522,7 @@
       background: white;
       border-radius: 10px;
       padding: 15px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       transition: all 0.3s ease;
       cursor: grab;
       border-left: 4px solid #8360c3;
@@ -541,7 +530,7 @@
 
     .staff-item:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
 
     .staff-item.dragging {
@@ -596,13 +585,13 @@
       border-radius: 15px;
       padding: 20px;
       text-align: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
       transition: all 0.3s ease;
     }
 
     .stat-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     }
 
     .stat-card i {
@@ -627,32 +616,32 @@
 
     /* 響應式設計 */
     @media (max-width: 768px) {
-      .main {
-        flex-direction: column;
+      .main { 
+        flex-direction: column; 
       }
-
-      .sidebar {
-        width: 100%;
-        height: auto;
+      
+      .sidebar { 
+        width: 100%; 
+        height: auto; 
       }
-
-      .content {
-        padding: 20px;
+      
+      .content { 
+        padding: 20px; 
       }
-
+      
       .schedule-toolbar {
         flex-direction: column;
         align-items: stretch;
       }
-
+      
       .week-nav {
         justify-content: center;
       }
-
+      
       .schedule-container {
         padding: 15px;
       }
-
+      
       .schedule-table th,
       .schedule-table td {
         padding: 8px 5px;
@@ -661,19 +650,19 @@
     }
 
     /* 滾動條美化 */
-    ::-webkit-scrollbar {
-      width: 8px;
+    ::-webkit-scrollbar { 
+      width: 8px; 
     }
-
-    ::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.1);
+    
+    ::-webkit-scrollbar-track { 
+      background: rgba(0,0,0,0.1); 
     }
-
+    
     ::-webkit-scrollbar-thumb {
       background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
       border-radius: 4px;
     }
-
+    
     ::-webkit-scrollbar-thumb:hover {
       background: linear-gradient(135deg, #2ebf91 0%, #8360c3 100%);
     }
@@ -696,7 +685,6 @@
     }
   </style>
 </head>
-
 <body>
   <!-- 頂部欄 -->
   <div class="header">
@@ -721,83 +709,98 @@
   <div class="main">
     <div class="sidebar">
       <div class="menu">
+        <!-- 科學會首頁 -->
+        <div class="menu-item">
+          <a href="admin_dashboard.html" class="menu-link">
+            <i class="fas fa-home"></i>
+            科學會首頁
+          </a>
+        </div>
+
+        <!-- 活動行事曆 -->
         <div class="menu-item">
           <a href="activity_calendar.html" class="menu-link">
             <i class="fas fa-calendar"></i>
-            行事曆
+            活動行事曆
           </a>
         </div>
 
+        <!-- 幹部行事曆 -->
         <div class="menu-item">
-          <a href="admin_event_album.html" class="menu-link">
-            <i class="fas fa-image"></i>
-            活動相簿
+          <a href="admin_executive.html" class="menu-link">
+            <i class="fas fa-calendar-alt"></i>
+            幹部行事曆
           </a>
         </div>
 
+        <!-- 發布公告 -->
+        <div class="menu-item">
+          <a href="publish_announcement.html" class="menu-link">
+            <i class="fas fa-bullhorn"></i>
+            發布公告
+          </a>
+        </div>
+
+        <!-- 活動管理 -->
         <div class="menu-item">
           <div class="menu-link" onclick="toggleMenu(this); return false;">
-            <i class="fas fa-bullhorn"></i>
-            發佈公告/活動/表單
+            <i class="fas fa-tasks"></i>
+            活動管理
             <i class="fas fa-chevron-down menu-arrow"></i>
           </div>
           <div class="submenu">
             <div class="submenu-item">
-              <a href="publish_announcement.html" class="submenu-link">
-                <i class="fas fa-bullhorn"></i>
-                發佈公告
+              <a href="admin_activity_publish.html" class="submenu-link">
+                <i class="fas fa-plus-circle"></i>
+                發布活動
               </a>
             </div>
             <div class="submenu-item">
-              <a href="admin_activity_publish.html" class="submenu-link">
-                <i class="fas fa-plus-circle"></i>
-                發佈比賽及活動
+              <a href="admin_name_manage.html" class="submenu-link">
+                <i class="fas fa-user-edit"></i>
+                報名人員名單管理
               </a>
             </div>
             <div class="submenu-item">
               <a href="admin_table_publish.html" class="submenu-link">
                 <i class="fas fa-comment-alt"></i>
-                發佈活動反饋表單
+                發布活動反饋表單
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="admin_statistics.html" class="submenu-link">
+                <i class="fas fa-trophy"></i>
+                統計活動/比賽名次結果
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="admin_analysis.html" class="submenu-link">
+                <i class="fas fa-chart-bar"></i>
+                活動分析
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="activity_achievements.html" class="submenu-link">
+                <i class="fas fa-images"></i>
+                活動成果牆
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="admin_upload_files.html" class="submenu-link">
+                <i class="fas fa-eye"></i>
+                圖片識別
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="auto_notification.html" class="submenu-link">
+                <i class="fas fa-bell"></i>
+                自動通知推播
               </a>
             </div>
           </div>
         </div>
 
-        <div class="menu-item">
-          <a href="admin_name_manage.html" class="menu-link">
-            <i class="fas fa-user-edit"></i>
-            報名人員名單管理
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="admin_statistics.html" class="menu-link">
-            <i class="fas fa-trophy"></i>
-            統計比賽名次
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="admin_upload_files.html" class="menu-link">
-            <i class="fas fa-upload"></i>
-            開放上傳檔案
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="online_scheduling.html" class="menu-link active">
-            <i class="fas fa-user-check"></i>
-            線上簽到表
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="admin_request_review.html" class="menu-link">
-            <i class="fas fa-file-signature"></i>
-            請假申請
-          </a>
-        </div>
-
+        <!-- 開會紀錄 -->
         <div class="menu-item">
           <a href="meeting_records.html" class="menu-link">
             <i class="fas fa-clipboard"></i>
@@ -805,26 +808,85 @@
           </a>
         </div>
 
+        <!-- 線上排班 -->
         <div class="menu-item">
-          <a href="auto_notification.html" class="menu-link">
-            <i class="fas fa-bell"></i>
-            自動推播通知
+          <a href="online_scheduling.html" class="menu-link active">
+            <i class="fas fa-user-clock"></i>
+            線上排班
           </a>
         </div>
 
+        <!-- 內部請假審核&簽到表 -->
         <div class="menu-item">
-          <a href="image_recognition.html" class="menu-link">
-            <i class="fas fa-eye"></i>
-            圖片識別
+          <a href="admin_request_review.html" class="menu-link">
+            <i class="fas fa-file-signature"></i>
+            內部請假審核&簽到表
           </a>
+        </div>
+
+        <!-- 幹部工作時數&出席紀錄 -->
+        <div class="menu-item">
+          <a href="admin_department_manage.html" class="menu-link">
+            <i class="fas fa-clock"></i>
+            幹部工作時數&出席紀錄
+          </a>
+        </div>
+
+        <!-- 各類審核單 -->
+        <div class="menu-item">
+          <a href="approval_forms.html" class="menu-link">
+            <i class="fas fa-file-check"></i>
+            各類審核單
+          </a>
+        </div>
+
+        <!-- 各組管理事項 -->
+        <div class="menu-item">
+          <div class="menu-link" onclick="toggleMenu(this); return false;">
+            <i class="fas fa-users-cog"></i>
+            各組管理事項
+            <i class="fas fa-chevron-down menu-arrow"></i>
+          </div>
+          <div class="submenu">
+            <div class="submenu-item">
+              <a href="secretariat_management.html" class="submenu-link">
+                <i class="fas fa-file-alt"></i>
+                文書組
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="publicity_management.html" class="submenu-link">
+                <i class="fas fa-paint-brush"></i>
+                美宣組
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="activity_management.html" class="submenu-link">
+                <i class="fas fa-calendar-plus"></i>
+                活動組
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="finance_management.html" class="submenu-link">
+                <i class="fas fa-coins"></i>
+                總務組
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="admin_customer_service.html" class="submenu-link">
+                <i class="fas fa-handshake"></i>
+                公關組
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
+    
     <div class="content">
       <!-- 頁面標題 -->
       <div class="page-header">
-        <h1><i class="fas fa-user-clock"></i>線上簽到表</h1>
+        <h1><i class="fas fa-user-clock"></i>線上排班</h1>
         <p>智能排班管理系統，輕鬆分配工作時程和人力資源</p>
       </div>
 
@@ -863,7 +925,7 @@
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
-
+        
         <div class="schedule-controls">
           <button class="control-btn active" data-view="week">週檢視</button>
           <button class="control-btn" data-view="month">月檢視</button>
@@ -874,7 +936,7 @@
 
       <!-- 主要排班區域 -->
       <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px;">
-
+        
         <!-- 排班表格 -->
         <div class="schedule-container">
           <table class="schedule-table" id="scheduleTable">
@@ -1088,7 +1150,7 @@
               </div>
               <div class="staff-availability">本週可用: 週一到週五</div>
             </div>
-
+            
             <div class="staff-item" draggable="true" data-staff="李小華">
               <div class="staff-name">李小華</div>
               <div class="staff-role">副會長</div>
@@ -1098,7 +1160,7 @@
               </div>
               <div class="staff-availability">本週可用: 週二到週六</div>
             </div>
-
+            
             <div class="staff-item" draggable="true" data-staff="王小美">
               <div class="staff-name">王小美</div>
               <div class="staff-role">文書組長</div>
@@ -1108,7 +1170,7 @@
               </div>
               <div class="staff-availability">本週可用: 週一到週日</div>
             </div>
-
+            
             <div class="staff-item" draggable="true" data-staff="陳小強">
               <div class="staff-name">陳小強</div>
               <div class="staff-role">活動組員</div>
@@ -1118,7 +1180,7 @@
               </div>
               <div class="staff-availability">本週可用: 週一到週五</div>
             </div>
-
+            
             <div class="staff-item" draggable="true" data-staff="林小芳">
               <div class="staff-name">林小芳</div>
               <div class="staff-role">總務組員</div>
@@ -1148,7 +1210,7 @@
       dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
     });
 
-    window.addEventListener('click', function (e) {
+    window.addEventListener('click', function(e) {
       if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.style.display = 'none';
       }
@@ -1159,7 +1221,7 @@
       const menuItem = element.parentElement;
       const submenu = menuItem.querySelector('.submenu');
       const isExpanded = menuItem.classList.contains('expanded');
-
+      
       // 關閉所有其他一級選單
       document.querySelectorAll('.menu-item').forEach(item => {
         if (item !== menuItem) {
@@ -1170,7 +1232,7 @@
           }
         }
       });
-
+      
       // 切換當前選單
       if (isExpanded) {
         menuItem.classList.remove('expanded');
@@ -1195,19 +1257,19 @@
     function updateWeekDisplay() {
       const baseDate = new Date(2025, 8, 16); // 2025年9月16日（第3週）
       baseDate.setDate(baseDate.getDate() + (currentWeekOffset * 7));
-
+      
       const weekNumber = Math.ceil((baseDate.getDate() + new Date(baseDate.getFullYear(), baseDate.getMonth(), 1).getDay()) / 7);
-
-      document.getElementById('currentWeek').textContent =
+      
+      document.getElementById('currentWeek').textContent = 
         `${baseDate.getFullYear()}年${baseDate.getMonth() + 1}月第${weekNumber}週`;
     }
 
     // 檢視模式切換
     document.querySelectorAll('.control-btn[data-view]').forEach(btn => {
-      btn.addEventListener('click', function () {
+      btn.addEventListener('click', function() {
         document.querySelectorAll('.control-btn[data-view]').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
-
+        
         const view = this.dataset.view;
         console.log('切換到', view, '檢視');
       });
@@ -1217,13 +1279,13 @@
     function initDragAndDrop() {
       // 人員項目拖拽
       document.querySelectorAll('.staff-item').forEach(item => {
-        item.addEventListener('dragstart', function (e) {
+        item.addEventListener('dragstart', function(e) {
           draggedStaff = this.dataset.staff;
           this.classList.add('dragging');
           e.dataTransfer.effectAllowed = 'move';
         });
 
-        item.addEventListener('dragend', function (e) {
+        item.addEventListener('dragend', function(e) {
           this.classList.remove('dragging');
           draggedStaff = null;
         });
@@ -1231,20 +1293,20 @@
 
       // 排班格子放置
       document.querySelectorAll('.schedule-table td:not(.time-slot):not(.shift-unavailable)').forEach(cell => {
-        cell.addEventListener('dragover', function (e) {
+        cell.addEventListener('dragover', function(e) {
           e.preventDefault();
           e.dataTransfer.dropEffect = 'move';
           this.classList.add('drop-zone');
         });
 
-        cell.addEventListener('dragleave', function (e) {
+        cell.addEventListener('dragleave', function(e) {
           this.classList.remove('drop-zone');
         });
 
-        cell.addEventListener('drop', function (e) {
+        cell.addEventListener('drop', function(e) {
           e.preventDefault();
           this.classList.remove('drop-zone');
-
+          
           if (draggedStaff) {
             // 如果格子已有人，詢問是否替換
             if (this.classList.contains('shift-assigned')) {
@@ -1253,18 +1315,18 @@
                 return;
               }
             }
-
+            
             // 分配班次
             assignShift(this, draggedStaff);
           }
         });
 
         // 點擊編輯功能
-        cell.addEventListener('click', function () {
+        cell.addEventListener('click', function() {
           if (this.classList.contains('shift-assigned')) {
             const person = this.querySelector('.shift-person').textContent;
             const task = this.querySelector('.shift-task').textContent;
-
+            
             const newTask = prompt(`編輯 ${person} 的工作內容:`, task);
             if (newTask && newTask.trim()) {
               this.querySelector('.shift-task').textContent = newTask.trim();
@@ -1273,7 +1335,7 @@
         });
 
         // 右鍵刪除功能
-        cell.addEventListener('contextmenu', function (e) {
+        cell.addEventListener('contextmenu', function(e) {
           e.preventDefault();
           if (this.classList.contains('shift-assigned')) {
             const person = this.querySelector('.shift-person').textContent;
@@ -1294,7 +1356,7 @@
           <div class="shift-task">一般值班</div>
         </div>
       `;
-
+      
       // 添加成功提示
       showNotification(`已安排 ${staffName} 的班次`);
     }
@@ -1311,14 +1373,14 @@
       if (confirm('智能排班將自動填滿空白時段，是否繼續？')) {
         const emptySlots = document.querySelectorAll('.schedule-table td:not(.time-slot):not(.shift-unavailable):not(.shift-assigned)');
         const staff = ['張小明', '李小華', '王小美', '陳小強', '林小芳'];
-
+        
         emptySlots.forEach((slot, index) => {
           const staffName = staff[index % staff.length];
           setTimeout(() => {
             assignShift(slot, staffName);
           }, index * 100);
         });
-
+        
         showNotification('智能排班完成！');
       }
     }
@@ -1327,17 +1389,17 @@
     function exportSchedule() {
       const scheduleData = [];
       const rows = document.querySelectorAll('.schedule-table tbody tr');
-
+      
       rows.forEach(row => {
         const timeSlot = row.querySelector('.time-slot').textContent;
         const cells = row.querySelectorAll('td:not(.time-slot)');
-
+        
         cells.forEach((cell, dayIndex) => {
           if (cell.classList.contains('shift-assigned')) {
             const person = cell.querySelector('.shift-person').textContent;
             const task = cell.querySelector('.shift-task').textContent;
             const days = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
-
+            
             scheduleData.push({
               時段: timeSlot,
               星期: days[dayIndex],
@@ -1347,7 +1409,7 @@
           }
         });
       });
-
+      
       console.log('排班資料:', scheduleData);
       alert('排班表已匯出到控制台（實際應用中會下載檔案）');
     }
@@ -1372,14 +1434,14 @@
         transition: transform 0.3s ease;
       `;
       notification.textContent = message;
-
+      
       document.body.appendChild(notification);
-
+      
       // 動畫顯示
       setTimeout(() => {
         notification.style.transform = 'translateX(0)';
       }, 100);
-
+      
       // 3秒後移除
       setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
@@ -1390,7 +1452,7 @@
     }
 
     // 點擊其他地方關閉所有選單
-    document.addEventListener('click', function (e) {
+    document.addEventListener('click', function(e) {
       if (!e.target.closest('.menu')) {
         document.querySelectorAll('.menu-item').forEach(item => {
           item.classList.remove('expanded');
@@ -1403,10 +1465,9 @@
     });
 
     // 初始化
-    window.addEventListener('load', function () {
+    window.addEventListener('load', function() {
       initDragAndDrop();
     });
   </script>
 </body>
-
 </html>

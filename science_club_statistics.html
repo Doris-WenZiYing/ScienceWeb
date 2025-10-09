@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <title>統計活動/比賽名次結果 - 科學會管理系統</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        font-family: "Microsoft JhengHei", "Arial", sans-serif;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        overflow: hidden;
+      }
+
+      .header {
+        height: 70px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 100;
+      }
+
+      .header::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .header-left:hover {
+        transform: scale(1.02);
+      }
+
+      .header img.logo {
+        height: 50px;
+        filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+      }
+
+      .notification-icon {
+        position: relative;
+        padding: 10px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .notification-icon:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(131, 96, 195, 0.4);
+      }
+
+      .notification-icon i {
+        font-size: 18px;
+        color: white;
+      }
+
+      .notification-badge {
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        background: #ff4757;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+
+      .avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 3px solid #fff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .avatar:hover {
+        transform: scale(1.1);
+      }
+
+      .avatar i {
+        font-size: 20px;
+        color: white;
+      }
+
+      .main {
+        display: flex;
+        height: calc(100vh - 70px);
+      }
+
+      .sidebar {
+        width: 280px;
+        min-width: 280px;
+        max-width: 280px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .sidebar::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, #8360c3 0%, #2ebf91 100%);
+      }
+
+      .menu {
+        height: 100%;
+        overflow-y: auto;
+        padding: 20px 0;
+      }
+
+      .menu::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .menu::-webkit-scrollbar-thumb {
+        background: rgba(131, 96, 195, 0.3);
+        border-radius: 3px;
+      }
+
+      .menu-item {
+        display: block;
+        position: relative;
+      }
+
+      .menu-link {
+        display: flex;
+        align-items: center;
+        padding: 15px 25px;
+        text-decoration: none;
+        color: #555;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .menu-link:hover,
+      .menu-link.active {
+        color: #8360c3;
+        background: rgba(131, 96, 195, 0.1);
+        border-left: 4px solid #8360c3;
+        transform: translateX(5px);
+      }
+
+      .menu-link i {
+        margin-right: 12px;
+        width: 20px;
+        font-size: 16px;
+      }
+
+      .menu-arrow {
+        margin-left: auto;
+        font-size: 12px;
+        transition: transform 0.3s ease;
+      }
+
+      .menu-item.expanded .menu-arrow {
+        transform: rotate(180deg);
+      }
+
+      .submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        background: rgba(131, 96, 195, 0.05);
+      }
+
+      .submenu.show {
+        max-height: 500px;
+      }
+
+      .submenu-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 25px 12px 45px;
+        text-decoration: none;
+        color: #666;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .submenu-link:hover,
+      .submenu-link.active {
+        color: #8360c3;
+        background: rgba(131, 96, 195, 0.1);
+        border-left: 4px solid #8360c3;
+        transform: translateX(5px);
+      }
+
+      .submenu-link i {
+        margin-right: 10px;
+        width: 16px;
+        font-size: 14px;
+      }
+
+      .content {
+        flex: 1;
+        padding: 30px;
+        overflow-y: auto;
+      }
+
+      .content::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .content::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        border-radius: 4px;
+      }
+
+      .page-header {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .page-header h1 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .page-header h1 i {
+        margin-right: 15px;
+        color: #8360c3;
+      }
+
+      .page-header p {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .activity-selector {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .selector-label {
+        font-size: 16px;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .selector-label i {
+        color: #8360c3;
+      }
+
+      .activity-select {
+        width: 100%;
+        padding: 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 15px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        outline: none;
+      }
+
+      .activity-select:focus {
+        border-color: #8360c3;
+        box-shadow: 0 4px 15px rgba(131, 96, 195, 0.2);
+      }
+
+      .podium-section {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 25px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .section-title {
+        font-size: 20px;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .section-title i {
+        color: #8360c3;
+      }
+
+      .podium-container {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+
+      .podium-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: all 0.3s ease;
+      }
+
+      .podium-item:hover {
+        transform: translateY(-5px);
+      }
+
+      .rank-badge {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        color: white;
+        margin-bottom: 15px;
+        position: relative;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .rank-badge::after {
+        content: "";
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 30px;
+        height: 30px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: bold;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .rank-1 .rank-badge {
+        background: linear-gradient(135deg, #ffd700, #ffa500);
+      }
+
+      .rank-1 .rank-badge::after {
+        content: "1";
+        color: #ffd700;
+      }
+
+      .rank-2 .rank-badge {
+        background: linear-gradient(135deg, #c0c0c0, #a8a8a8);
+      }
+
+      .rank-2 .rank-badge::after {
+        content: "2";
+        color: #c0c0c0;
+      }
+
+      .rank-3 .rank-badge {
+        background: linear-gradient(135deg, #cd7f32, #b8860b);
+      }
+
+      .rank-3 .rank-badge::after {
+        content: "3";
+        color: #cd7f32;
+      }
+
+      .podium-info {
+        text-align: center;
+        padding: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        min-width: 200px;
+      }
+
+      .podium-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+      }
+
+      .podium-class {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 12px;
+      }
+
+      .podium-score {
+        font-size: 28px;
+        font-weight: 700;
+        color: #8360c3;
+      }
+
+      .podium-score span {
+        font-size: 14px;
+        color: #999;
+        font-weight: 400;
+      }
+
+      .rank-2 {
+        transform: scale(0.95);
+      }
+
+      .rank-3 {
+        transform: scale(0.9);
+      }
+
+      .rankings-table-section {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 25px;
+      }
+
+      .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .export-btn {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+      }
+
+      .export-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(131, 96, 195, 0.3);
+      }
+
+      .rankings-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .rankings-table thead {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      }
+
+      .rankings-table th {
+        padding: 15px;
+        text-align: left;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .rankings-table td {
+        padding: 15px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        font-size: 14px;
+      }
+
+      .rankings-table tbody tr {
+        transition: all 0.2s ease;
+      }
+
+      .rankings-table tbody tr:hover {
+        background: rgba(131, 96, 195, 0.05);
+      }
+
+      .rank-number {
+        font-weight: 700;
+        font-size: 16px;
+        color: #8360c3;
+      }
+
+      .score-cell {
+        font-weight: 600;
+        color: #8360c3;
+        font-size: 16px;
+      }
+
+      .medal-icon {
+        font-size: 18px;
+        margin-right: 8px;
+      }
+
+      .gold {
+        color: #ffd700;
+      }
+
+      .silver {
+        color: #c0c0c0;
+      }
+
+      .bronze {
+        color: #cd7f32;
+      }
+
+      @media (max-width: 1200px) {
+        .podium-container {
+          flex-wrap: wrap;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .main {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          max-width: none;
+        }
+
+        .content {
+          padding: 15px;
+        }
+
+        .podium-container {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .rank-2,
+        .rank-3 {
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="header">
+      <div
+        class="header-left"
+        onclick="location.href='activity_calendar.html';"
+      >
+        <img src="image/logo1.gif" alt="Logo" class="logo" />
+      </div>
+      <div class="header-right">
+        <div class="notification-icon">
+          <i class="fas fa-bell"></i>
+          <div class="notification-badge">3</div>
+        </div>
+        <div class="avatar">
+          <i class="fas fa-user-shield"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="sidebar">
+        <div class="menu">
+          <div class="menu-item">
+            <a href="activity_calendar.html" class="menu-link">
+              <i class="fas fa-calendar"></i>
+              行事曆
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_event_album.html" class="menu-link">
+              <i class="fas fa-home"></i>
+              活動相簿
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-link" onclick="toggleMenu(this); return false;">
+              <i class="fas fa-bullhorn"></i>
+              發佈公告/活動/表單
+              <i class="fas fa-chevron-down menu-arrow"></i>
+            </div>
+            <div class="submenu">
+              <div class="submenu-item">
+                <a href="publish_announcement.html" class="submenu-link active">
+                  <i class="fas fa-bullhorn"></i>
+                  發佈公告
+                </a>
+              </div>
+              <div class="submenu-item">
+                <a
+                  href="science_club_activity_publish.html"
+                  class="submenu-link"
+                >
+                  <i class="fas fa-plus-circle"></i>
+                  發佈比賽及活動
+                </a>
+              </div>
+              <div class="submenu-item">
+                <a href="science_club_table_publish.html" class="submenu-link">
+                  <i class="fas fa-comment-alt"></i>
+                  發佈活動反饋表單
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_name_manage.html" class="menu-link">
+              <i class="fas fa-user-edit"></i>
+              報名人員名單管理
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_statistics.html" class="menu-link active">
+              <i class="fas fa-trophy"></i>
+              統計比賽名次
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_upload_files.html" class="menu-link">
+              <i class="fas fa-upload"></i>
+              開放上傳檔案
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="online_scheduling.html" class="menu-link">
+              <i class="fas fa-user-check"></i>
+              線上簽到表
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_request_review.html" class="menu-link">
+              <i class="fas fa-file-signature"></i>
+              請假申請
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="meeting_records.html" class="menu-link">
+              <i class="fas fa-clipboard"></i>
+              開會紀錄
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="auto_notification.html" class="menu-link">
+              <i class="fas fa-bell"></i>
+              自動推播通知
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="image_recognition.html" class="menu-link">
+              <i class="fas fa-eye"></i>
+              圖片識別
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="page-header">
+          <h1><i class="fas fa-trophy"></i>統計活動/比賽名次</h1>
+          <p>記錄和管理活動競賽的參賽者成績與排名</p>
+        </div>
+
+        <div class="activity-selector">
+          <div class="selector-label">
+            <i class="fas fa-calendar-check"></i>
+            選擇活動
+          </div>
+          <select
+            class="activity-select"
+            id="activitySelect"
+            onchange="loadRankings()"
+          >
+            <option value="">請選擇要查看的活動</option>
+            <option value="1" selected>化學實驗競賽</option>
+            <option value="2">物理闖關遊戲</option>
+            <option value="3">生物知識競賽</option>
+            <option value="4">數學解題競賽</option>
+          </select>
+        </div>
+
+        <div class="podium-section">
+          <div class="section-title">
+            <i class="fas fa-medal"></i>
+            前三名頒獎台
+          </div>
+          <div class="podium-container">
+            <div class="podium-item rank-2">
+              <div class="rank-badge">
+                <i class="fas fa-medal"></i>
+              </div>
+              <div class="podium-info">
+                <div class="podium-name">李小華</div>
+                <div class="podium-class">電機二乙</div>
+                <div class="podium-score">92 <span>分</span></div>
+              </div>
+            </div>
+
+            <div class="podium-item rank-1">
+              <div class="rank-badge">
+                <i class="fas fa-crown"></i>
+              </div>
+              <div class="podium-info">
+                <div class="podium-name">王小明</div>
+                <div class="podium-class">資訊一甲</div>
+                <div class="podium-score">98 <span>分</span></div>
+              </div>
+            </div>
+
+            <div class="podium-item rank-3">
+              <div class="rank-badge">
+                <i class="fas fa-medal"></i>
+              </div>
+              <div class="podium-info">
+                <div class="podium-name">張小美</div>
+                <div class="podium-class">機械三丙</div>
+                <div class="podium-score">88 <span>分</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rankings-table-section">
+          <div class="table-header">
+            <div class="section-title">
+              <i class="fas fa-list-ol"></i>
+              完整排名
+            </div>
+            <button class="export-btn" onclick="exportRankings()">
+              <i class="fas fa-download"></i>
+              匯出成績
+            </button>
+          </div>
+          <table class="rankings-table">
+            <thead>
+              <tr>
+                <th>名次</th>
+                <th>姓名</th>
+                <th>學號</th>
+                <th>班級</th>
+                <th>成績</th>
+                <th>獎項</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <i class="fas fa-trophy medal-icon gold"></i
+                  ><span class="rank-number">1</span>
+                </td>
+                <td>王小明</td>
+                <td>A10912345</td>
+                <td>資訊一甲</td>
+                <td class="score-cell">98</td>
+                <td>金牌</td>
+              </tr>
+              <tr>
+                <td>
+                  <i class="fas fa-trophy medal-icon silver"></i
+                  ><span class="rank-number">2</span>
+                </td>
+                <td>李小華</td>
+                <td>A10912346</td>
+                <td>電機二乙</td>
+                <td class="score-cell">92</td>
+                <td>銀牌</td>
+              </tr>
+              <tr>
+                <td>
+                  <i class="fas fa-trophy medal-icon bronze"></i
+                  ><span class="rank-number">3</span>
+                </td>
+                <td>張小美</td>
+                <td>A10912347</td>
+                <td>機械三丙</td>
+                <td class="score-cell">88</td>
+                <td>銅牌</td>
+              </tr>
+              <tr>
+                <td><span class="rank-number">4</span></td>
+                <td>陳小強</td>
+                <td>A10912348</td>
+                <td>化工一甲</td>
+                <td class="score-cell">85</td>
+                <td>佳作</td>
+              </tr>
+              <tr>
+                <td><span class="rank-number">5</span></td>
+                <td>林小芳</td>
+                <td>A10912349</td>
+                <td>土木二乙</td>
+                <td class="score-cell">82</td>
+                <td>佳作</td>
+              </tr>
+              <tr>
+                <td><span class="rank-number">6</span></td>
+                <td>黃小婷</td>
+                <td>A10912350</td>
+                <td>工管三丙</td>
+                <td class="score-cell">79</td>
+                <td>佳作</td>
+              </tr>
+              <tr>
+                <td><span class="rank-number">7</span></td>
+                <td>周小傑</td>
+                <td>A10912351</td>
+                <td>資訊二甲</td>
+                <td class="score-cell">76</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td><span class="rank-number">8</span></td>
+                <td>吳小玲</td>
+                <td>A10912352</td>
+                <td>電機一乙</td>
+                <td class="score-cell">73</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td><span class="rank-number">9</span></td>
+                <td>鄭小文</td>
+                <td>A10912353</td>
+                <td>機械二丙</td>
+                <td class="score-cell">70</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td><span class="rank-number">10</span></td>
+                <td>劉小安</td>
+                <td>A10912354</td>
+                <td>化工三甲</td>
+                <td class="score-cell">68</td>
+                <td>-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <title>個人活動紀錄</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap" rel="stylesheet" />
+  <style>
+    body, html {
+      margin: 0; padding: 0;
+      font-family: 'Microsoft JhengHei','Noto Sans TC',sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      height: 100%;
+    }
+
+    /* 頂部欄 */
+    .header {
+      height: 70px; background: linear-gradient(135deg,#ffffff 0%,#f8f9fa 100%);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 30px; box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      position: relative; z-index: 100;
+    }
+    .header::before {
+      content:''; position:absolute; bottom:0; left:0; right:0;
+      height:3px; background: linear-gradient(90deg,#667eea 0%,#764ba2 100%);
+    }
+    .header img.logo { height:50px; cursor:pointer; }
+    .header-right { display:flex; align-items:center; gap:25px; position:relative; }
+    .icon, .avatar {
+      width:40px; height:40px; border-radius:50%;
+      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      color:white; display:flex; align-items:center; justify-content:center;
+      cursor:pointer;
+    }
+
+    /* 下拉選單 */
+    .dropdown-menu {
+      position: absolute;
+      top: 70px;
+      right: 0;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      display: none;
+      flex-direction: column;
+      min-width: 140px;
+      z-index: 200;
+    }
+    .dropdown-menu a {
+      padding: 10px 15px;
+      text-decoration: none;
+      color: #333;
+      display: block;
+      font-size: 14px;
+    }
+    .dropdown-menu a:hover {
+      background: #f5f5f5;
+      color: #667eea;
+    }
+
+    /* 側邊欄 */
+    .sidebar {
+      width: 250px; 
+      background: rgba(255,255,255,0.95); 
+      backdrop-filter: blur(10px);
+      display: flex; 
+      flex-direction: column; 
+      padding-top: 30px;
+      overflow-y: auto;          
+      scrollbar-width: thin;     
+      scrollbar-color: #667eea rgba(0,0,0,0.1);
+    }
+    .sidebar::-webkit-scrollbar { width: 8px; }
+    .sidebar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background-color: #667eea; border-radius: 4px; }
+
+    .menu a {
+      display: flex; align-items: center; padding: 15px 30px; text-decoration: none;
+      color: #555; font-size: 16px; transition: all 0.3s ease; border-left: 4px solid transparent;
+    }
+    .menu a:hover, .menu a.active {
+      color: #667eea; background: rgba(102, 126, 234, 0.1); border-left: 4px solid #667eea;
+    }
+    .menu a i { margin-right: 15px; }
+
+    /* 主體 */
+    .main { display:flex; height:calc(100% - 70px); }
+
+    /* 內容 */
+    .content {
+      flex:1; padding:40px;
+      background:rgba(255,255,255,0.1); backdrop-filter:blur(10px);
+      overflow-y:auto;
+    }
+
+    .records-container {
+      background:rgba(255,255,255,0.95);
+      border-radius:20px; padding:30px;
+      box-shadow:0 5px 20px rgba(0,0,0,0.1);
+      max-width:1000px; margin:0 auto;
+    }
+    .records-container h2 {
+      text-align:center; color:#333; margin-bottom:20px;
+    }
+
+    .export-buttons {
+      display:flex; gap:10px; justify-content:flex-end; margin-bottom:15px;
+      flex-wrap: wrap;
+    }
+    .export-buttons button {
+      background:#667eea; color:white; border:none; padding:8px 14px;
+      border-radius:6px; cursor:pointer; font-size:14px;
+    }
+    .export-buttons button:hover { background:#5a6ddd; }
+
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    table th, table td { padding:12px 15px; border-bottom:1px solid #ddd; text-align:left; }
+    table th { background:#667eea; color:white; }
+    tr:hover { background:rgba(102,126,234,0.1); }
+
+    .no-records { text-align:center; font-size:18px; color:#666; margin-top:30px; }
+
+    @media (max-width: 768px) {
+      .main { flex-direction:column; }
+      .sidebar { width:100%; }
+      .content { padding:20px; }
+      table, thead, tbody, th, td, tr { display:block; }
+      thead { display:none; }
+      tr {
+        margin-bottom:15px;
+        background:#fff; border-radius:10px;
+        padding:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1);
+      }
+      td {
+        border:none; padding:8px 10px;
+        position:relative; text-align:left;
+      }
+      td::before {
+        content: attr(data-label);
+        font-weight:bold; color:#333;
+        display:block; margin-bottom:3px;
+      }
+      .export-buttons { justify-content:center; }
+    }
+  </style>
+</head>
+<body>
+   <div class="header">
+    <img src="image/logo1.gif" alt="Logo" class="logo" onclick="location.href='student_index.html'">
+    <div class="header-right">
+      <div class="icon"><i class="fas fa-bell"></i></div>
+      <div class="avatar" onclick="toggleMenu()"><i class="fas fa-user"></i></div>
+      <div id="userMenu" class="dropdown-menu">
+        <a href="student_profile.html"><i class="fas fa-cog" style="margin-right:8px;"></i>個人設定</a>
+        <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt" style="margin-right:8px;"></i>登出</a>
+      </div>
+    </div>
+  </div>
+
+ <div class="main">
+    <div class="sidebar">
+      <div class="menu">
+        <a href="student_index.html"><i class="fas fa-home"></i>學生首頁</a>
+        <a href="student_activities.html"><i class="fas fa-calendar-alt"></i>活動行事曆</a>
+        <a href="student_registration.html"><i class="fas fa-user-plus"></i>線上報名</a>
+        <a href="student_activities_modify.html"><i class="fas fa-edit"></i>活動報名修改</a>
+        <a href="student_profile.html" class="active"><i class="fas fa-user-circle"></i>查看個人活動紀錄</a>
+        <a href="student_upload.html"><i class="fas fa-cloud-upload-alt"></i>檔案上傳</a>
+        <a href="student_files.html"><i class="fas fa-folder-open"></i>查看上傳檔案</a>
+        <a href="student_from.html"><i class="fas fa-chart-pie"></i>填寫活動回饋</a>
+        <a href="student_image.html"><i class="fas fa-image"></i>活動相簿</a>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="records-container">
+        <h2><i class="fas fa-list" style="color:#667eea;margin-right:8px;"></i>個人活動紀錄</h2>
+
+        <div class="export-buttons">
+          <button onclick="exportPDF()"><i class="fas fa-file-pdf"></i> 匯出 PDF</button>
+          <button onclick="exportExcel()"><i class="fas fa-file-excel"></i> 匯出 Excel</button>
+        </div>
+
+        <table id="recordsTable" style="display:none;">
+          <thead>
+            <tr>
+              <th>活動名稱</th>
+              <th>參賽項目</th>
+              <th>名次/成績</th>
+              <th>姓名</th>
+              <th>報名日期</th>
+            </tr>
+          </thead>
+          <tbody id="recordsBody"></tbody>
+        </table>
+        <p id="noRecordsMsg" class="no-records" style="display:none;">目前沒有報名任何活動。</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <script>
+    const MY_REGISTRATIONS_API = '/api/my-registrations';
+    let registrationsData = [];
+
+    async function fetchRecords() {
+      const table = document.getElementById('recordsTable');
+      const body = document.getElementById('recordsBody');
+      const noRecordsMsg = document.getElementById('noRecordsMsg');
+
+      try {
+        const res = await fetch(MY_REGISTRATIONS_API);
+        if (!res.ok) throw new Error('取得紀錄失敗');
+        const registrations = await res.json();
+
+        if (!Array.isArray(registrations) || registrations.length === 0) {
+          table.style.display = 'none';
+          noRecordsMsg.style.display = 'block';
+          return;
+        }
+
+        registrationsData = registrations;
+        body.innerHTML = "";
+        registrations.forEach(r => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td data-label="活動名稱">${r.eventName}</td>
+            <td data-label="參賽項目">${r.competition || '—'}</td>
+            <td data-label="名次/成績">${r.rank || '—'}</td>
+            <td data-label="姓名">${r.name}</td>
+            <td data-label="報名日期">${r.date || '—'}</td>
+          `;
+          body.appendChild(row);
+        });
+        table.style.display = 'table';
+      } catch (err) {
+        console.error(err);
+        table.style.display = 'none';
+        noRecordsMsg.textContent = '取得資料時發生錯誤，請稍後再試。';
+        noRecordsMsg.style.display = 'block';
+      }
+    }
+
+    function exportPDF() {
+      if (registrationsData.length === 0) { alert("目前沒有資料可匯出"); return; }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text("個人活動紀錄", 14, 15);
+      doc.autoTable({
+        startY: 20,
+        head: [['活動名稱','參賽項目','名次/成績','姓名','報名日期']],
+        body: registrationsData.map(r=>[r.eventName,r.competition||'—',r.rank||'—',r.name,r.date||'—'])
+      });
+      doc.save("個人活動紀錄.pdf");
+    }
+
+    function exportExcel() {
+      if (registrationsData.length === 0) { alert("目前沒有資料可匯出"); return; }
+      const worksheet = XLSX.utils.json_to_sheet(registrationsData.map(r=>({
+        活動名稱: r.eventName,
+        參賽項目: r.competition||'—',
+        名次成績: r.rank||'—',
+        姓名: r.name,
+        報名日期: r.date||'—'
+      })));
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "活動紀錄");
+      XLSX.writeFile(workbook, "個人活動紀錄.xlsx");
+    }
+
+    // 下拉選單功能
+    function toggleMenu() {
+      const menu = document.getElementById("userMenu");
+      menu.style.display = (menu.style.display==="flex") ? "none" : "flex";
+    }
+    function logout() { location.href = "login_student.html"; }
+    document.addEventListener("click",(e)=>{
+      const avatar = document.querySelector(".avatar");
+      const menu = document.getElementById("userMenu");
+      if(!avatar.contains(e.target) && !menu.contains(e.target)){ menu.style.display="none"; }
+    });
+
+    fetchRecords();
+  </script>
+</body>
+</html>

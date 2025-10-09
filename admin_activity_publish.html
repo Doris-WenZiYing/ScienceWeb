@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>新增活動 - 科學會管理系統</title>
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+    }
+
+    /* 頂部區域 */
+    .header {
+      height: 70px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 100;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+    }
+
+    /* Logo 和標題區域 */
+    .header-left {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .header-left:hover {
+      transform: scale(1.02);
+    }
+
+    .header img.logo {
+      height: 50px;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+      transition: transform 0.3s ease;
+      margin-right: 15px;
+    }
+
+    .header-title {
+      font-size: 24px;
+      font-weight: 300;
+      color: #333;
+      transition: color 0.3s ease;
+    }
+
+    .header-left:hover .header-title {
+      color: #8360c3;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      position: relative;
+    }
+
+    .icon {
+      position: relative;
+      padding: 12px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      animation: pulse 2s infinite;
+    }
+
+    .icon:hover {
+      transform: translateY(-3px) scale(1.1);
+      box-shadow: 0 12px 35px rgba(131, 96, 195, 0.5);
+      background: linear-gradient(135deg, #9d7ce6 0%, #3dd5a3 100%);
+    }
+
+    .icon:active {
+      transform: translateY(-1px) scale(1.05);
+      transition: all 0.1s ease;
+    }
+
+    .icon i {
+      font-size: 20px;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      animation: bellShake 0.5s ease-in-out infinite alternate;
+    }
+
+    .icon::after {
+      content: '3';
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+      color: white;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+      border: 2px solid white;
+      animation: bounce 1s ease-in-out infinite;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-3px); }
+      60% { transform: translateY(-2px); }
+    }
+
+    /* 通知面板樣式 */
+    .notification-panel {
+      position: absolute;
+      top: 65px;
+      right: 80px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      display: none;
+      width: 380px;
+      max-height: 500px;
+      z-index: 1000;
+      animation: dropdownFade 0.3s ease;
+      overflow: hidden;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3); }
+      50% { box-shadow: 0 4px 25px rgba(131, 96, 195, 0.6); }
+      100% { box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3); }
+    }
+
+    @keyframes bellShake {
+      0% { transform: rotate(-5deg); }
+      100% { transform: rotate(5deg); }
+    }
+
+    .notification-header {
+      padding: 20px;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 15px 15px 0 0;
+    }
+
+    .notification-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .notification-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .notification-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .notification-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+
+    .notification-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      padding: 15px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      gap: 12px;
+    }
+
+    .notification-item:hover {
+      background: rgba(131, 96, 195, 0.05);
+    }
+
+    .notification-item.unread {
+      background: rgba(131, 96, 195, 0.08);
+    }
+
+    .notification-item.unread::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      background: #e74c3c;
+      border-radius: 50%;
+    }
+
+    .notification-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .notification-icon.activity {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+    }
+
+    .notification-icon.deadline {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+    }
+
+    .notification-icon.announcement {
+      background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+      color: white;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .notification-text {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .notification-time {
+      font-size: 11px;
+      color: #999;
+    }
+
+    .notification-delete {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(231, 76, 60, 0.1);
+      color: #e74c3c;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .notification-item:hover .notification-delete {
+      opacity: 1;
+    }
+
+    .notification-delete:hover {
+      background: #e74c3c;
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .notification-empty {
+      padding: 60px 20px;
+      text-align: center;
+      color: #999;
+    }
+
+    .notification-empty i {
+      font-size: 48px;
+      color: #ddd;
+      margin-bottom: 15px;
+    }
+
+    .notification-list::-webkit-scrollbar { width: 6px; }
+    .notification-list::-webkit-scrollbar-track { background: #f0f0f0; }
+    .notification-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      border-radius: 3px;
+    }
+
+    .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .avatar:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
+    }
+
+    .avatar i {
+      font-size: 20px;
+      color: white;
+    }
+
+    /* 下拉選單 */
+    .dropdown {
+      position: absolute;
+      top: 65px;
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: none;
+      min-width: 120px;
+      z-index: 1000;
+      overflow: hidden;
+      animation: dropdownFade 0.3s ease;
+    }
+
+    @keyframes dropdownFade {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropdown a {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .dropdown a:hover {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+    }
+
+    .dropdown a i {
+      margin-right: 8px;
+      width: 16px;
+    }
+
+    /* 主體區域 */
+    .main {
+      display: flex;
+      height: calc(100% - 70px);
+      gap: 0;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 30px 0;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, #8360c3 0%, #2ebf91 100%);
+    }
+
+    .menu {
+      flex: 1;
+      margin-top: 20px;
+    }
+
+    .menu-item {
+      display: block;
+      position: relative;
+    }
+
+    .menu-link {
+      display: flex;
+      align-items: center;
+      padding: 15px 25px;
+      text-decoration: none;
+      color: #555;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      cursor: pointer;
+    }
+
+    .menu-link:hover {
+      color: #8360c3;
+      background: rgba(131, 96, 195, 0.1);
+      border-left: 4px solid #8360c3;
+      transform: translateX(5px);
+    }
+
+    .menu-link.active {
+      color: #8360c3;
+      background: rgba(131, 96, 195, 0.1);
+      border-left: 4px solid #8360c3;
+      transform: translateX(5px);
+    }
+
+    .menu-link i {
+      margin-right: 12px;
+      width: 20px;
+      font-size: 16px;
+    }
+
+    .menu-arrow {
+      margin-left: auto;
+      font-size: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    .menu-item.expanded .menu-arrow {
+      transform: rotate(180deg);
+    }
+
+    /* 二級選單 */
+    .submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      background: rgba(131, 96, 195, 0.05);
+    }
+
+    .submenu.show {
+      max-height: 500px;
+    }
+
+    .submenu-item {
+      position: relative;
+    }
+
+    .submenu-link {
+      display: flex;
+      align-items: center;
+      padding: 12px 25px 12px 45px;
+      text-decoration: none;
+      color: #666;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      cursor: pointer;
+    }
+
+    .submenu-link:hover {
+      color: #8360c3;
+      background: rgba(131, 96, 195, 0.1);
+      border-left: 4px solid #8360c3;
+      transform: translateX(5px);
+    }
+
+    .submenu-link.active {
+      color: #8360c3;
+      background: rgba(131, 96, 195, 0.1);
+      border-left: 4px solid #8360c3;
+      transform: translateX(5px);
+    }
+
+    .submenu-link i {
+      margin-right: 10px;
+      width: 16px;
+      font-size: 14px;
+    }
+
+    /* 內容區域 */
+    .content {
+      flex: 1;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* 頁面標題 */
+    .page-header {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .page-title-section h1 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+
+    .page-title-section h1 i {
+      margin-right: 15px;
+      color: #8360c3;
+      font-size: 32px;
+    }
+
+    .page-title-section p {
+      color: #666;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* 時間顯示區域 */
+    .time-display {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 10px rgba(131, 96, 195, 0.3);
+      white-space: nowrap;
+    }
+
+    .time-display i {
+      font-size: 16px;
+      color: white;
+    }
+
+    /* 成功訊息 */
+    .success-message {
+      background: rgba(46, 213, 115, 0.1);
+      border: 1px solid #2ed573;
+      color: #27ae60;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .success-message i {
+      margin-right: 10px;
+    }
+
+    /* 表單區域 */
+    .activity-form {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 30px;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .form-section h3 {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+    }
+
+    .form-section h3 i {
+      margin-right: 10px;
+      color: #8360c3;
+      font-size: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #444;
+      font-size: 14px;
+    }
+
+    .required::after {
+      content: '*';
+      color: #ff4757;
+      margin-left: 4px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e1e8ed;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #8360c3;
+      box-shadow: 0 0 0 3px rgba(131, 96, 195, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-full {
+      grid-column: 1 / -1;
+    }
+
+    /* 檔案上傳 */
+    .file-upload {
+      border: 2px dashed #e1e8ed;
+      border-radius: 10px;
+      padding: 40px 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background: #fafbfc;
+    }
+
+    .file-upload:hover {
+      border-color: #8360c3;
+      background: rgba(131, 96, 195, 0.05);
+    }
+
+    .file-upload.dragover {
+      border-color: #8360c3;
+      background: rgba(131, 96, 195, 0.1);
+      transform: scale(1.02);
+    }
+
+    .file-upload i {
+      font-size: 48px;
+      color: #8360c3;
+      margin-bottom: 15px;
+    }
+
+    .file-upload p {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .file-upload small {
+      color: #999;
+      font-size: 12px;
+    }
+
+    .image-preview {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: none;
+      border: 2px solid #e1e8ed;
+    }
+
+    /* 複選框 */
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+      margin-right: 8px;
+    }
+
+    /* 按鈕區域 */
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 30px;
+      border-top: 1px solid #e1e8ed;
+      margin-top: 30px;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(131, 96, 195, 0.4);
+    }
+
+    .btn-secondary {
+      background: #f8f9fa;
+      color: #666;
+      border: 2px solid #e1e8ed;
+    }
+
+    .btn-secondary:hover {
+      background: #e9ecef;
+      transform: translateY(-1px);
+    }
+
+    /* 響應式設計 */
+    @media (max-width: 768px) {
+      .main { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; }
+      .content { padding: 20px; }
+      .form-row { grid-template-columns: 1fr; }
+      .form-actions { flex-direction: column; gap: 15px; }
+      .page-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+    }
+
+    /* 滾動條美化 */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #2ebf91 0%, #8360c3 100%);
+    }
+  </style>
+</head>
+<body>
+  <!-- 頂部欄 -->
+  <div class="header">
+    <div class="header-left" onclick="location.href='activity_calendar.html';">
+      <img src="image/logo1.gif" alt="Logo" class="logo">
+    </div>
+    <div class="header-right">
+      <div class="icon" id="notificationIcon"><i class="fas fa-bell"></i></div>
+      <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+          <h3>通知</h3>
+          <div class="notification-actions">
+            <button class="notification-btn" onclick="markAllAsRead()">全部已讀</button>
+            <button class="notification-btn" onclick="clearAllNotifications()">清除全部</button>
+          </div>
+        </div>
+        <div class="notification-list" id="notificationList">
+          <!-- 通知項目將由 JavaScript 動態生成 -->
+        </div>
+      </div>
+      <div class="avatar" id="avatar">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <div class="dropdown" id="dropdown">
+        <a href="login_admin.html">
+          <i class="fas fa-sign-out-alt"></i>
+          登出
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主區塊 -->
+  <div class="main">
+    <div class="sidebar">
+      <div class="menu">
+        <div class="menu-item">
+          <a href="activity_calendar.html" class="menu-link">
+            <i class="fas fa-calendar"></i>
+            行事曆
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="admin_dashboard.html" class="menu-link">
+            <i class="fas fa-home"></i>
+            活動相簿
+          </a>
+        </div>
+
+        <div class="menu-item expanded">
+          <div class="menu-link" onclick="toggleMenu(this); return false;">
+            <i class="fas fa-bullhorn"></i>
+            發佈公告/活動/表單
+            <i class="fas fa-chevron-down menu-arrow"></i>
+          </div>
+          <div class="submenu show">
+            <div class="submenu-item">
+              <a href="publish_announcement.html" class="submenu-link">
+                <i class="fas fa-bullhorn"></i>
+                發佈公告
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="admin_activity_publish.html" class="submenu-link active">
+                <i class="fas fa-plus-circle"></i>
+                發佈比賽及活動
+              </a>
+            </div>
+            <div class="submenu-item">
+              <a href="admin_table_publish.html" class="submenu-link">
+                <i class="fas fa-comment-alt"></i>
+                發佈活動反饋表單
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <a href="admin_name_manage.html" class="menu-link">
+            <i class="fas fa-user-edit"></i>
+            報名人員名單管理
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="admin_statistics.html" class="menu-link">
+            <i class="fas fa-trophy"></i>
+            統計比賽名次
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="admin_upload_files.html" class="menu-link">
+            <i class="fas fa-upload"></i>
+            開放上傳檔案
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="online_scheduling.html" class="menu-link">
+            <i class="fas fa-user-check"></i>
+            線上簽到表
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="admin_request_review.html" class="menu-link">
+            <i class="fas fa-file-signature"></i>
+            請假申請
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="meeting_records.html" class="menu-link">
+            <i class="fas fa-clipboard"></i>
+            開會紀錄
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="auto_notification.html" class="menu-link">
+            <i class="fas fa-bell"></i>
+            自動推播通知
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="image_recognition.html" class="menu-link">
+            <i class="fas fa-eye"></i>
+            圖片識別
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="content">
+      <!-- 頁面標題 -->
+      <div class="page-header">
+        <div class="page-title-section">
+          <h1><i class="fas fa-plus-circle"></i>新增活動</h1>
+          <p>創建一個精彩的新活動，讓科學會成員參與其中</p>
+        </div>
+        <div class="time-display">
+          <i class="fas fa-clock"></i>
+          <span id="timeDisplay">2025年09月24日 星期四 上午10:46:32</span>
+        </div>
+      </div>
+
+      <!-- 成功訊息 -->
+      <div class="success-message" id="successMessage">
+        <i class="fas fa-check-circle"></i>
+        活動發布成功！
+      </div>
+
+      <!-- 活動表單 -->
+      <div class="activity-form">
+        <form id="activityForm">
+          <!-- 基本資訊 -->
+          <div class="form-section">
+            <h3><i class="fas fa-info-circle"></i>基本資訊</h3>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="activityName" class="required">活動名稱</label>
+                <input type="text" id="activityName" name="activityName" placeholder="請輸入活動名稱" required>
+              </div>
+              <div class="form-group">
+                <label for="activityCategory" class="required">活動類別</label>
+                <select id="activityCategory" name="activityCategory" required>
+                  <option value="">請選擇活動類別</option>
+                  <option value="workshop">工作坊</option>
+                  <option value="seminar">研習會</option>
+                  <option value="conference">會議</option>
+                  <option value="exhibition">展覽</option>
+                  <option value="competition">競賽</option>
+                  <option value="social">社交活動</option>
+                  <option value="sports">體育活動</option>
+                  <option value="cultural">文化活動</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group form-full">
+              <label for="description" class="required">活動描述</label>
+              <textarea id="description" name="description" placeholder="請詳細描述活動內容、目標對象、注意事項等..." required></textarea>
+            </div>
+          </div>
+
+          <!-- 時間設定 -->
+          <div class="form-section">
+            <h3><i class="fas fa-calendar-alt"></i>時間設定</h3>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="startDate" class="required">開始日期</label>
+                <input type="date" id="startDate" name="startDate" required>
+              </div>
+              <div class="form-group">
+                <label for="endDate" class="required">結束日期</label>
+                <input type="date" id="endDate" name="endDate" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="startTime" class="required">開始時間</label>
+                <input type="time" id="startTime" name="startTime" required>
+              </div>
+              <div class="form-group">
+                <label for="endTime" class="required">結束時間</label>
+                <input type="time" id="endTime" name="endTime" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="registrationDeadline" class="required">報名截止日期</label>
+                <input type="date" id="registrationDeadline" name="registrationDeadline" required>
+              </div>
+              <div class="form-group">
+                <label for="maxParticipants" class="required">參加人數上限</label>
+                <input type="number" id="maxParticipants" name="maxParticipants" min="1" placeholder="請輸入人數上限" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- 地點與聯絡 -->
+          <div class="form-section">
+            <h3><i class="fas fa-map-marker-alt"></i>地點與聯絡</h3>
+            
+            <div class="form-group form-full">
+              <label for="location" class="required">活動地點</label>
+              <input type="text" id="location" name="location" placeholder="請輸入活動地點" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="organizer">主辦單位</label>
+                <input type="text" id="organizer" name="organizer" placeholder="請輸入主辦單位">
+              </div>
+              <div class="form-group">
+                <label for="contact">聯絡資訊</label>
+                <input type="text" id="contact" name="contact" placeholder="電話或Email">
+              </div>
+            </div>
+          </div>
+
+          <!-- 活動圖片 -->
+          <div class="form-section">
+            <h3><i class="fas fa-image"></i>活動圖片</h3>
+            
+            <div class="form-group">
+              <label for="activityImage">上傳活動圖片</label>
+              <div class="file-upload" id="fileUpload">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>拖放圖片至此處或點擊選擇檔案</p>
+                <small>支援 JPG、PNG、GIF 格式，單檔最大 5MB</small>
+                <input type="file" id="activityImage" name="activityImage" accept="image/*" style="display: none;">
+              </div>
+              <img id="imagePreview" class="image-preview" alt="圖片預覽">
+            </div>
+          </div>
+
+          <!-- 其他設定 -->
+          <div class="form-section">
+            <h3><i class="fas fa-cog"></i>其他設定</h3>
+            
+            <div class="form-group">
+              <label for="tags">活動標籤</label>
+              <input type="text" id="tags" name="tags" placeholder="用逗號分隔，例如：學習,交流,創新">
+            </div>
+
+            <div class="checkbox-group">
+              <input type="checkbox" id="featured" name="featured">
+              <label for="featured">設為精選活動</label>
+            </div>
+
+            <div class="checkbox-group">
+              <input type="checkbox" id="emailNotify" name="emailNotify" checked>
+              <label for="emailNotify">發送電子郵件通知</label>
+            </div>
+
+            <div class="checkbox-group">
+              <input type="checkbox" id="pushNotify" name="pushNotify" checked>
+              <label for="pushNotify">推送即時通知</label>
+            </div>
+          </div>
+
+          <!-- 按鈕區域 -->
+          <div class="form-actions">
+            <div>
+              <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                <i class="fas fa-eraser"></i>清空表單
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="saveAsDraft()">
+                <i class="fas fa-save"></i>儲存草稿
+              </button>
+            </div>
+            <div>
+              <a href="admin_dashboard.html" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>返回列表
+              </a>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i>發布活動
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // 更新時間顯示
+    function updateTime() {
+      const now = new Date();
+      
+      const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        weekday: 'long',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      };
+      
+      let timeString = now.toLocaleDateString('zh-TW', options);
+      timeString = timeString
+        .replace(/(\d{4})\/(\d{1,2})\/(\d{1,2})/, '$1年$2月$3日')
+        .replace(/\s+/g, ' ');
+      
+      document.getElementById('timeDisplay').textContent = timeString;
+    }
+
+    // 頁面載入後立即執行
+    document.addEventListener('DOMContentLoaded', function() {
+      updateTime();
+      setInterval(updateTime, 1000);
+      renderNotifications();
+      updateNotificationBadge();
+    });
+
+    // 通知數據
+    let notifications = [
+      {
+        id: 1,
+        type: 'activity',
+        icon: 'fa-calendar-check',
+        title: '新活動發布',
+        text: '科學營活動已發布，請查看詳情並報名',
+        time: '2小時前',
+        read: false
+      },
+      {
+        id: 2,
+        type: 'deadline',
+        icon: 'fa-clock',
+        title: '報名即將截止',
+        text: '下月活動報名將於今日16:00截止',
+        time: '5小時前',
+        read: false
+      },
+      {
+        id: 3,
+        type: 'announcement',
+        icon: 'fa-bullhorn',
+        title: '系統公告',
+        text: '月會時間調整至10月15日上午10點',
+        time: '1天前',
+        read: false
+      }
+    ];
+
+    // 渲染通知列表
+    function renderNotifications() {
+      const notificationList = document.getElementById('notificationList');
+      
+      if (notifications.length === 0) {
+        notificationList.innerHTML = `
+          <div class="notification-empty">
+            <i class="fas fa-bell-slash"></i>
+            <div>暫無通知</div>
+          </div>
+        `;
+        return;
+      }
+
+      notificationList.innerHTML = notifications.map(notif => `
+        <div class="notification-item ${notif.read ? '' : 'unread'}" onclick="markAsRead(${notif.id})">
+          <div class="notification-icon ${notif.type}">
+            <i class="fas ${notif.icon}"></i>
+          </div>
+          <div class="notification-content">
+            <div class="notification-title">${notif.title}</div>
+            <div class="notification-text">${notif.text}</div>
+            <div class="notification-time">${notif.time}</div>
+          </div>
+          <button class="notification-delete" onclick="deleteNotification(event, ${notif.id})">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // 更新通知徽章
+    function updateNotificationBadge() {
+      const unreadCount = notifications.filter(n => !n.read).length;
+      const icon = document.querySelector('.icon');
+      
+      if (unreadCount > 0) {
+        icon.setAttribute('data-count', unreadCount);
+        // 更新 ::after 偽元素內容需要動態修改樣式
+        const style = document.createElement('style');
+        style.textContent = `.icon::after { content: '${unreadCount}'; }`;
+        document.head.appendChild(style);
+      } else {
+        // 移除徽章
+        const style = document.createElement('style');
+        style.textContent = `.icon::after { display: none; }`;
+        document.head.appendChild(style);
+      }
+    }
+
+    // 標記為已讀
+    function markAsRead(id) {
+      const notification = notifications.find(n => n.id === id);
+      if (notification && !notification.read) {
+        notification.read = true;
+        renderNotifications();
+        updateNotificationBadge();
+      }
+    }
+
+    // 全部標記為已讀
+    function markAllAsRead() {
+      notifications.forEach(notification => {
+        notification.read = true;
+      });
+      renderNotifications();
+      updateNotificationBadge();
+    }
+
+    // 刪除通知
+    function deleteNotification(event, id) {
+      event.stopPropagation();
+      notifications = notifications.filter(n => n.id !== id);
+      renderNotifications();
+      updateNotificationBadge();
+    }
+
+    // 清空所有通知
+    function clearAllNotifications() {
+      if (confirm('確定要清除所有通知嗎？')) {
+        notifications = [];
+        renderNotifications();
+        updateNotificationBadge();
+      }
+    }
+
+    // 頭像下拉選單控制
+    const avatar = document.getElementById('avatar');
+    const dropdown = document.getElementById('dropdown');
+    const notificationIcon = document.getElementById('notificationIcon');
+    const notificationPanel = document.getElementById('notificationPanel');
+
+    avatar.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+      notificationPanel.style.display = 'none';
+    });
+
+    notificationIcon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      notificationPanel.style.display = notificationPanel.style.display === 'block' ? 'none' : 'block';
+      dropdown.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(e) {
+      if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
+      if (!notificationIcon.contains(e.target) && !notificationPanel.contains(e.target)) {
+        notificationPanel.style.display = 'none';
+      }
+    });
+
+    // 選單控制
+    function toggleMenu(element) {
+      const menuItem = element.parentElement;
+      const submenu = menuItem.querySelector('.submenu');
+      const isExpanded = menuItem.classList.contains('expanded');
+      
+      document.querySelectorAll('.menu-item').forEach(item => {
+        if (item !== menuItem) {
+          item.classList.remove('expanded');
+          const otherSubmenu = item.querySelector('.submenu');
+          if (otherSubmenu) {
+            otherSubmenu.classList.remove('show');
+          }
+        }
+      });
+      
+      if (isExpanded) {
+        menuItem.classList.remove('expanded');
+        submenu.classList.remove('show');
+      } else {
+        menuItem.classList.add('expanded');
+        submenu.classList.add('show');
+      }
+    }
+
+    // 圖片上傳處理
+    const fileUpload = document.getElementById('fileUpload');
+    const fileInput = document.getElementById('activityImage');
+    const imagePreview = document.getElementById('imagePreview');
+
+    fileUpload.addEventListener('click', () => fileInput.click());
+
+    fileUpload.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      fileUpload.classList.add('dragover');
+    });
+
+    fileUpload.addEventListener('dragleave', () => {
+      fileUpload.classList.remove('dragover');
+    });
+
+    fileUpload.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileUpload.classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        fileInput.files = files;
+        handleImageUpload(files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleImageUpload(e.target.files[0]);
+      }
+    });
+
+    function handleImageUpload(file) {
+      if (file && file.type.startsWith('image/')) {
+        if (file.size <= 5 * 1024 * 1024) { // 5MB限制
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block';
+            fileUpload.querySelector('p').textContent = '✅ ' + file.name;
+            fileUpload.querySelector('p').style.color = '#2ed573';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          alert('檔案大小超過 5MB 限制');
+          fileInput.value = '';
+        }
+      } else {
+        alert('請選擇有效的圖片檔案');
+        fileInput.value = '';
+      }
+    }
+
+    // 日期驗證
+    document.getElementById('startDate').addEventListener('change', function() {
+      const startDate = this.value;
+      const endDateInput = document.getElementById('endDate');
+      const regDeadlineInput = document.getElementById('registrationDeadline');
+      
+      endDateInput.min = startDate;
+      regDeadlineInput.max = startDate;
+      
+      if (endDateInput.value && endDateInput.value < startDate) {
+        endDateInput.value = startDate;
+      }
+      
+      if (regDeadlineInput.value && regDeadlineInput.value > startDate) {
+        regDeadlineInput.value = startDate;
+      }
+    });
+
+    // 時間驗證
+    document.getElementById('endTime').addEventListener('change', function() {
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+      const startTime = document.getElementById('startTime').value;
+      const endTime = this.value;
+      
+      if (startDate === endDate && startTime && endTime <= startTime) {
+        alert('在同一天中，結束時間必須晚於開始時間');
+        this.value = '';
+      }
+    });
+
+    // 表單提交處理
+    document.getElementById('activityForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // 基本驗證
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+      const startTime = document.getElementById('startTime').value;
+      const endTime = document.getElementById('endTime').value;
+      const regDeadline = document.getElementById('registrationDeadline').value;
+      
+      if (endDate < startDate) {
+        alert('結束日期不能早於開始日期');
+        return;
+      }
+      
+      if (startDate === endDate && endTime <= startTime) {
+        alert('在同一天中，結束時間必須晚於開始時間');
+        return;
+      }
+      
+      if (regDeadline > startDate) {
+        alert('報名截止日期不能晚於活動開始日期');
+        return;
+      }
+      
+      // 模擬提交成功
+      const successMessage = document.getElementById('successMessage');
+      successMessage.style.display = 'block';
+      
+      // 滾動到頂部
+      document.querySelector('.content').scrollTo({ 
+        top: 0,
+        behavior: 'smooth' 
+      });
+      
+      // 3秒後隱藏成功訊息
+      setTimeout(() => {
+        successMessage.style.display = 'none';
+      }, 3000);
+    });
+
+    // 清空表單
+    function clearForm() {
+      if (confirm('確定要清空表單嗎？此操作無法復原。')) {
+        document.getElementById('activityForm').reset();
+        imagePreview.style.display = 'none';
+        fileUpload.querySelector('p').textContent = '拖放圖片至此處或點擊選擇檔案';
+        fileUpload.querySelector('p').style.color = '#666';
+      }
+    }
+
+    // 儲存草稿
+    function saveAsDraft() {
+      const formData = {
+        activityName: document.getElementById('activityName').value,
+        activityCategory: document.getElementById('activityCategory').value,
+        description: document.getElementById('description').value,
+        startDate: document.getElementById('startDate').value,
+        endDate: document.getElementById('endDate').value,
+        startTime: document.getElementById('startTime').value,
+        endTime: document.getElementById('endTime').value,
+        location: document.getElementById('location').value,
+        maxParticipants: document.getElementById('maxParticipants').value,
+        registrationDeadline: document.getElementById('registrationDeadline').value,
+        organizer: document.getElementById('organizer').value,
+        contact: document.getElementById('contact').value,
+        tags: document.getElementById('tags').value,
+        featured: document.getElementById('featured').checked,
+        emailNotify: document.getElementById('emailNotify').checked,
+        pushNotify: document.getElementById('pushNotify').checked
+      };
+
+      alert('草稿已儲存！');
+    }
+
+    // 設定最小日期為今天
+    window.addEventListener('load', function() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('startDate').min = today;
+      document.getElementById('endDate').min = today;
+      document.getElementById('registrationDeadline').min = today;
+    });
+  </script>
+</body>
+</html>

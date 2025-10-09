@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活動相簿 - 科學會管理系統</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* --- 樣式修改點 1: 頁面整體背景 (保留原有的漸層，但您可以根據截圖替換為純色) --- */
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            overflow: hidden;
+        }
+
+        .header {
+            height: 70px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 100;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .header-left:hover {
+            transform: scale(1.02);
+        }
+
+        .header img.logo {
+            height: 50px;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+            transition: transform 0.3s ease;
+            margin-right: 15px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 300;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .header-left:hover .header-title {
+            color: #8360c3;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            position: relative;
+        }
+
+        .icon {
+            position: relative;
+            padding: 12px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        .icon:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 12px 35px rgba(131, 96, 195, 0.5);
+            background: linear-gradient(135deg, #9d7ce6 0%, #3dd5a3 100%);
+        }
+
+        .icon:active {
+            transform: translateY(-1px) scale(1.05);
+            transition: all 0.1s ease;
+        }
+
+        .icon i {
+            font-size: 20px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            animation: bellShake 0.5s ease-in-out infinite alternate;
+        }
+
+        .icon::after {
+            content: '3';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+            border: 2px solid white;
+            animation: bounce 1s ease-in-out infinite;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 4px 25px rgba(131, 96, 195, 0.6);
+            }
+
+            100% {
+                box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+            }
+        }
+
+        @keyframes bellShake {
+            0% {
+                transform: rotate(-5deg);
+            }
+
+            100% {
+                transform: rotate(5deg);
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-3px);
+            }
+
+            60% {
+                transform: translateY(-2px);
+            }
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
+        }
+
+        .avatar i {
+            font-size: 20px;
+            color: white;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 65px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: none;
+            min-width: 120px;
+            z-index: 1000;
+            overflow: hidden;
+            animation: dropdownFade 0.3s ease;
+        }
+
+        @keyframes dropdownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown a {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown a:hover {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+        }
+
+        .dropdown a i {
+            margin-right: 8px;
+            width: 16px;
+        }
+
+        /* 通知面板樣式 (保持不變) */
+        .notification-panel {
+            position: absolute;
+            top: 65px;
+            right: 80px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+            width: 380px;
+            max-height: 500px;
+            z-index: 1000;
+            animation: dropdownFade 0.3s ease;
+            overflow: hidden;
+        }
+
+        .notification-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .notification-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .notification-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .notification-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            gap: 12px;
+        }
+
+        .notification-item:hover {
+            background: rgba(131, 96, 195, 0.05);
+        }
+
+        .notification-item.unread {
+            background: rgba(131, 96, 195, 0.08);
+        }
+
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: #e74c3c;
+            border-radius: 50%;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.activity {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+        }
+
+        .notification-icon.deadline {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        .notification-icon.announcement {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .notification-text {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .notification-time {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .notification-delete {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:hover .notification-delete {
+            opacity: 1;
+        }
+
+        .notification-delete:hover {
+            background: #e74c3c;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .notification-empty {
+            padding: 60px 20px;
+            text-align: center;
+            color: #999;
+        }
+
+        .notification-empty i {
+            font-size: 48px;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+
+        .notification-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .notification-list::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+
+        .notification-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            border-radius: 3px;
+        }
+
+        .main {
+            display: flex;
+            height: calc(100% - 70px);
+            width: 100%;
+            gap: 0;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #8360c3 0%, #2ebf91 100%);
+        }
+
+        .menu {
+            flex: 1;
+            margin-top: 20px;
+        }
+
+        .menu-item {
+            display: block;
+            position: relative;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            text-decoration: none;
+            color: #555;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .menu-link:hover,
+        .menu-link.active {
+            color: #8360c3;
+            background: rgba(131, 96, 195, 0.1);
+            border-left: 4px solid #8360c3;
+            transform: translateX(5px);
+        }
+
+        .menu-link i {
+            margin-right: 12px;
+            width: 20px;
+            font-size: 16px;
+        }
+
+        .menu-arrow {
+            margin-left: auto;
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-item.expanded .menu-arrow {
+            transform: rotate(180deg);
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(131, 96, 195, 0.05);
+        }
+
+        .submenu.show {
+            max-height: 500px;
+        }
+
+        .submenu-item {
+            position: relative;
+        }
+
+        .submenu-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 25px 12px 45px;
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .submenu-link:hover {
+            color: #8360c3;
+            background: rgba(131, 96, 195, 0.1);
+            border-left: 4px solid #8360c3;
+            transform: translateX(5px);
+        }
+
+        .submenu-link i {
+            margin-right: 10px;
+            width: 16px;
+            font-size: 14px;
+        }
+
+        /* --- 樣式修改點 2: 右側內容區域 (Content) --- */
+        .content {
+            flex: 1;
+            padding: 40px;
+            background: #ffffff;
+            /* 改為純白色背景 */
+            backdrop-filter: none;
+            /* 移除模糊效果 */
+            overflow-y: auto;
+            overflow-x: hidden;
+            border-radius: 20px;
+            /* 增加圓角 */
+            margin: 20px;
+            /* 增加邊距以露出背景 */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            /* 增加顯著陰影 */
+        }
+
+        /* --- 相簿標題區塊調整 --- */
+        .album-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .album-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        /* 相簿卡片列表容器 */
+        .album-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 10px;
+        }
+
+        /* 相簿卡片 */
+        .album-card {
+            background: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #eee;
+        }
+
+        .album-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(131, 96, 195, 0.3);
+        }
+
+        .album-card-cover {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            opacity: 0.9;
+        }
+
+        .album-card-info {
+            padding: 15px 20px;
+        }
+
+        .album-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .album-card-date {
+            font-size: 13px;
+            color: #8360c3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .album-card-desc {
+            font-size: 13px;
+            color: #666;
+            height: 36px;
+            /* 兩行文字空間 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        /* 詳情頁面樣式 */
+        .album-detail-view {
+            display: none;
+            /* 預設隱藏 */
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .back-btn {
+            background: #f0f0f0;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .upload-form-group {
+            background: rgba(131, 96, 195, 0.05);
+            border: 2px dashed #8360c3;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-form-group:hover {
+            background: rgba(131, 96, 195, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .upload-form-group i {
+            font-size: 40px;
+            color: #8360c3;
+            margin-bottom: 10px;
+        }
+
+        .upload-form-group p {
+            color: #555;
+            font-weight: 500;
+        }
+
+        .upload-file-input {
+            display: none;
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            padding-bottom: 20px;
+        }
+
+        .media-item {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .media-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .media-item img,
+        .media-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(231, 76, 60, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+
+        .media-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        /* 彈跳視窗樣式 (Modal 保持不變) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #8360c3;
+            box-shadow: 0 0 0 3px rgba(131, 96, 195, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* 提交按鈕樣式保持不變 */
+        .btn-submit {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(131, 96, 195, 0.4);
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        /* 滾動條樣式調整 (保持不變) */
+        .modal::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+
+        .modal::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            border-radius: 4px;
+        }
+
+        .content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            border-radius: 4px;
+        }
+
+        /* 媒體查詢 (保持不變) */
+        @media (max-width: 1024px) {
+            .content {
+                margin: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+
+            .content {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .album-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-left" onclick="location.href='activity_calendar.html';">
+            <img src="image/logo1.gif" alt="Logo" class="logo">
+        </div>
+        <div class="header-right">
+            <div class="icon" id="notificationIcon"><i class="fas fa-bell"></i></div>
+            <div class="notification-panel" id="notificationPanel">
+                <div class="notification-header">
+                    <h3>通知</h3>
+                    <div class="notification-actions">
+                        <button class="notification-btn" onclick="markAllAsRead()">全部已讀</button>
+                        <button class="notification-btn" onclick="clearAllNotifications()">清除全部</button>
+                    </div>
+                </div>
+                <div class="notification-list" id="notificationList">
+                </div>
+            </div>
+            <div class="avatar" id="avatar">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div class="dropdown" id="dropdown">
+                <a href="login_admin.html">
+                    <i class="fas fa-sign-out-alt"></i>
+                    登出
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="sidebar">
+            <div class="menu">
+                <div class="menu-item">
+                    <a href="activity_calendar.html" class="menu-link">
+                        <i class="fas fa-calendar"></i>
+                        行事曆
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a href="admin_event_album.html" class="menu-link active">
+                        <i class="fas fa-image"></i>
+                        活動相簿
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <div class="menu-link" onclick="toggleMenu(this); return false;">
+                        <i class="fas fa-bullhorn"></i>
+                        發佈公告/活動/表單
+                        <i class="fas fa-chevron-down menu-arrow"></i>
+                    </div>
+                    <div class="submenu">
+                        <div class="submenu-item">
+                            <a href="publish_announcement.html" class="submenu-link">
+                                <i class="fas fa-bullhorn"></i>
+                                發佈公告
+                            </a>
+                        </div>
+                        <div class="submenu-item">
+                            <a href="admin_activity_publish.html" class="submenu-link">
+                                <i class="fas fa-plus-circle"></i>
+                                發佈比賽及活動
+                            </a>
+                        </div>
+                        <div class="submenu-item">
+                            <a href="admin_table_publish.html" class="submenu-link">
+                                <i class="fas fa-comment-alt"></i>
+                                發佈活動反饋表單
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <a href="admin_name_manage.html" class="menu-link">
+                        <i class="fas fa-user-edit"></i>
+                        報名人員名單管理
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a href="admin_statistics.html" class="menu-link">
+                        <i class="fas fa-trophy"></i>
+                        統計比賽名次
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a href="admin_upload_files.html" class="menu-link">
+                        <i class="fas fa-upload"></i>
+                        開放上傳檔案
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a href="online_scheduling.html" class="menu-link">
+                        <i class="fas fa-user-check"></i>
+                        線上簽到表
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a href="admin_request_review.html" class="menu-link">
+                        <i class="fas fa-file-signature"></i>
+                        請假申請
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a href="meeting_records.html" class="menu-link">
+                        <i class="fas fa-clipboard"></i>
+                        開會紀錄
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a href="auto_notification.html" class="menu-link">
+                        <i class="fas fa-bell"></i>
+                        自動推播通知
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a href="image_recognition.html" class="menu-link">
+                        <i class="fas fa-eye"></i>
+                        圖片識別
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div id="albumListView">
+                <div class="album-header">
+                    <h1>活動相簿管理</h1>
+                    <button class="btn-submit" onclick="openAddAlbumModal()">
+                        <i class="fas fa-plus-circle"></i> 新增活動相簿
+                    </button>
+                </div>
+
+                <div class="album-list" id="albumList">
+                    <div class="album-card" data-album-id="1" onclick="showAlbumDetail(1)">
+                        <div class="album-card-cover"><i class="fas fa-camera"></i></div>
+                        <div class="album-card-info">
+                            <div class="album-card-title">科學營大成功</div>
+                            <div class="album-card-date"><i class="fas fa-calendar-alt"></i> 2025-10-07<span
+                                    style="margin-left:auto; font-size:12px; color:#555;">3 個項目</span></div>
+                            <div class="album-card-desc">為期三天的科學營圓滿落幕，收錄了所有精彩的瞬間！感謝所有參與的學生和志工！</div>
+                        </div>
+                    </div>
+                    <div class="album-card" data-album-id="2" onclick="showAlbumDetail(2)">
+                        <div class="album-card-cover"
+                            style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);"><i
+                                class="fas fa-users"></i></div>
+                        <div class="album-card-info">
+                            <div class="album-card-title">新進志工培訓</div>
+                            <div class="album-card-date"><i class="fas fa-calendar-alt"></i> 2025-10-20<span
+                                    style="margin-left:auto; font-size:12px; color:#555;">2 個項目</span></div>
+                            <div class="album-card-desc">新進志工訓練照片，大家學習得很認真！期待你們在未來的活動中大放異彩！</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="albumDetailView" class="album-detail-view">
+                <div class="detail-header">
+                    <button class="back-btn" onclick="showAlbumList()">
+                        <i class="fas fa-chevron-left"></i> 返回相簿列表
+                    </button>
+                    <h2 id="detailAlbumTitle" style="color:#333; font-weight:700;">相簿名稱</h2>
+                    <p id="detailAlbumDate" style="color:#8360c3; font-weight:500;"></p>
+                </div>
+
+                <div class="upload-form-group" onclick="document.getElementById('mediaUploadInput').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>點擊上傳照片或影片（可多選）</p>
+                    <input type="file" id="mediaUploadInput" class="upload-file-input" accept="image/*,video/*" multiple
+                        onchange="uploadMedia(this.files)">
+                </div>
+
+                <div class="media-grid" id="mediaGrid">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addAlbumModalOverlay" onclick="closeModal(event, 'addAlbumModalOverlay')">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>新增活動相簿</h2>
+                <button class="modal-close" onclick="closeModal(null, 'addAlbumModalOverlay')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="albumForm">
+                    <div class="form-group">
+                        <label>活動名稱 *</label>
+                        <input type="text" id="albumTitle" placeholder="請輸入活動名稱" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>活動日期 *</label>
+                        <input type="date" id="albumDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>活動描述</label>
+                        <textarea id="albumDesc" placeholder="請輸入相簿描述"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal(null, 'addAlbumModalOverlay')">取消</button>
+                <button class="btn-submit" onclick="submitAlbum()">確定新增</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模擬數據庫：活動相簿列表
+        let albumsData = [
+            { id: 1, title: '科學營大成功', date: '2025-10-07', desc: '為期三天的科學營圓滿落幕，收錄了所有精彩的瞬間！感謝所有參與的學生和志工！', coverColor: '#8360c3' },
+            { id: 2, title: '新進志工培訓', date: '2025-10-20', desc: '新進志工訓練照片，大家學習得很認真！期待你們在未來的活動中大放異彩！', coverColor: '#f39c12' }
+        ];
+
+        // 模擬數據庫：媒體檔案 (Media) - 這裡使用圖片或影片的 URL/路徑
+        let mediaData = {
+            1: [ // 科學營大成功 (圖片/影片範例)
+                { id: 'm1', type: 'image', url: 'https://picsum.photos/id/1018/300/300' },
+                { id: 'm2', type: 'image', url: 'https://picsum.photos/id/1020/300/300' },
+                { id: 'm3', type: 'video', url: 'https://www.w3schools.com/html/mov_bbb.mp4' } // 模擬影片
+            ],
+            2: [ // 新進志工培訓
+                { id: 'm6', type: 'image', url: 'https://picsum.photos/id/1040/300/300' },
+                { id: 'm7', type: 'image', url: 'https://picsum.photos/id/1050/300/300' }
+            ]
+        };
+
+        let currentAlbumId = null; // 當前查看的相簿 ID
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderAlbumList();
+
+            // 關閉下拉選單/子選單的通用監聽器
+            document.addEventListener('click', function (e) {
+                // 處理子選單收起邏輯 (從原檔案複製)
+                if (!e.target.closest('.menu')) {
+                    document.querySelectorAll('.menu-item').forEach(item => {
+                        if (!item.querySelector('.menu-link.active')) {
+                            item.classList.remove('expanded');
+                            const submenu = item.querySelector('.submenu');
+                            if (submenu) {
+                                submenu.classList.remove('show');
+                            }
+                        }
+                    });
+                }
+
+                // 處理 Header 下拉選單收起邏輯 (從原檔案複製)
+                if (!e.target.closest('.header-right')) {
+                    document.getElementById('dropdown').classList.remove('show');
+
+                    // 確保通知面板也可以收起
+                    const notificationPanel = document.getElementById('notificationPanel');
+                    if (notificationPanel && !e.target.closest('#notificationIcon')) {
+                        notificationPanel.style.display = 'none';
+                    }
+                }
+            });
+
+            // 點擊頭像/鈴鐺圖標切換下拉選單/通知面板
+            document.getElementById('avatar').addEventListener('click', () => toggleDropdown('dropdown'));
+
+            const notificationIcon = document.getElementById('notificationIcon');
+            const notificationPanel = document.getElementById('notificationPanel');
+            if (notificationIcon && notificationPanel) {
+                notificationIcon.addEventListener('click', (e) => {
+                    e.stopPropagation(); // 阻止事件冒泡到 document 的點擊事件
+                    // 先關閉頭像下拉選單
+                    document.getElementById('dropdown').classList.remove('show');
+
+                    // 切換通知面板的顯示狀態
+                    if (notificationPanel.style.display === 'block') {
+                        notificationPanel.style.display = 'none';
+                    } else {
+                        notificationPanel.style.display = 'block';
+                    }
+                });
+
+                // 阻止在通知面板內點擊時關閉面板
+                notificationPanel.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
+        });
+
+        // ------------------------------------
+        // Header & Sidebar 功能
+        // ------------------------------------
+
+        // Header 下拉選單切換
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            const isShown = dropdown.classList.contains('show');
+
+            // 先關閉其他下拉選單/通知面板
+            document.getElementById('dropdown').classList.remove('show');
+            const notificationPanel = document.getElementById('notificationPanel');
+            if (notificationPanel) {
+                notificationPanel.style.display = 'none';
+            }
+
+            if (!isShown) {
+                dropdown.classList.add('show');
+            }
+        }
+
+        // 側邊欄子選單開合 (從原檔案複製)
+        function toggleMenu(element) {
+            const menuItem = element.parentElement;
+            const submenu = menuItem.querySelector('.submenu');
+            const isExpanded = menuItem.classList.contains('expanded');
+
+            document.querySelectorAll('.menu-item').forEach(item => {
+                if (item !== menuItem) {
+                    item.classList.remove('expanded');
+                    const otherSubmenu = item.querySelector('.submenu');
+                    if (otherSubmenu) {
+                        otherSubmenu.classList.remove('show');
+                    }
+                }
+            });
+
+            if (isExpanded) {
+                menuItem.classList.remove('expanded');
+                submenu.classList.remove('show');
+            } else {
+                menuItem.classList.add('expanded');
+                submenu.classList.add('show');
+            }
+        }
+
+        // 通知面板虛擬動作（無實際數據操作）
+        function markAllAsRead() { alert('所有通知已標記為已讀 (模擬操作)'); }
+        function clearAllNotifications() {
+            const list = document.getElementById('notificationList');
+            list.innerHTML = '<div class="notification-empty"><i class="fas fa-bell-slash"></i><p>目前沒有新通知</p></div>';
+            alert('所有通知已清除 (模擬操作)');
+            document.getElementById('notificationIcon').querySelector('.icon').style.setProperty('--content', '0');
+        }
+
+        // ------------------------------------
+        // 相簿列表視圖操作
+        // ------------------------------------
+
+        // 渲染相簿列表
+        function renderAlbumList() {
+            const albumList = document.getElementById('albumList');
+            albumList.innerHTML = ''; // 清空現有內容
+
+            if (albumsData.length === 0) {
+                albumList.innerHTML = '<p style="text-align:center; color:#999; grid-column: 1 / -1;">目前沒有活動相簿，請點擊「新增活動相簿」建立。</p>';
+                return;
+            }
+
+            albumsData.forEach(album => {
+                const mediaCount = mediaData[album.id] ? mediaData[album.id].length : 0;
+                const albumCard = document.createElement('div');
+                albumCard.className = 'album-card';
+                albumCard.setAttribute('data-album-id', album.id);
+                albumCard.onclick = () => showAlbumDetail(album.id);
+
+                albumCard.innerHTML = `
+                    <div class="album-card-cover" style="background: linear-gradient(135deg, ${album.coverColor || '#8360c3'} 0%, #2ebf91 100%);">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="album-card-info">
+                        <div class="album-card-title">${album.title}</div>
+                        <div class="album-card-date">
+                            <i class="fas fa-calendar-alt"></i> ${album.date}
+                            <span style="margin-left:auto; font-size:12px; color:#555;">${mediaCount} 個項目</span>
+                        </div>
+                        <div class="album-card-desc" title="${album.desc}">${album.desc}</div>
+                    </div>
+                `;
+                albumList.appendChild(albumCard);
+            });
+        }
+
+        // 開啟新增相簿彈窗
+        function openAddAlbumModal() {
+            document.getElementById('addAlbumModalOverlay').classList.add('show');
+        }
+
+        // 關閉 Modal (通用功能)
+        function closeModal(event, overlayId) {
+            // 確保點擊的是背景層而非 Modal 內容
+            if (!event || event.target.id === overlayId || event === null) {
+                document.getElementById(overlayId).classList.remove('show');
+                document.getElementById('albumForm').reset();
+            }
+        }
+
+        // 提交新增相簿
+        function submitAlbum() {
+            const title = document.getElementById('albumTitle').value.trim();
+            const date = document.getElementById('albumDate').value;
+            const desc = document.getElementById('albumDesc').value.trim() || '無描述';
+
+            if (!title || !date) {
+                alert('請填寫活動名稱和日期！');
+                return;
+            }
+
+            // 隨機選一個顏色作為封面背景
+            const colors = ['#8360c3', '#2ebf91', '#e74c3c', '#f39c12', '#9b59b6'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+            const newId = albumsData.length > 0 ? Math.max(...albumsData.map(a => a.id)) + 1 : 1;
+
+            const newAlbum = {
+                id: newId,
+                title: title,
+                date: date,
+                desc: desc,
+                coverColor: randomColor
+            };
+
+            albumsData.push(newAlbum);
+            mediaData[newId] = []; // 初始化媒體列表
+
+            renderAlbumList(); // 重新渲染列表
+            closeModal(null, 'addAlbumModalOverlay');
+            alert(`✅ 活動相簿「${title}」已成功新增！`);
+        }
+
+        // ------------------------------------
+        // 相簿詳情（圖片牆）視圖操作
+        // ------------------------------------
+
+        // 顯示相簿詳情頁
+        function showAlbumDetail(albumId) {
+            const album = albumsData.find(a => a.id === albumId);
+            if (!album) return;
+
+            currentAlbumId = albumId;
+
+            // 更新詳情標題
+            document.getElementById('detailAlbumTitle').textContent = album.title;
+            document.getElementById('detailAlbumDate').textContent = `日期: ${album.date}`;
+
+            // 渲染媒體牆
+            renderMediaGrid(albumId);
+
+            // 切換視圖
+            document.getElementById('albumListView').style.display = 'none';
+            document.getElementById('albumDetailView').style.display = 'block';
+        }
+
+        // 返回相簿列表
+        function showAlbumList() {
+            currentAlbumId = null;
+            document.getElementById('albumListView').style.display = 'block';
+            document.getElementById('albumDetailView').style.display = 'none';
+            // 重新渲染列表以更新數量
+            renderAlbumList();
+        }
+
+        // 渲染媒體牆 (學生端看到的效果)
+        function renderMediaGrid(albumId) {
+            const mediaGrid = document.getElementById('mediaGrid');
+            mediaGrid.innerHTML = '';
+
+            const albumMedia = mediaData[albumId] || [];
+
+            if (albumMedia.length === 0) {
+                mediaGrid.innerHTML = '<p style="text-align:center; color:#999; grid-column: 1 / -1; padding: 20px;">此相簿目前沒有任何照片或影片。</p>';
+                return;
+            }
+
+            albumMedia.forEach(media => {
+                const mediaItem = document.createElement('div');
+                mediaItem.className = 'media-item';
+
+                let mediaElement;
+                if (media.type === 'image') {
+                    // 學生端點擊圖片放大模擬
+                    mediaElement = `<img src="${media.url}" alt="活動照片" onclick="openLightbox('${media.url}')">`;
+                } else if (media.type === 'video') {
+                    // 學生端可播放影片
+                    mediaElement = `<video src="${media.url}" controls></video>`;
+                }
+
+                mediaItem.innerHTML = `
+                    ${mediaElement}
+                    <button class="delete-btn" title="刪除" onclick="deleteMedia(event, '${albumId}', '${media.id}')">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                `;
+                mediaGrid.appendChild(mediaItem);
+            });
+        }
+
+        // 刪除照片/影片
+        function deleteMedia(event, albumId, mediaId) {
+            event.stopPropagation();
+            if (confirm('確定要從相簿中刪除此項目嗎？')) {
+                // 模擬刪除數據
+                mediaData[albumId] = mediaData[albumId].filter(m => m.id !== mediaId);
+                renderMediaGrid(albumId);
+                // 由於媒體數據改變，也需要更新相簿列表以顯示正確的計數
+                renderAlbumList();
+                alert('✅ 項目已刪除！');
+            }
+        }
+
+        // 模擬上傳媒體檔案（管理員功能）
+        function uploadMedia(files) {
+            if (!currentAlbumId) return alert('錯誤：未選定相簿！');
+
+            const albumId = currentAlbumId;
+            const currentMedia = mediaData[albumId];
+
+            const uploadedCount = files.length;
+            if (uploadedCount === 0) return;
+
+            for (let i = 0; i < uploadedCount; i++) {
+                const file = files[i];
+                const fileType = file.type.startsWith('image/') ? 'image' :
+                    file.type.startsWith('video/') ? 'video' : null;
+
+                if (!fileType) {
+                    console.warn('不支援的檔案類型:', file.type);
+                    continue;
+                }
+
+                // 模擬檔案上傳：創建一個暫時的 URL 供瀏覽器顯示
+                const tempUrl = URL.createObjectURL(file);
+                const newMediaId = 'm' + Date.now() + i;
+
+                currentMedia.push({
+                    id: newMediaId,
+                    type: fileType,
+                    url: tempUrl // 實際應替換為伺服器上的永久 URL
+                });
+            }
+
+            renderMediaGrid(albumId); // 重新渲染媒體牆
+            document.getElementById('mediaUploadInput').value = ''; // 清空檔案選擇器
+            alert(`✅ 成功上傳 ${uploadedCount} 個項目到相簿！`);
+        }
+
+        // 學生端點擊圖片放大燈箱 (LightBox) 模擬
+        function openLightbox(url) {
+            // 這是給學生看的「照片牆」點擊放大效果的模擬
+            window.open(url, '_blank', 'width=800,height=600');
+        }
+
+    </script>
+</body>
+
+</html>

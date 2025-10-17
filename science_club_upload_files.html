@@ -10,11 +10,11 @@
     />
     <script src="notification-center.js" defer></script>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
       html,
       body {
@@ -25,17 +25,17 @@
         overflow: hidden;
       }
 
-      .header {
-        height: 70px;
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 30px;
-        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-        position: relative;
-        z-index: 100;
-      }
+        .header {
+            height: 70px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 100;
+        }
 
       .icon-wrapper {
         position: relative;
@@ -174,10 +174,19 @@
         box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
       }
 
-      .avatar i {
-        font-size: 20px;
-        color: white;
-      }
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
 
       .dropdown {
         position: absolute;
@@ -1250,26 +1259,34 @@
             </div>
           </div>
 
-          <div class="menu-item">
-            <a href="science_club_name_manage.html" class="menu-link">
-              <i class="fas fa-user-edit"></i>
-              報名人員名單管理
-            </a>
-          </div>
+        .zone-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid #8360c3;
+        }
+        .zone-rules { color:#666; font-size:13px; line-height:1.6; padding:12px; background:#fff; border:1px dashed #e1e8ed; border-radius:8px; }
+        .allowed-types { font-size:12px; color:#555; margin-top:6px; }
 
-          <div class="menu-item">
-            <a href="science_club_statistics.html" class="menu-link">
-              <i class="fas fa-trophy"></i>
-              統計比賽名次
-            </a>
-          </div>
+        .zone-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
 
-          <div class="menu-item">
-            <a href="science_club_upload_files.html" class="menu-link active">
-              <i class="fas fa-upload"></i>
-              開放上傳檔案
-            </a>
-          </div>
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
 
           <div class="menu-item">
             <a href="science_club_request_review.html" class="menu-link">
@@ -1613,7 +1630,6 @@
         } catch (error) {
           console.error('載入檔案數量失敗:', error);
         }
-      }
 
       // ==========================================
       // 渲染上傳區列表
@@ -2107,5 +2123,6 @@
         return div.innerHTML;
       }
     </script>
-  </body>
+</body>
+
 </html>

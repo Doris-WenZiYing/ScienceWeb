@@ -16,13 +16,12 @@
         box-sizing: border-box;
       }
 
-      html,
-      body {
-        height: 100%;
-        font-family: "Microsoft JhengHei", "Arial", sans-serif;
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        overflow: hidden;
-      }
+    html, body {
+      height: 100%;
+      font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      overflow: hidden;
+    }
 
       .notification-badge {
         position: absolute;
@@ -279,15 +278,15 @@
         z-index: 100;
       }
 
-      .header::before {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
-      }
+    .header::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+    }
 
       .header-left {
         display: flex;
@@ -297,9 +296,9 @@
         transition: all 0.3s ease;
       }
 
-      .header-left:hover {
-        transform: scale(1.02);
-      }
+    .header-left:hover {
+      transform: scale(1.02);
+    }
 
       .header img.logo {
         height: 50px;
@@ -435,10 +434,12 @@
         box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
       }
 
-      .avatar i {
-        font-size: 20px;
-        color: white;
-      }
+    .icon i {
+      font-size: 20px;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      animation: bellShake 0.5s ease-in-out infinite alternate;
+    }
 
       .dropdown {
         position: absolute;
@@ -502,15 +503,10 @@
         overflow-x: hidden;
       }
 
-      .sidebar::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 4px;
-        height: 100%;
-        background: linear-gradient(180deg, #8360c3 0%, #2ebf91 100%);
-      }
+    @keyframes bellShake {
+      0% { transform: rotate(-5deg); }
+      100% { transform: rotate(5deg); }
+    }
 
       .menu {
         padding: 20px 0;
@@ -524,15 +520,15 @@
         width: 6px;
       }
 
-      .menu::-webkit-scrollbar-thumb {
-        background: rgba(131, 96, 195, 0.3);
-        border-radius: 3px;
-      }
+    .avatar:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
+    }
 
-      .menu-item {
-        display: block;
-        position: relative;
-      }
+    .avatar i {
+      font-size: 20px;
+      color: white;
+    }
 
       .menu-link {
         display: flex;
@@ -547,40 +543,55 @@
         white-space: nowrap;
       }
 
-      .menu-link:hover,
-      .menu-link.active {
-        color: #8360c3;
-        background: rgba(131, 96, 195, 0.1);
-        border-left: 4px solid #8360c3;
-        transform: translateX(5px);
-      }
+    @keyframes dropdownFade {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-      .menu-link i {
-        margin-right: 12px;
-        width: 20px;
-        font-size: 16px;
-      }
+    .dropdown a {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
 
-      .menu-arrow {
-        margin-left: auto;
-        font-size: 12px;
-        transition: transform 0.3s ease;
-      }
+    .dropdown a:hover {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+    }
 
-      .menu-item.expanded .menu-arrow {
-        transform: rotate(180deg);
-      }
+    .dropdown a i {
+      margin-right: 8px;
+      width: 16px;
+    }
 
-      .submenu {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease;
-        background: rgba(131, 96, 195, 0.05);
-      }
+    .notification-panel {
+      position: absolute;
+      top: 65px;
+      right: 80px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      display: none;
+      width: 380px;
+      max-height: 500px;
+      z-index: 1000;
+      animation: dropdownFade 0.3s ease;
+      overflow: hidden;
+    }
 
-      .submenu.show {
-        max-height: 500px;
-      }
+    .notification-header {
+      padding: 20px;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 15px 15px 0 0;
+    }
 
       .submenu-link {
         display: flex;
@@ -595,34 +606,41 @@
         white-space: nowrap;
       }
 
-      .submenu-link:hover,
-      .submenu-link.active {
-        color: #8360c3;
-        background: rgba(131, 96, 195, 0.1);
-        border-left: 4px solid #8360c3;
-        transform: translateX(5px);
-      }
+    .notification-actions {
+      display: flex;
+      gap: 10px;
+    }
 
-      .submenu-link i {
-        margin-right: 10px;
-        width: 16px;
-        font-size: 14px;
-      }
+    .notification-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s ease;
+    }
 
-      .content {
-        flex: 1;
-        padding: 30px;
-        overflow-y: auto;
-      }
+    .notification-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
 
-      .content::-webkit-scrollbar {
-        width: 8px;
-      }
+    .notification-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
 
-      .content::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        border-radius: 4px;
-      }
+    .notification-item {
+      padding: 15px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      gap: 12px;
+    }
 
       .page-header {
         background: rgba(255, 255, 255, 0.95);
@@ -1013,7 +1031,17 @@
           </a>
         </div>
       </div>
+      <div class="avatar" id="avatar">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <div class="dropdown" id="dropdown">
+        <a href="login_science_club.html">
+          <i class="fas fa-sign-out-alt"></i>
+          登出
+        </a>
+      </div>
     </div>
+  </div>
 
     <div class="main">
       <div class="sidebar">
@@ -1031,12 +1059,12 @@
               活動相簿
             </a>
           </div>
-
-          <div class="menu-item">
-            <div class="menu-link" onclick="toggleMenu(this); return false;">
-              <i class="fas fa-bullhorn"></i>
-              發佈公告/活動/表單
-              <i class="fas fa-chevron-down menu-arrow"></i>
+          <div class="submenu">
+            <div class="submenu-item">
+              <a href="science_club_publish_announcement.html" class="submenu-link">
+                <i class="fas fa-bullhorn"></i>
+                發佈公告
+              </a>
             </div>
             <div class="submenu">
               <div class="submenu-item">
@@ -1064,28 +1092,35 @@
                 </a>
               </div>
             </div>
+            <div class="submenu-item">
+              <a href="science_club_table_publish.html" class="submenu-link">
+                <i class="fas fa-comment-alt"></i>
+                發佈活動反饋表單
+              </a>
+            </div>
           </div>
+        </div>
 
-          <div class="menu-item">
-            <a href="science_club_name_manage.html" class="menu-link">
-              <i class="fas fa-user-edit"></i>
-              報名人員名單管理
-            </a>
-          </div>
+        <div class="menu-item">
+          <a href="science_club_name_manage.html" class="menu-link">
+            <i class="fas fa-user-edit"></i>
+            報名人員名單管理
+          </a>
+        </div>
 
-          <div class="menu-item">
-            <a href="science_club_statistics.html" class="menu-link active">
-              <i class="fas fa-trophy"></i>
-              統計比賽名次
-            </a>
-          </div>
+        <div class="menu-item">
+          <a href="science_club_statistics.html" class="menu-link active">
+            <i class="fas fa-trophy"></i>
+            統計比賽名次
+          </a>
+        </div>
 
-          <div class="menu-item">
-            <a href="science_club_upload_files.html" class="menu-link">
-              <i class="fas fa-upload"></i>
-              開放上傳檔案
-            </a>
-          </div>
+        <div class="menu-item">
+          <a href="science_club_upload_files.html" class="menu-link">
+            <i class="fas fa-upload"></i>
+            開放上傳檔案
+          </a>
+        </div>
 
           <div class="menu-item">
             <a href="science_club_request_review.html" class="menu-link">
@@ -1107,6 +1142,18 @@
               圖片識別
             </a>
           </div>
+          <div class="filter-group">
+            <label class="filter-label">查詢</label>
+            <input type="text" class="filter-input" id="searchInput" placeholder="搜尋姓名、學號、班級..." onkeyup="searchRankings()">
+          </div>
+          <button class="btn btn-primary" onclick="updateRankings()">
+            <i class="fas fa-sync-alt"></i>
+            更新數據
+          </button>
+          <button class="btn btn-secondary" onclick="exportRankings()">
+            <i class="fas fa-download"></i>
+            匯出報表
+          </button>
         </div>
       </div>
 
@@ -1166,7 +1213,25 @@
               匯出報表
             </button>
           </div>
+        `;
+        return;
+      }
+      notificationList.innerHTML = notifications.map(notif => `
+        <div class="notification-item ${notif.read ? '' : 'unread'}" onclick="markAsRead(${notif.id})">
+          <div class="notification-icon ${notif.type}">
+            <i class="fas ${notif.icon}"></i>
+          </div>
+          <div class="notification-content">
+            <div class="notification-title">${notif.title}</div>
+            <div class="notification-text">${notif.text}</div>
+            <div class="notification-time">${notif.time}</div>
+          </div>
+          <button class="notification-delete" onclick="deleteNotification(event, ${notif.id})">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
+      `).join('');
+    }
 
         <div class="results-section">
           <div class="section-title">

@@ -1826,14 +1826,14 @@
               <div class="announcement-meta">更新時間：${new Date(d.savedAt || d.savedAt || d.savedAt).toLocaleString('zh-TW')}</div>
             </div>
             <div class="announcement-actions" style="display:flex; gap:8px;">
-              <button class="btn btn-xs btn-success" onclick="publishDraft(${d.id})"><i class=\"fas fa-paper-plane\"></i> 發佈</button>
-              <button class="btn btn-xs btn-edit" onclick="editDraft(${d.id})"><i class=\"fas fa-edit\"></i> 修改</button>
-              <button class="btn btn-xs btn-delete" onclick="deleteDraft(${d.id})"><i class=\"fas fa-trash\"></i> 刪除</button>
+              <button style="background:#2ebf91; color:#fff; border:none; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:6px; transition:all 0.3s;" onclick="publishDraft(${d.id})" onmouseover="this.style.background='#26a87e'" onmouseout="this.style.background='#2ebf91'"><i class="fas fa-paper-plane"></i> 發佈</button>
+              <button style="background:#f0f0f0; color:#666; border:none; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:6px; transition:all 0.3s;" onclick="editDraft(${d.id})" onmouseover="this.style.background='#e0e0e0'" onmouseout="this.style.background='#f0f0f0'"><i class="fas fa-edit"></i> 修改</button>
+              <button style="background:#ffe5e5; color:#e74c3c; border:none; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:6px; transition:all 0.3s;" onclick="deleteDraft(${d.id})" onmouseover="this.style.background='#ffd5d5'" onmouseout="this.style.background='#ffe5e5'"><i class="fas fa-trash"></i> 刪除</button>
             </div>`;
           container.appendChild(card);
         });
       }
-
+      
       function editDraft(id) {
         const drafts = loadDrafts();
         const d = drafts.find(x => x.id === id);

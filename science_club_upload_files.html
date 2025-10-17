@@ -1195,16 +1195,20 @@
                 </div>
             </div>
 
-            <div class="toolbar">
-                <input type="text" id="searchInput" placeholder="搜尋上傳區（標題/類別/描述）" oninput="renderUploadZones()" />
-                <button class="btn-light" onclick="clearSearch()"><i class="fas fa-times"></i> 清除</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div class="filter-chips" style="margin: 0;">
+                    <div class="chip active" id="chip_all" onclick="setStatusFilter('all')">全部</div>
+                    <div class="chip" id="chip_active" onclick="setStatusFilter('active')">開放中</div>
+                    <div class="chip" id="chip_closed" onclick="setStatusFilter('closed')">已截止</div>
+                </div>
+
+                <div class="toolbar" style="margin: 0;">
+                    <input type="text" id="searchInput" placeholder="搜尋上傳區（標題/類別/描述）" oninput="renderUploadZones()" />
+                    <button class="btn-light" onclick="clearSearch()"><i class="fas fa-times"></i> 清除</button>
+                </div>
             </div>
 
-            <div class="filter-chips">
-                <div class="chip active" id="chip_all" onclick="setStatusFilter('all')">全部</div>
-                <div class="chip" id="chip_active" onclick="setStatusFilter('active')">開放中</div>
-                <div class="chip" id="chip_closed" onclick="setStatusFilter('closed')">已截止</div>
-            </div>
+
 
             <div class="upload-zones-container" id="uploadZones">
                 <!-- 上傳區將由 JavaScript 動態生成 -->

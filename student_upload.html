@@ -2,118 +2,92 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
-  <title>上傳個人證照/獎狀</title>
+  <title>檔案上傳</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap" rel="stylesheet" />
   <style>
-    body, html { 
-      margin:0; padding:0; 
-      font-family:'Microsoft JhengHei','Noto Sans TC',sans-serif;
-      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); 
-      height:100%; 
-    }
-
-    .header { 
-      height:70px; 
-      background:linear-gradient(135deg,#ffffff 0%,#f8f9fa 100%);
-      display:flex; align-items:center; justify-content:space-between; 
-      padding:0 30px; 
-      box-shadow:0 2px 20px rgba(0,0,0,0.1); 
-      position:relative; z-index:100; 
-    }
-    .header::before { 
-      content:''; position:absolute; bottom:0; left:0; right:0; height:3px;
-      background:linear-gradient(90deg,#667eea 0%,#764ba2 100%); 
-    }
+    html, body { margin:0; padding:0; height:100%; font-family:'Microsoft JhengHei','Noto Sans TC',sans-serif; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
+    .header { height:70px; display:flex; align-items:center; justify-content:space-between; padding:0 30px; background:linear-gradient(135deg,#fff 0%,#f8f9fa 100%); box-shadow:0 2px 20px rgba(0,0,0,0.1); position:relative; z-index:100; }
+    .header::before { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#667eea 0%,#764ba2 100%); }
     .header img.logo { height:50px; cursor:pointer; }
     .header-right { display:flex; align-items:center; gap:25px; position:relative; }
-    .icon,.avatar { 
-      width:40px; height:40px; border-radius:50%;
-      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); 
-      color:white; display:flex; align-items:center; justify-content:center; 
-      cursor:pointer; 
-    }
-
-    /* 下拉選單 */
-    .dropdown-menu {
-      position: absolute;
-      top: 70px;
-      right: 0;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-      display: none;
-      flex-direction: column;
-      min-width: 140px;
-      z-index: 200;
-    }
-    .dropdown-menu a {
-      padding: 10px 15px;
-      text-decoration: none;
-      color: #333;
-      display: block;
-      font-size: 14px;
-    }
-    .dropdown-menu a:hover {
-      background: #f5f5f5;
-      color: #667eea;
-    }
-
-    .main { display:flex; height:calc(100% - 70px); }
-
-    /* 側邊欄 */
-    .sidebar { 
-      width:250px; background:rgba(255,255,255,0.95); 
-      backdrop-filter:blur(10px); display:flex; flex-direction:column; 
-      padding-top:30px; overflow-y:auto;
-      scrollbar-width: thin; scrollbar-color: #667eea rgba(0,0,0,0.1);
-    }
-    .sidebar::-webkit-scrollbar { width: 8px; }
-    .sidebar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 4px; }
-    .sidebar::-webkit-scrollbar-thumb { background-color: #667eea; border-radius: 4px; }
-
-    .menu a { 
-      display:flex; align-items:center; padding:15px 30px; 
-      text-decoration:none; color:#555; font-size:16px; transition:all 0.3s ease; 
-      border-left:4px solid transparent; 
-    }
-    .menu a:hover,.menu a.active { 
-      color:#667eea; background:rgba(102,126,234,0.1); border-left:4px solid #667eea; 
-    }
+    .icon, .avatar { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; cursor:pointer; }
+    .dropdown-menu { position: absolute; top: 70px; right: 0; background: white; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); display: none; flex-direction: column; min-width: 140px; z-index: 200; }
+    .dropdown-menu a { padding: 10px 15px; text-decoration: none; color: #333; display: block; font-size: 14px; }
+    .dropdown-menu a:hover { background: #f5f5f5; color: #667eea; }
+    .main { display:flex; height:calc(100% - 70px); min-height:0; }
+    .sidebar { width:250px; background:rgba(255,255,255,0.95); backdrop-filter:blur(10px); display:flex; flex-direction:column; padding-top:30px; overflow-y:auto; min-height:0; scrollbar-width: thin; scrollbar-color: #667eea rgba(0,0,0,0.1); transition:all 0.3s ease; }
+    .sidebar::-webkit-scrollbar { width:8px; }
+    .sidebar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius:4px; }
+    .sidebar::-webkit-scrollbar-thumb { background-color:#667eea; border-radius:4px; }
+    .menu a { display:flex; align-items:center; padding:15px 30px; text-decoration:none; color:#555; font-size:16px; transition:all 0.3s ease; border-left:4px solid transparent; }
+    .menu a:hover, .menu a.active { color:#667eea; background:rgba(102,126,234,0.1); border-left:4px solid #667eea; }
     .menu a i { margin-right:15px; }
+    .content { flex:1; padding:40px; background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); overflow-y:auto; min-height:0; }
+    .upload-container { max-width:700px; margin:0 auto; padding:35px; background:rgba(255,255,255,0.95); border-radius:20px; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
+    .upload-container h2 { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:10px; color:#333; }
+    .upload-container .subtitle { text-align:center; color:#666; font-size:14px; margin-bottom:25px; }
+    
+    /* 拖曳上傳區域 */
+    .drop-zone { border:2px dashed #667eea; border-radius:12px; padding:40px 20px; text-align:center; background:rgba(102,126,234,0.05); cursor:pointer; transition:all 0.3s ease; margin-bottom:20px; }
+    .drop-zone:hover, .drop-zone.dragover { background:rgba(102,126,234,0.1); border-color:#5a6ddd; }
+    .drop-zone i { font-size:48px; color:#667eea; margin-bottom:15px; }
+    .drop-zone p { margin:5px 0; color:#555; }
+    .drop-zone .hint { font-size:12px; color:#888; margin-top:10px; }
+    #fileInput { display:none; }
 
-    .content { 
-      flex:1; padding:40px; background:rgba(255,255,255,0.1); 
-      backdrop-filter:blur(10px); overflow-y:auto; 
-    }
+    /* 檔案預覽列表 */
+    .file-preview-list { margin:20px 0; max-height:300px; overflow-y:auto; }
+    .file-preview-item { display:flex; align-items:center; justify-content:space-between; padding:12px 15px; background:white; border:1px solid #e0e0e0; border-radius:8px; margin-bottom:10px; transition:all 0.3s ease; }
+    .file-preview-item:hover { border-color:#667eea; box-shadow:0 2px 8px rgba(102,126,234,0.15); }
+    .file-preview-info { display:flex; align-items:center; gap:12px; flex:1; }
+    .file-icon { width:40px; height:40px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+    .file-icon.image { background:#e3f2fd; color:#2196f3; }
+    .file-icon.pdf { background:#ffebee; color:#f44336; }
+    .file-icon.word { background:#e8f5e9; color:#4caf50; }
+    .file-icon.other { background:#f5f5f5; color:#757575; }
+    .file-details { flex:1; min-width:0; }
+    .file-name { font-size:14px; color:#333; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .file-size { font-size:12px; color:#888; margin-top:2px; }
+    .file-size.warning { color:#ff9800; }
+    .file-size.error { color:#f44336; }
+    .remove-file-btn { background:#f44336; color:white; border:none; border-radius:5px; padding:5px 12px; cursor:pointer; font-size:12px; transition:all 0.3s ease; }
+    .remove-file-btn:hover { background:#d32f2f; }
 
-    .upload-container { 
-      background:rgba(255,255,255,0.95); border-radius:20px; padding:30px;
-      box-shadow:0 5px 20px rgba(0,0,0,0.1); max-width:800px; margin:0 auto; text-align:center; 
-    }
-    .upload-container h2 { margin-bottom:25px; color:#333; }
-    .file-input { margin:20px 0; }
+    /* 統計資訊 */
+    .upload-stats { display:flex; justify-content:space-around; padding:15px; background:#f8f9fa; border-radius:10px; margin-bottom:20px; }
+    .stat-item { text-align:center; }
+    .stat-value { font-size:24px; font-weight:bold; color:#667eea; }
+    .stat-label { font-size:12px; color:#888; margin-top:5px; }
 
-    @media (max-width:1024px) { .sidebar { width:200px; } .menu a { font-size:14px; padding:12px 20px; } }
-    @media (max-width:768px) { .main { flex-direction:column; } .sidebar { width:100%; order:2; } .content { order:1; padding:20px; } }
-    @media (max-width:480px) { .header { padding:0 15px; } .header img.logo { height:40px; } .header-right { gap:10px; } .icon,.avatar { width:32px; height:32px; font-size:14px; } .upload-container { padding:15px; } .file-input { margin:15px 0; } }
+    button.upload-btn { width:100%; background:#667eea; color:white; border:none; padding:14px 25px; border-radius:10px; cursor:pointer; font-size:16px; font-weight:600; transition:all 0.3s ease; display:flex; align-items:center; justify-content:center; gap:8px; }
+    button.upload-btn:hover:not(:disabled) { background:#5a6ddd; transform:translateY(-2px); box-shadow:0 4px 12px rgba(102,126,234,0.4); }
+    button.upload-btn:disabled { background:#ccc; cursor:not-allowed; opacity:0.6; }
+    
+    #progressBar { width:100%; background:#eee; border-radius:8px; height:12px; margin-top:20px; display:none; overflow:hidden; }
+    #progress { width:0%; height:12px; background:linear-gradient(90deg,#667eea 0%,#764ba2 100%); border-radius:8px; transition:width 0.3s ease; position:relative; }
+    #progress::after { content:''; position:absolute; top:0; left:0; bottom:0; right:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent); animation:shimmer 2s infinite; }
+    @keyframes shimmer { 0%{transform:translateX(-100%);} 100%{transform:translateX(100%);} }
+    #uploadStatus { margin-top:10px; font-size:14px; color:#555; text-align:center; }
+    
+    @media (max-width:768px) { .main { flex-direction:column; } .sidebar { position:absolute; top:70px; left:-100%; width:200px; height:calc(100% - 70px); z-index:999; padding-top:20px; } .sidebar.active { left:0; } .content { padding:20px; } .upload-container { padding:25px; } .upload-stats { flex-direction:column; gap:10px; } }
+    @media (max-width:480px) { .header { padding:0 15px; } .header img.logo { height:40px; } .header-right { gap:10px; } .icon,.avatar { width:32px; height:32px; font-size:14px; } .drop-zone { padding:30px 15px; } .drop-zone i { font-size:36px; } }
   </style>
 </head>
 <body>
   <div class="header">
-    <img src="image/logo1.gif" alt="Logo" class="logo" onclick="location.href='student_index.html'">
+    <img src="image/logo1.gif" alt="Logo" onclick="location.href='student_index.html'" class="logo">
     <div class="header-right">
       <div class="icon"><i class="fas fa-bell"></i></div>
       <div class="avatar" onclick="toggleMenu()"><i class="fas fa-user"></i></div>
       <div id="userMenu" class="dropdown-menu">
-        <a href="student_profile.html"><i class="fas fa-cog" style="margin-right:8px;"></i>個人設定</a>
         <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt" style="margin-right:8px;"></i>登出</a>
       </div>
     </div>
   </div>
 
   <div class="main">
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
       <div class="menu">
         <a href="student_index.html"><i class="fas fa-home"></i>學生首頁</a>
         <a href="student_activities.html"><i class="fas fa-calendar-alt"></i>活動行事曆</a>
@@ -129,51 +103,242 @@
 
     <div class="content">
       <div class="upload-container">
-        <h2>上傳個人證照 / 獎狀</h2>
-        <form id="uploadForm">
-          <input type="file" id="fileInput" class="file-input" multiple accept="image/*,.pdf,.doc,.docx" />
-          <br/>
-          <button type="submit" style="padding:10px 20px; border:none; background:#667eea; color:white; border-radius:8px; cursor:pointer;">上傳</button>
-        </form>
+        <h2><i class="fas fa-cloud-upload-alt"></i> 上傳個人證照/獎狀</h2>
+        <p class="subtitle">支援 JPG、PNG、PDF、DOC、DOCX 格式，單檔最大 10MB</p>
+        
+        <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p style="font-size:16px; font-weight:600;">點擊選擇檔案或拖曳至此</p>
+          <p>支援多檔案同時上傳</p>
+          <p class="hint">建議檔案大小不超過 10MB</p>
+        </div>
+        <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx">
+
+        <div id="uploadStats" class="upload-stats" style="display:none;">
+          <div class="stat-item">
+            <div class="stat-value" id="fileCount">0</div>
+            <div class="stat-label">已選檔案</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="totalSize">0 MB</div>
+            <div class="stat-label">總大小</div>
+          </div>
+        </div>
+
+        <div id="filePreviewList" class="file-preview-list"></div>
+
+        <button class="upload-btn" id="uploadBtn" onclick="uploadFiles()" disabled>
+          <i class="fas fa-upload"></i> 開始上傳
+        </button>
+        <div id="progressBar"><div id="progress"></div></div>
+        <div id="uploadStatus"></div>
       </div>
     </div>
   </div>
 
   <script>
-    const uploadForm = document.getElementById('uploadForm');
     const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const filePreviewList = document.getElementById('filePreviewList');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadStats = document.getElementById('uploadStats');
+    const fileCountEl = document.getElementById('fileCount');
+    const totalSizeEl = document.getElementById('totalSize');
+    const progressBar = document.getElementById('progressBar');
+    const progress = document.getElementById('progress');
+    const uploadStatus = document.getElementById('uploadStatus');
 
-    function getUploadedFiles() {
-      return JSON.parse(localStorage.getItem('uploadedFiles') || '[]');
-    }
-    function saveUploadedFiles(files) {
-      localStorage.setItem('uploadedFiles', JSON.stringify(files));
-    }
+    let selectedFiles = [];
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-    uploadForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const files = Array.from(fileInput.files);
-      if (files.length === 0) {
-        alert('請選擇檔案');
-        return;
-      }
-      const uploadedFiles = getUploadedFiles();
-      files.forEach(file => { uploadedFiles.push({ name: file.name, type: file.type }); });
-      saveUploadedFiles(uploadedFiles);
-      fileInput.value = '';
-      alert('上傳成功！請到「查看已上傳檔案」頁面查看');
+    // 檔案選擇
+    fileInput.addEventListener('change', (e) => {
+      handleFiles(e.target.files);
     });
 
-    // 下拉選單功能
-    function toggleMenu() {
-      const menu = document.getElementById("userMenu");
-      menu.style.display = (menu.style.display==="flex") ? "none" : "flex";
+    // 拖曳功能
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    function handleFiles(files) {
+      const newFiles = Array.from(files);
+      newFiles.forEach(file => {
+        if (!selectedFiles.find(f => f.name === file.name && f.size === file.size)) {
+          selectedFiles.push(file);
+        }
+      });
+      updatePreview();
     }
-    function logout() { location.href = "login_student.html"; }
-    document.addEventListener("click",(e)=>{
-      const avatar = document.querySelector(".avatar");
-      const menu = document.getElementById("userMenu");
-      if(!avatar.contains(e.target) && !menu.contains(e.target)){ menu.style.display="none"; }
+
+    function updatePreview() {
+      filePreviewList.innerHTML = '';
+      
+      if (selectedFiles.length === 0) {
+        uploadStats.style.display = 'none';
+        uploadBtn.disabled = true;
+        return;
+      }
+
+      uploadStats.style.display = 'flex';
+      uploadBtn.disabled = false;
+
+      let totalSize = 0;
+      selectedFiles.forEach((file, index) => {
+        totalSize += file.size;
+        
+        const fileType = getFileType(file.name);
+        const fileIcon = getFileIcon(fileType);
+        const sizeClass = file.size > MAX_FILE_SIZE ? 'error' : (file.size > MAX_FILE_SIZE * 0.8 ? 'warning' : '');
+        
+        const div = document.createElement('div');
+        div.className = 'file-preview-item';
+        div.innerHTML = `
+          <div class="file-preview-info">
+            <div class="file-icon ${fileType}">
+              <i class="fas ${fileIcon}"></i>
+            </div>
+            <div class="file-details">
+              <div class="file-name" title="${file.name}">${file.name}</div>
+              <div class="file-size ${sizeClass}">
+                ${formatFileSize(file.size)}
+                ${file.size > MAX_FILE_SIZE ? ' - 檔案過大！' : ''}
+              </div>
+            </div>
+          </div>
+          <button class="remove-file-btn" onclick="removeFile(${index})">
+            <i class="fas fa-times"></i> 移除
+          </button>
+        `;
+        filePreviewList.appendChild(div);
+      });
+
+      fileCountEl.textContent = selectedFiles.length;
+      totalSizeEl.textContent = formatFileSize(totalSize);
+    }
+
+    window.removeFile = function(index) {
+      selectedFiles.splice(index, 1);
+      updatePreview();
+    };
+
+    function getFileType(fileName) {
+      const ext = fileName.split('.').pop().toLowerCase();
+      if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext)) return 'image';
+      if (ext === 'pdf') return 'pdf';
+      if (['doc', 'docx'].includes(ext)) return 'word';
+      return 'other';
+    }
+
+    function getFileIcon(fileType) {
+      const icons = {
+        'image': 'fa-file-image',
+        'pdf': 'fa-file-pdf',
+        'word': 'fa-file-word',
+        'other': 'fa-file'
+      };
+      return icons[fileType] || 'fa-file';
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    function uploadFiles() {
+      if (selectedFiles.length === 0) {
+        alert('請先選擇檔案！');
+        return;
+      }
+
+      // 檢查檔案大小
+      const oversizedFiles = selectedFiles.filter(f => f.size > MAX_FILE_SIZE);
+      if (oversizedFiles.length > 0) {
+        alert('部分檔案超過 10MB 限制，請移除後再上傳：\n' + oversizedFiles.map(f => f.name).join('\n'));
+        return;
+      }
+
+      uploadBtn.disabled = true;
+      uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上傳中...';
+      progressBar.style.display = 'block';
+      uploadStatus.textContent = '正在處理檔案...';
+
+      const existingFiles = JSON.parse(localStorage.getItem('uploadedFiles') || '[]');
+      let uploaded = 0;
+
+      selectedFiles.forEach((file, i) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const fileData = {
+            id: Date.now() + i,
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            url: e.target.result,
+            uploadDate: new Date().toISOString()
+          };
+          existingFiles.push(fileData);
+          uploaded++;
+          
+          const percentage = (uploaded / selectedFiles.length * 100);
+          progress.style.width = percentage + '%';
+          uploadStatus.textContent = `已上傳 ${uploaded} / ${selectedFiles.length} 個檔案`;
+
+          if (uploaded === selectedFiles.length) {
+            localStorage.setItem('uploadedFiles', JSON.stringify(existingFiles));
+            setTimeout(() => {
+              uploadStatus.innerHTML = '<i class="fas fa-check-circle" style="color:#4caf50;"></i> 上傳完成！';
+              uploadStatus.style.color = '#4caf50';
+              setTimeout(() => {
+                if (confirm('上傳成功！是否前往「查看上傳檔案」頁面？')) {
+                  location.href = 'student_files.html';
+                } else {
+                  resetUpload();
+                }
+              }, 1000);
+            }, 500);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function resetUpload() {
+      selectedFiles = [];
+      fileInput.value = '';
+      updatePreview();
+      progressBar.style.display = 'none';
+      progress.style.width = '0%';
+      uploadStatus.textContent = '';
+      uploadBtn.disabled = true;
+      uploadBtn.innerHTML = '<i class="fas fa-upload"></i> 開始上傳';
+    }
+
+    function toggleMenu(){
+      const menu=document.getElementById('userMenu');
+      menu.style.display=(menu.style.display==='flex')?'none':'flex';
+    }
+
+    function logout(){ location.href='login_student.html'; }
+
+    document.addEventListener('click',(e)=>{
+      const avatar=document.querySelector('.avatar');
+      const menu=document.getElementById('userMenu');
+      if(!avatar.contains(e.target) && !menu.contains(e.target)){ menu.style.display='none'; }
     });
   </script>
 </body>

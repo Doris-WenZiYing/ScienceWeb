@@ -240,9 +240,9 @@ function handleLogin() {
         // 根據角色跳轉
         $redirect_map = [
             'admin' => 'science_club_event_album.html',
-            'science_club' => 'activity_calendar.html',
+            'science_club' => 'science_club_activity_calendar.html',
             'teacher' => 'teacher_dashboard.html',
-            'student' => 'student_dashboard.html'
+            'student' => 'student_index.html'
         ];
         
         $redirect = $redirect_map[$role] ?? 'index.html';

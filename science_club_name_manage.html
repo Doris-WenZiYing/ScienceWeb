@@ -2,7 +2,7 @@
 <html lang="zh-TW">
   <head>
     <meta charset="UTF-8" />
-    <title>報名人員名單管理 - 科學會管理系統</title>
+    <title>科學會管理系統-報名人員名單管理</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -48,16 +48,21 @@
         display: flex;
         align-items: center;
         gap: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .header-left:hover {
+        transform: scale(1.02);
       }
 
       .header img.logo {
         height: 50px;
-        cursor: pointer;
         filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
         transition: transform 0.3s ease;
       }
 
-      .header img.logo:hover {
+      .header-left:hover .logo {
         transform: scale(1.05);
       }
 
@@ -65,47 +70,102 @@
         font-size: 20px;
         color: #333;
         font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .header-left:hover .header-title {
+        color: #8360c3;
       }
 
       .header-right {
         display: flex;
         align-items: center;
         gap: 25px;
+        position: relative;
       }
 
-      .notification-icon {
+      .icon {
         position: relative;
-        padding: 10px;
+        padding: 12px;
         border-radius: 50%;
         background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        animation: pulse 2s infinite;
       }
 
-      .notification-icon:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(131, 96, 195, 0.4);
+      .icon:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 12px 35px rgba(131, 96, 195, 0.5);
+        background: linear-gradient(135deg, #9d7ce6 0%, #3dd5a3 100%);
       }
 
-      .notification-icon i {
-        font-size: 18px;
+      .icon:active {
+        transform: translateY(-1px) scale(1.05);
+        transition: all 0.1s ease;
+      }
+
+      .icon i {
+        font-size: 20px;
         color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        animation: bellShake 0.5s ease-in-out infinite alternate;
       }
 
-      .notification-badge {
+      .icon::after {
+        content: '3';
         position: absolute;
-        top: -2px;
-        right: -2px;
-        background: #ff4757;
+        top: -5px;
+        right: -5px;
+        background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
         color: white;
         border-radius: 50%;
-        width: 18px;
-        height: 18px;
-        font-size: 11px;
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: bold;
+        box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+        border: 2px solid white;
+        animation: bounce 1s ease-in-out infinite;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+        }
+        50% {
+          box-shadow: 0 4px 25px rgba(131, 96, 195, 0.6);
+        }
+        100% {
+          box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+        }
+      }
+
+      @keyframes bellShake {
+        0% {
+          transform: rotate(-5deg);
+        }
+        100% {
+          transform: rotate(5deg);
+        }
+      }
+
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-3px);
+        }
+        60% {
+          transform: translateY(-2px);
+        }
       }
 
       .avatar {
@@ -124,11 +184,247 @@
 
       .avatar:hover {
         transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
       }
 
       .avatar i {
         font-size: 20px;
         color: white;
+      }
+
+      .dropdown {
+        position: absolute;
+        top: 65px;
+        right: 0;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        display: none;
+        min-width: 120px;
+        z-index: 1000;
+        overflow: hidden;
+        animation: dropdownFade 0.3s ease;
+      }
+
+      @keyframes dropdownFade {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .dropdown a {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .dropdown a:hover {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+      }
+
+      .dropdown a i {
+        margin-right: 8px;
+        width: 16px;
+      }
+
+      /* 通知面板樣式 */
+      .notification-panel {
+        position: absolute;
+        top: 65px;
+        right: 80px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        display: none;
+        width: 380px;
+        max-height: 500px;
+        z-index: 1000;
+        animation: dropdownFade 0.3s ease;
+        overflow: hidden;
+      }
+
+      .notification-header {
+        padding: 20px;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 15px 15px 0 0;
+      }
+
+      .notification-header h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .notification-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .notification-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.3s ease;
+      }
+
+      .notification-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+
+      .notification-list {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .notification-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        display: flex;
+        gap: 12px;
+      }
+
+      .notification-item:hover {
+        background: rgba(131, 96, 195, 0.05);
+      }
+
+      .notification-item.unread {
+        background: rgba(131, 96, 195, 0.08);
+      }
+
+      .notification-item.unread::before {
+        content: '';
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        background: #e74c3c;
+        border-radius: 50%;
+      }
+
+      .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      .notification-icon.activity {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+      }
+
+      .notification-icon.deadline {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+      }
+
+      .notification-icon.announcement {
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        color: white;
+      }
+
+      .notification-content {
+        flex: 1;
+      }
+
+      .notification-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+      }
+
+      .notification-text {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 4px;
+      }
+
+      .notification-time {
+        font-size: 11px;
+        color: #999;
+      }
+
+      .notification-delete {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(231, 76, 60, 0.1);
+        color: #e74c3c;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+
+      .notification-item:hover .notification-delete {
+        opacity: 1;
+      }
+
+      .notification-delete:hover {
+        background: #e74c3c;
+        color: white;
+        transform: scale(1.1);
+      }
+
+      .notification-empty {
+        padding: 60px 20px;
+        text-align: center;
+        color: #999;
+      }
+
+      .notification-empty i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 15px;
+      }
+
+      .notification-list::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .notification-list::-webkit-scrollbar-track {
+        background: #f0f0f0;
+      }
+
+      .notification-list::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        border-radius: 3px;
       }
 
       .main {
@@ -144,7 +440,8 @@
         backdrop-filter: blur(10px);
         box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
         position: relative;
-        overflow: hidden;
+        overflow-y: auto;
+        overflow-x: hidden;
       }
 
       .sidebar::before {
@@ -158,9 +455,11 @@
       }
 
       .menu {
-        height: 100%;
-        overflow-y: auto;
         padding: 20px 0;
+      }
+      
+      .menu-item:first-child {
+        margin-top: 10px;
       }
 
       .menu::-webkit-scrollbar {
@@ -328,11 +627,16 @@
         width: 250px;
       }
 
+      .export-buttons {
+        display: flex;
+        gap: 10px;
+      }
+
       .export-btn {
         background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
         color: white;
         border: none;
-        padding: 10px 25px;
+        padding: 10px 20px;
         border-radius: 25px;
         font-size: 14px;
         cursor: pointer;
@@ -573,6 +877,19 @@
         transform: scale(1.1);
       }
 
+      .sidebar::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .sidebar::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+      }
+
+      .sidebar::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        border-radius: 4px;
+      }
+
       @media (max-width: 1200px) {
         .stats-row {
           grid-template-columns: repeat(2, 1fr);
@@ -600,26 +917,44 @@
         .search-box input {
           width: 100%;
         }
+        .export-buttons {
+          flex-direction: column;
+          width: 100%;
+        }
+        .export-btn {
+          width: 100%;
+          justify-content: center;
+        }
       }
     </style>
   </head>
   <body>
     <div class="header">
-      <div class="header-left">
-        <img
-          src="image/logo1.gif"
-          alt="Logo"
-          class="logo"
-          onclick="location.href='activity_calendar.html';"
-        />
+      <div class="header-left" onclick="location.href='science_club_activity_calendar.html';">
+        <img src="image/logo1.gif" alt="Logo" class="logo" />
       </div>
       <div class="header-right">
-        <div class="notification-icon">
+        <div class="icon" id="notificationIcon">
           <i class="fas fa-bell"></i>
-          <div class="notification-badge">3</div>
         </div>
-        <div class="avatar">
+        <div class="notification-panel" id="notificationPanel">
+          <div class="notification-header">
+            <h3>通知</h3>
+            <div class="notification-actions">
+              <button class="notification-btn" onclick="markAllAsRead()">全部已讀</button>
+              <button class="notification-btn" onclick="clearAllNotifications()">清除全部</button>
+            </div>
+          </div>
+          <div class="notification-list" id="notificationList"></div>
+        </div>
+        <div class="avatar" id="avatar">
           <i class="fas fa-user-shield"></i>
+        </div>
+        <div class="dropdown" id="dropdown">
+          <a href="login_science_club.html">
+            <i class="fas fa-sign-out-alt"></i>
+            登出
+          </a>
         </div>
       </div>
     </div>
@@ -628,7 +963,7 @@
       <div class="sidebar">
         <div class="menu">
           <div class="menu-item">
-            <a href="activity_calendar.html" class="menu-link">
+            <a href="science_club_activity_calendar.html" class="menu-link">
               <i class="fas fa-calendar"></i>
               行事曆
             </a>
@@ -636,7 +971,7 @@
 
           <div class="menu-item">
             <a href="science_club_event_album.html" class="menu-link">
-              <i class="fas fa-home"></i>
+              <i class="fas fa-image"></i>
               活動相簿
             </a>
           </div>
@@ -649,16 +984,13 @@
             </div>
             <div class="submenu">
               <div class="submenu-item">
-                <a href="publish_announcement.html" class="submenu-link active">
+                <a href="science_club_publish_announcement.html" class="submenu-link">
                   <i class="fas fa-bullhorn"></i>
                   發佈公告
                 </a>
               </div>
               <div class="submenu-item">
-                <a
-                  href="science_club_activity_publish.html"
-                  class="submenu-link"
-                >
+                <a href="science_club_activity_publish.html" class="submenu-link">
                   <i class="fas fa-plus-circle"></i>
                   發佈比賽及活動
                 </a>
@@ -694,13 +1026,6 @@
           </div>
 
           <div class="menu-item">
-            <a href="online_scheduling.html" class="menu-link">
-              <i class="fas fa-user-check"></i>
-              線上簽到表
-            </a>
-          </div>
-
-          <div class="menu-item">
             <a href="science_club_request_review.html" class="menu-link">
               <i class="fas fa-file-signature"></i>
               請假申請
@@ -708,21 +1033,14 @@
           </div>
 
           <div class="menu-item">
-            <a href="meeting_records.html" class="menu-link">
+            <a href="science_club_meeting_records.html" class="menu-link">
               <i class="fas fa-clipboard"></i>
               開會紀錄
             </a>
           </div>
 
           <div class="menu-item">
-            <a href="auto_notification.html" class="menu-link">
-              <i class="fas fa-bell"></i>
-              自動推播通知
-            </a>
-          </div>
-
-          <div class="menu-item">
-            <a href="image_recognition.html" class="menu-link">
+            <a href="science_club_image_recognition.html" class="menu-link">
               <i class="fas fa-eye"></i>
               圖片識別
             </a>
@@ -745,10 +1063,16 @@
                 id="searchInput"
               />
             </div>
-            <button class="export-btn" onclick="exportData()">
-              <i class="fas fa-download"></i>
-              匯出名單
+            <div class="export-buttons">
+              <button class="export-btn" onclick="exportToExcel()">
+                <i class="fas fa-file-excel"></i>
+                匯出Excel
+              </button>
+              <button class="export-btn" onclick="exportToWord()">
+                <i class="fas fa-file-word"></i>
+                匯出簽到表
             </button>
+            </div>
           </div>
         </div>
 
@@ -763,35 +1087,8 @@
             onchange="loadRegistrants()"
           >
             <option value="">請選擇要查看的活動</option>
-            <option value="1">科學週競賽</option>
-            <option value="2" selected>化學實驗競賽</option>
-            <option value="3">物理闖關遊戲</option>
-            <option value="4">生物知識競賽</option>
-            <option value="5">科普講座：宇宙奧秘</option>
+            <!-- 已發佈的活動將由 JavaScript 動態載入 -->
           </select>
-        </div>
-
-        <div class="stats-row">
-          <div class="stat-card">
-            <i class="fas fa-users"></i>
-            <h3>156</h3>
-            <p>總報名人數</p>
-          </div>
-          <div class="stat-card">
-            <i class="fas fa-check-circle"></i>
-            <h3>142</h3>
-            <p>已確認</p>
-          </div>
-          <div class="stat-card">
-            <i class="fas fa-clock"></i>
-            <h3>12</h3>
-            <p>待確認</p>
-          </div>
-          <div class="stat-card">
-            <i class="fas fa-times-circle"></i>
-            <h3>2</h3>
-            <p>已取消</p>
-          </div>
         </div>
 
         <div class="table-section">
@@ -807,9 +1104,6 @@
               <button class="filter-btn" onclick="filterStatus('confirmed')">
                 已確認
               </button>
-              <button class="filter-btn" onclick="filterStatus('pending')">
-                待確認
-              </button>
               <button class="filter-btn" onclick="filterStatus('cancelled')">
                 已取消
               </button>
@@ -819,10 +1113,9 @@
             <thead>
               <tr>
                 <th>序號</th>
-                <th>姓名</th>
-                <th>學號</th>
                 <th>班級</th>
-                <th>聯絡電話</th>
+                <th>學號</th>
+                <th>姓名</th>
                 <th>報名時間</th>
                 <th>狀態</th>
                 <th>操作</th>
@@ -831,19 +1124,15 @@
             <tbody id="registrantsTableBody">
               <tr>
                 <td>1</td>
-                <td>王小明</td>
-                <td>A10912345</td>
-                <td>資訊一甲</td>
-                <td>0912-345-678</td>
+                <td>資五忠</td>
+                <td>110534109</td>
+                <td>蕭鈺萱</td>
                 <td>2025-09-20 14:30</td>
                 <td>
                   <span class="status-badge status-confirmed">已確認</span>
                 </td>
                 <td>
                   <div class="action-buttons">
-                    <button class="action-btn" title="查看詳情">
-                      <i class="fas fa-eye"></i>
-                    </button>
                     <button class="action-btn" title="編輯">
                       <i class="fas fa-edit"></i>
                     </button>
@@ -855,19 +1144,15 @@
               </tr>
               <tr>
                 <td>2</td>
-                <td>李小華</td>
-                <td>A10912346</td>
                 <td>電機二乙</td>
-                <td>0923-456-789</td>
+                <td>110534110</td>
+                <td>李小華</td>
                 <td>2025-09-20 15:15</td>
                 <td>
                   <span class="status-badge status-confirmed">已確認</span>
                 </td>
                 <td>
                   <div class="action-buttons">
-                    <button class="action-btn" title="查看詳情">
-                      <i class="fas fa-eye"></i>
-                    </button>
                     <button class="action-btn" title="編輯">
                       <i class="fas fa-edit"></i>
                     </button>
@@ -879,17 +1164,15 @@
               </tr>
               <tr>
                 <td>3</td>
-                <td>張小美</td>
-                <td>A10912347</td>
                 <td>機械三丙</td>
-                <td>0934-567-890</td>
+                <td>110534111</td>
+                <td>張小美</td>
                 <td>2025-09-21 09:20</td>
-                <td><span class="status-badge status-pending">待確認</span></td>
+                <td>
+                  <span class="status-badge status-confirmed">已確認</span>
+                </td>
                 <td>
                   <div class="action-buttons">
-                    <button class="action-btn" title="查看詳情">
-                      <i class="fas fa-eye"></i>
-                    </button>
                     <button class="action-btn" title="編輯">
                       <i class="fas fa-edit"></i>
                     </button>
@@ -901,19 +1184,15 @@
               </tr>
               <tr>
                 <td>4</td>
-                <td>陳小強</td>
-                <td>A10912348</td>
                 <td>化工一甲</td>
-                <td>0945-678-901</td>
+                <td>110534112</td>
+                <td>陳小強</td>
                 <td>2025-09-21 10:45</td>
                 <td>
                   <span class="status-badge status-confirmed">已確認</span>
                 </td>
                 <td>
                   <div class="action-buttons">
-                    <button class="action-btn" title="查看詳情">
-                      <i class="fas fa-eye"></i>
-                    </button>
                     <button class="action-btn" title="編輯">
                       <i class="fas fa-edit"></i>
                     </button>
@@ -925,19 +1204,15 @@
               </tr>
               <tr>
                 <td>5</td>
-                <td>林小芳</td>
-                <td>A10912349</td>
                 <td>土木二乙</td>
-                <td>0956-789-012</td>
+                <td>110534113</td>
+                <td>林小芳</td>
                 <td>2025-09-21 13:30</td>
                 <td>
                   <span class="status-badge status-cancelled">已取消</span>
                 </td>
                 <td>
                   <div class="action-buttons">
-                    <button class="action-btn" title="查看詳情">
-                      <i class="fas fa-eye"></i>
-                    </button>
                     <button class="action-btn" title="編輯">
                       <i class="fas fa-edit"></i>
                     </button>
@@ -949,19 +1224,15 @@
               </tr>
               <tr>
                 <td>6</td>
-                <td>黃小婷</td>
-                <td>A10912350</td>
                 <td>工管三丙</td>
-                <td>0967-890-123</td>
+                <td>110534114</td>
+                <td>黃小婷</td>
                 <td>2025-09-22 08:15</td>
                 <td>
                   <span class="status-badge status-confirmed">已確認</span>
                 </td>
                 <td>
                   <div class="action-buttons">
-                    <button class="action-btn" title="查看詳情">
-                      <i class="fas fa-eye"></i>
-                    </button>
                     <button class="action-btn" title="編輯">
                       <i class="fas fa-edit"></i>
                     </button>
@@ -978,6 +1249,150 @@
     </div>
 
     <script>
+      // 通知數據
+      let notifications = [
+        {
+          id: 1,
+          type: 'activity',
+          icon: 'fa-calendar-check',
+          title: '新活動發布',
+          text: '科學營活動已發布,請查看詳情並報名',
+          time: '2小時前',
+          read: false
+        },
+        {
+          id: 2,
+          type: 'deadline',
+          icon: 'fa-clock',
+          title: '報名即將截止',
+          text: '下月活動報名將於今日16:00截止',
+          time: '5小時前',
+          read: false
+        },
+        {
+          id: 3,
+          type: 'announcement',
+          icon: 'fa-bullhorn',
+          title: '系統公告',
+          text: '月會時間調整至10月15日上午10點',
+          time: '1天前',
+          read: false
+        }
+      ];
+
+      document.addEventListener('DOMContentLoaded', function () {
+        renderNotifications();
+        updateNotificationBadge();
+      });
+
+      // 渲染通知列表
+      function renderNotifications() {
+        const notificationList = document.getElementById('notificationList');
+
+        if (notifications.length === 0) {
+          notificationList.innerHTML = `
+            <div class="notification-empty">
+              <i class="fas fa-bell-slash"></i>
+              <div>暫無通知</div>
+            </div>
+          `;
+          return;
+        }
+
+        notificationList.innerHTML = notifications.map(notif => `
+          <div class="notification-item ${notif.read ? '' : 'unread'}" onclick="markAsRead(${notif.id})">
+            <div class="notification-icon ${notif.type}">
+              <i class="fas ${notif.icon}"></i>
+            </div>
+            <div class="notification-content">
+              <div class="notification-title">${notif.title}</div>
+              <div class="notification-text">${notif.text}</div>
+              <div class="notification-time">${notif.time}</div>
+            </div>
+            <button class="notification-delete" onclick="deleteNotification(event, ${notif.id})">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        `).join('');
+      }
+
+      // 更新通知數量徽章
+      function updateNotificationBadge() {
+        const unreadCount = notifications.filter(n => !n.read).length;
+        const icon = document.querySelector('.icon');
+
+        if (unreadCount > 0) {
+          const style = document.createElement('style');
+          style.textContent = `.icon::after { content: '${unreadCount}'; }`;
+          document.head.appendChild(style);
+        } else {
+          const style = document.createElement('style');
+          style.textContent = `.icon::after { display: none; }`;
+          document.head.appendChild(style);
+        }
+      }
+
+      // 標記單個通知為已讀
+      function markAsRead(id) {
+        const notification = notifications.find(n => n.id === id);
+        if (notification && !notification.read) {
+          notification.read = true;
+          renderNotifications();
+          updateNotificationBadge();
+        }
+      }
+
+      // 標記全部為已讀
+      function markAllAsRead() {
+        notifications.forEach(n => n.read = true);
+        renderNotifications();
+        updateNotificationBadge();
+      }
+
+      // 刪除單個通知
+      function deleteNotification(event, id) {
+        event.stopPropagation();
+        notifications = notifications.filter(n => n.id !== id);
+        renderNotifications();
+        updateNotificationBadge();
+      }
+
+      // 清除全部通知
+      function clearAllNotifications() {
+        if (confirm('確定要清除所有通知嗎?')) {
+          notifications = [];
+          renderNotifications();
+          updateNotificationBadge();
+        }
+      }
+
+      // 通知面板控制
+      const notificationIcon = document.getElementById('notificationIcon');
+      const notificationPanel = document.getElementById('notificationPanel');
+      const avatar = document.getElementById('avatar');
+      const dropdown = document.getElementById('dropdown');
+
+      notificationIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        notificationPanel.style.display = notificationPanel.style.display === 'block' ? 'none' : 'block';
+        dropdown.style.display = 'none';
+      });
+
+      avatar.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        notificationPanel.style.display = 'none';
+      });
+
+      window.addEventListener('click', function (e) {
+        if (!notificationIcon.contains(e.target) && !notificationPanel.contains(e.target)) {
+          notificationPanel.style.display = 'none';
+        }
+        if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.style.display = 'none';
+        }
+      });
+
       function toggleMenu(element) {
         const menuItem = element.parentElement;
         const submenu = menuItem.querySelector(".submenu");
@@ -1005,22 +1420,27 @@
       function loadRegistrants() {
         const select = document.getElementById("activitySelect");
         const selectedActivity = select.options[select.selectedIndex].text;
-        if (select.value) {
+        const selectedValue = select.value;
+        
+        if (selectedValue) {
           console.log("載入活動報名名單:", selectedActivity);
-          // 這裡可以添加實際的載入邏輯
+          
+          // 如果是已發佈的活動，顯示相應的報名名單
+          if (selectedValue.startsWith('published_')) {
+            // 這裡可以根據活動ID載入對應的報名名單
+            // 目前顯示預設的報名名單
+            console.log("載入已發佈活動的報名名單:", selectedActivity);
+          }
         }
       }
 
       function filterStatus(status) {
-        // 移除所有按鈕的 active 狀態
         document.querySelectorAll(".filter-btn").forEach((btn) => {
           btn.classList.remove("active");
         });
-        // 添加 active 到點擊的按鈕
         event.target.classList.add("active");
 
         console.log("篩選狀態:", status);
-        // 這裡可以添加實際的篩選邏輯
         const rows = document.querySelectorAll(".registrants-table tbody tr");
         rows.forEach((row) => {
           const statusBadge = row.querySelector(".status-badge");
@@ -1029,23 +1449,172 @@
           } else {
             const rowStatus = statusBadge.classList.contains("status-confirmed")
               ? "confirmed"
-              : statusBadge.classList.contains("status-pending")
-              ? "pending"
               : "cancelled";
             row.style.display = rowStatus === status ? "" : "none";
           }
         });
       }
 
-      function exportData() {
+      // 匯出Excel檔案
+      function exportToExcel() {
         const select = document.getElementById("activitySelect");
         const selectedActivity = select.options[select.selectedIndex].text;
         if (!select.value) {
-          alert("請先選擇活動！");
+          alert("請先選擇活動!");
           return;
         }
-        alert("正在匯出「" + selectedActivity + "」的報名名單...");
-        // 這裡可以添加實際的匯出邏輯（Excel, CSV等）
+
+        // 取得表格資料
+        const table = document.querySelector('.registrants-table');
+        const rows = Array.from(table.querySelectorAll('tbody tr')).filter(row => row.style.display !== 'none');
+        
+        if (rows.length === 0) {
+          alert("沒有可匯出的資料!");
+          return;
+        }
+
+        // 建立Excel XML格式內容
+        let excelContent = `<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Title>${selectedActivity} - 報名名單</Title>
+ </DocumentProperties>
+ <Styles>
+  <Style ss:ID="Header">
+   <Font ss:Bold="1"/>
+   <Interior ss:Color="#CCCCCC" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="報名名單">
+  <Table>
+   <Row>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">序號</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">班級</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">學號</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">姓名</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">報名時間</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">狀態</Data></Cell>
+   </Row>`;
+
+        rows.forEach(row => {
+          const cells = row.querySelectorAll('td');
+          excelContent += `
+   <Row>
+    <Cell><Data ss:Type="String">${cells[0].textContent.trim()}</Data></Cell>
+    <Cell><Data ss:Type="String">${cells[1].textContent.trim()}</Data></Cell>
+    <Cell><Data ss:Type="String">${cells[2].textContent.trim()}</Data></Cell>
+    <Cell><Data ss:Type="String">${cells[3].textContent.trim()}</Data></Cell>
+    <Cell><Data ss:Type="String">${cells[4].textContent.trim()}</Data></Cell>
+    <Cell><Data ss:Type="String">${cells[5].querySelector('.status-badge').textContent.trim()}</Data></Cell>
+   </Row>`;
+        });
+
+        excelContent += `
+  </Table>
+ </Worksheet>
+</Workbook>`;
+
+        // 下載Excel檔案
+        const blob = new Blob([excelContent], { 
+          type: 'application/vnd.ms-excel' 
+        });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `${selectedActivity}_報名名單.xls`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        alert(`已匯出「${selectedActivity}」的Excel報名名單!`);
+      }
+
+      // 匯出Word簽到表
+      function exportToWord() {
+        const select = document.getElementById("activitySelect");
+        const selectedActivity = select.options[select.selectedIndex].text;
+        if (!select.value) {
+          alert("請先選擇活動!");
+          return;
+        }
+
+        // 取得表格資料
+        const table = document.querySelector('.registrants-table');
+        const rows = Array.from(table.querySelectorAll('tbody tr')).filter(row => row.style.display !== 'none');
+        
+        if (rows.length === 0) {
+          alert("沒有可匯出的資料!");
+          return;
+        }
+
+        // 建立HTML內容
+        let htmlContent = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>${selectedActivity} - 簽到表</title>
+            <style>
+              body { font-family: "Microsoft JhengHei", Arial, sans-serif; margin: 20px; }
+              h1 { text-align: center; color: #333; margin-bottom: 30px; }
+              table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+              th, td { border: 1px solid #333; padding: 8px; text-align: center; }
+              th { background-color: #f0f0f0; font-weight: bold; }
+              .signature { height: 40px; }
+            </style>
+          </head>
+          <body>
+            <h1>${selectedActivity} - 簽到表</h1>
+            <table>
+              <thead>
+                <tr>
+                  <th>序號</th>
+                  <th>班級</th>
+                  <th>學號</th>
+                  <th>姓名</th>
+                  <th>簽到</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        rows.forEach(row => {
+          const cells = row.querySelectorAll('td');
+          htmlContent += `
+            <tr>
+              <td>${cells[0].textContent.trim()}</td>
+              <td>${cells[1].textContent.trim()}</td>
+              <td>${cells[2].textContent.trim()}</td>
+              <td>${cells[3].textContent.trim()}</td>
+              <td class="signature"></td>
+            </tr>
+          `;
+        });
+
+        htmlContent += `
+              </tbody>
+            </table>
+          </body>
+          </html>
+        `;
+
+        // 下載檔案
+        const blob = new Blob([htmlContent], { type: 'application/msword' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `${selectedActivity}_簽到表.doc`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        alert(`已匯出「${selectedActivity}」的Word簽到表!`);
       }
 
       // 搜尋功能
@@ -1067,14 +1636,12 @@
           e.stopPropagation();
           const action = this.title;
           const row = this.closest("tr");
-          const name = row.cells[1].textContent;
+          const name = row.cells[3].textContent; // 姓名在第4欄
 
-          if (action === "查看詳情") {
-            alert("查看 " + name + " 的詳細資料");
-          } else if (action === "編輯") {
+          if (action === "編輯") {
             alert("編輯 " + name + " 的資料");
           } else if (action === "刪除") {
-            if (confirm("確定要刪除 " + name + " 的報名資料嗎？")) {
+            if (confirm("確定要刪除 " + name + " 的報名資料嗎?")) {
               alert("已刪除 " + name + " 的報名資料");
               row.remove();
             }
@@ -1082,8 +1649,50 @@
         });
       });
 
+      // 從活動發佈頁面載入已發佈的活動
+      function loadPublishedActivities() {
+        try {
+          // 從 localStorage 讀取已發佈的活動
+          const publishedActivities = JSON.parse(localStorage.getItem('sc_published_activities') || '[]');
+          const activitySelect = document.getElementById('activitySelect');
+          
+          // 清空現有選項（保留第一個預設選項）
+          activitySelect.innerHTML = '<option value="">請選擇要查看的活動</option>';
+          
+          // 添加已發佈的活動
+          publishedActivities.forEach((activity, index) => {
+            const option = document.createElement('option');
+            option.value = `published_${activity.id || index}`;
+            option.textContent = activity.title || '未命名活動';
+            activitySelect.appendChild(option);
+          });
+          
+          // 如果沒有已發佈的活動，顯示預設活動
+          if (publishedActivities.length === 0) {
+            const defaultActivities = [
+              { value: '1', text: '科學週競賽' },
+              { value: '2', text: '化學實驗競賽' },
+              { value: '3', text: '物理闖關遊戲' },
+              { value: '4', text: '生物知識競賽' },
+              { value: '5', text: '科普講座:宇宙奧秘' }
+            ];
+            
+            defaultActivities.forEach(activity => {
+              const option = document.createElement('option');
+              option.value = activity.value;
+              option.textContent = activity.text;
+              if (activity.value === '2') option.selected = true; // 預設選中化學實驗競賽
+              activitySelect.appendChild(option);
+            });
+          }
+        } catch (error) {
+          console.error('載入已發佈活動時發生錯誤:', error);
+        }
+      }
+
       // 頁面載入時自動載入選中的活動
       window.addEventListener("load", function () {
+        loadPublishedActivities();
         loadRegistrants();
       });
     </script>

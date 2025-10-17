@@ -2,7 +2,7 @@
 <html lang="zh-TW">
   <head>
     <meta charset="UTF-8" />
-    <title>新增活動 - 科學會管理系統</title>
+    <title>科學會管理系統-發佈比賽及活動</title>
     <!-- FontAwesome CDN -->
     <link
       rel="stylesheet"
@@ -579,6 +579,13 @@
         overflow-y: auto;
       }
 
+      /* 兩欄版面（與公告頁一致） */
+      .content-grid { display:grid; grid-template-columns: 1.6fr 1fr; gap:24px; align-items:stretch; }
+      .left-col { min-width:0; display:flex; flex-direction:column; }
+      .right-col { position:relative; }
+      .right-sticky { position: sticky; top: 0; display:flex; flex-direction:column; gap:24px; height:100%; }
+      .right-sticky .preview-section:first-child { margin-top: 0; }
+
       /* 頁面標題 */
       .page-header {
         background: rgba(255, 255, 255, 0.95);
@@ -773,15 +780,13 @@
         font-size: 12px;
       }
 
-      .image-preview {
-        width: 100%;
-        max-height: 200px;
-        object-fit: cover;
-        border-radius: 8px;
-        margin-top: 10px;
-        display: none;
-        border: 2px solid #e1e8ed;
-      }
+      /* 與公告上傳樣式一致：文件列表 */
+      .file-list { margin-top: 15px; }
+      .file-item { display:flex; align-items:center; justify-content:space-between; padding:10px 15px; background:#fff; border:1px solid #e1e8ed; border-radius:8px; margin-bottom:8px; }
+      .file-info { display:flex; align-items:center; }
+      .file-info i { margin-right:10px; color:#8360c3; }
+      .remove-file { color:#ff4757; cursor:pointer; padding:5px; border-radius:5px; transition:all 0.2s ease; }
+      .remove-file:hover { background: rgba(255,71,87,0.1); }
 
       /* 複選框 */
       .checkbox-group {
@@ -842,6 +847,97 @@
         transform: translateY(-1px);
       }
 
+      .btn-success {
+        background: linear-gradient(135deg, #2ed573 0%, #17a2b8 100%);
+        color: white;
+      }
+      .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(46, 213, 115, 0.4);
+      }
+
+      /* 預覽區塊（比照公告頁風格） */
+      .preview-section {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin-top: 24px;
+        display: block;
+      }
+      .preview-section h3 {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+      }
+      .preview-section h3 i {
+        margin-right: 10px;
+        color: #8360c3;
+      }
+      .activity-preview {
+        border: 1px solid #e1e8ed;
+        border-radius: 15px;
+        padding: 25px;
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+      .preview-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #8360c3;
+        margin-bottom: 5px;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+      .preview-meta { font-size: 14px; color:#999; margin-bottom: 12px; }
+      .preview-content {
+        line-height: 1.8;
+        color: #999;
+        font-size: 15px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        text-align: center;
+      }
+      .preview-image { width:100%; max-height:240px; object-fit:cover; border-radius:10px; border:1px solid #e1e8ed; margin-top:12px; display:none; }
+
+      /* 媒體預覽 */
+      .media-preview { display:flex; flex-wrap:wrap; gap:12px; margin-top:8px; }
+      .media-thumb { width:180px; height:120px; border:1px solid #e1e8ed; border-radius:10px; overflow:hidden; background:#fff; display:flex; align-items:center; justify-content:center; }
+      .media-thumb img { max-width:100%; max-height:100%; display:block; }
+      .media-thumb video { width:100%; height:100%; object-fit:cover; }
+
+      .preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: between;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f1f3f4;
+      }
+
+      /* 草稿列表樣式（沿用公告頁精簡版） */
+      .announcement-list { margin-top: 12px; display:grid; grid-template-columns:1fr; gap:12px; }
+      .announcement-card { display:flex; justify-content:space-between; align-items:flex-start; background:#fff; border:1px solid #e1e8ed; border-radius:12px; padding:16px 18px; box-shadow:0 2px 8px rgba(0,0,0,0.04); }
+      .announcement-info { color:#444; }
+      .announcement-title { font-weight:700; margin-bottom:6px; }
+      .announcement-meta { font-size:12px; color:#777; }
+      .announcement-actions { display:flex; gap:8px; }
+      .btn-xs { padding:6px 10px; font-size:12px; border-radius:8px; }
+      .btn-edit { background:#f0f0f0; border:1px solid #ddd; color:#555; }
+      .btn-edit:hover { background:#e9e9e9; }
+      .btn-delete { background:#ffefef; border:1px solid #f3b2b2; color:#e74c3c; }
+      .btn-delete:hover { background:#ffe3e3; }
+
+      /* 右欄卡片標題（含圖示） */
+      .card-title { display:flex; align-items:center; gap:10px; font-size:20px; color:#333; font-weight:600; }
+      .card-title i { color:#8360c3; }
+
       /* 響應式設計 */
       @media (max-width: 768px) {
         .main {
@@ -854,6 +950,8 @@
         .content {
           padding: 20px;
         }
+        .content-grid { grid-template-columns: 1fr; }
+        .right-sticky { position: static; }
         .form-row {
           grid-template-columns: 1fr;
         }
@@ -889,7 +987,7 @@
     <div class="header">
       <div
         class="header-left"
-        onclick="location.href='activity_calendar.html';"
+        onclick="location.href='science_club_activity_calendar.html';"
       >
         <img src="image/logo1.gif" alt="Logo" class="logo" />
       </div>
@@ -920,7 +1018,7 @@
           <i class="fas fa-user-shield"></i>
         </div>
         <div class="dropdown" id="dropdown">
-          <a href="login_admin.html">
+          <a href="login_science_club.html">
             <i class="fas fa-sign-out-alt"></i>
             登出
           </a>
@@ -933,7 +1031,7 @@
       <div class="sidebar">
         <div class="menu">
           <div class="menu-item">
-            <a href="activity_calendar.html" class="menu-link">
+            <a href="science_club_activity_calendar.html" class="menu-link">
               <i class="fas fa-calendar"></i>
               行事曆
             </a>
@@ -954,7 +1052,7 @@
             </div>
             <div class="submenu show">
               <div class="submenu-item">
-                <a href="publish_announcement.html" class="submenu-link">
+                <a href="science_club_publish_announcement.html" class="submenu-link">
                   <i class="fas fa-bullhorn"></i>
                   發佈公告
                 </a>
@@ -999,13 +1097,6 @@
           </div>
 
           <div class="menu-item">
-            <a href="online_scheduling.html" class="menu-link">
-              <i class="fas fa-user-check"></i>
-              線上簽到表
-            </a>
-          </div>
-
-          <div class="menu-item">
             <a href="science_club_request_review.html" class="menu-link">
               <i class="fas fa-file-signature"></i>
               請假申請
@@ -1013,21 +1104,14 @@
           </div>
 
           <div class="menu-item">
-            <a href="meeting_records.html" class="menu-link">
+            <a href="science_club_meeting_records.html" class="menu-link">
               <i class="fas fa-clipboard"></i>
               開會紀錄
             </a>
           </div>
 
           <div class="menu-item">
-            <a href="auto_notification.html" class="menu-link">
-              <i class="fas fa-bell"></i>
-              自動推播通知
-            </a>
-          </div>
-
-          <div class="menu-item">
-            <a href="image_recognition.html" class="menu-link">
+            <a href="science_club_image_recognition.html" class="menu-link">
               <i class="fas fa-eye"></i>
               圖片識別
             </a>
@@ -1040,7 +1124,6 @@
         <div class="page-header">
           <div class="page-title-section">
             <h1><i class="fas fa-plus-circle"></i>新增活動</h1>
-            <p>創建一個精彩的新活動，讓科學會成員參與其中</p>
           </div>
           <div class="time-display">
             <i class="fas fa-clock"></i>
@@ -1054,9 +1137,11 @@
           活動發布成功！
         </div>
 
-        <!-- 活動表單 -->
-        <div class="activity-form">
-          <form id="activityForm">
+        <div class="content-grid">
+          <div class="left-col">
+            <!-- 活動表單 -->
+            <div class="activity-form">
+              <form id="activityForm">
             <!-- 基本資訊 -->
             <div class="form-section">
               <h3><i class="fas fa-info-circle"></i>基本資訊</h3>
@@ -1069,28 +1154,9 @@
                     id="activityName"
                     name="activityName"
                     placeholder="請輸入活動名稱"
+                    maxlength="15"
                     required
                   />
-                </div>
-                <div class="form-group">
-                  <label for="activityCategory" class="required"
-                    >活動類別</label
-                  >
-                  <select
-                    id="activityCategory"
-                    name="activityCategory"
-                    required
-                  >
-                    <option value="">請選擇活動類別</option>
-                    <option value="workshop">工作坊</option>
-                    <option value="seminar">研習會</option>
-                    <option value="conference">會議</option>
-                    <option value="exhibition">展覽</option>
-                    <option value="competition">競賽</option>
-                    <option value="social">社交活動</option>
-                    <option value="sports">體育活動</option>
-                    <option value="cultural">文化活動</option>
-                  </select>
                 </div>
               </div>
 
@@ -1161,7 +1227,7 @@
 
             <!-- 地點與聯絡 -->
             <div class="form-section">
-              <h3><i class="fas fa-map-marker-alt"></i>地點與聯絡</h3>
+              <h3><i class="fas fa-map-marker-alt"></i>地點</h3>
 
               <div class="form-group form-full">
                 <label for="location" class="required">活動地點</label>
@@ -1173,27 +1239,6 @@
                   required
                 />
               </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="organizer">主辦單位</label>
-                  <input
-                    type="text"
-                    id="organizer"
-                    name="organizer"
-                    placeholder="請輸入主辦單位"
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="contact">聯絡資訊</label>
-                  <input
-                    type="text"
-                    id="contact"
-                    name="contact"
-                    placeholder="電話或Email"
-                  />
-                </div>
-              </div>
             </div>
 
             <!-- 活動圖片 -->
@@ -1201,59 +1246,28 @@
               <h3><i class="fas fa-image"></i>活動圖片</h3>
 
               <div class="form-group">
-                <label for="activityImage">上傳活動圖片</label>
+                <label for="activityFiles">上傳附件</label>
                 <div class="file-upload" id="fileUpload">
                   <i class="fas fa-cloud-upload-alt"></i>
-                  <p>拖放圖片至此處或點擊選擇檔案</p>
-                  <small>支援 JPG、PNG、GIF 格式，單檔最大 5MB</small>
-                  <input
-                    type="file"
-                    id="activityImage"
-                    name="activityImage"
-                    accept="image/*"
-                    style="display: none"
-                  />
+                  <p>拖放檔案至此處或點擊選擇檔案</p>
+                  <small>支援圖片、PDF、Word 等格式，單檔最大 10MB</small>
+                  <input type="file" id="activityFiles" name="activityFiles" multiple style="display:none;" />
                 </div>
-                <img id="imagePreview" class="image-preview" alt="圖片預覽" />
+                <div class="file-list" id="fileList"></div>
               </div>
             </div>
 
-            <!-- 其他設定 -->
+            <!-- 通知設定 -->
             <div class="form-section">
-              <h3><i class="fas fa-cog"></i>其他設定</h3>
-
-              <div class="form-group">
-                <label for="tags">活動標籤</label>
-                <input
-                  type="text"
-                  id="tags"
-                  name="tags"
-                  placeholder="用逗號分隔，例如：學習,交流,創新"
-                />
-              </div>
+              <h3><i class="fas fa-bell"></i>通知設定</h3>
 
               <div class="checkbox-group">
-                <input type="checkbox" id="featured" name="featured" />
-                <label for="featured">設為精選活動</label>
-              </div>
-
-              <div class="checkbox-group">
-                <input
-                  type="checkbox"
-                  id="emailNotify"
-                  name="emailNotify"
-                  checked
-                />
+                <input type="checkbox" id="emailNotify" name="emailNotify" checked>
                 <label for="emailNotify">發送電子郵件通知</label>
               </div>
 
               <div class="checkbox-group">
-                <input
-                  type="checkbox"
-                  id="pushNotify"
-                  name="pushNotify"
-                  checked
-                />
+                <input type="checkbox" id="pushNotify" name="pushNotify" checked>
                 <label for="pushNotify">推送即時通知</label>
               </div>
             </div>
@@ -1277,18 +1291,48 @@
                 </button>
               </div>
               <div>
-                <a
-                  href="science_club_event_album.html"
-                  class="btn btn-secondary"
-                >
-                  <i class="fas fa-arrow-left"></i>返回列表
-                </a>
+                <button type="button" class="btn btn-success" onclick="previewActivity()">
+                  <i class="fas fa-eye"></i>預覽
+                </button>
                 <button type="submit" class="btn btn-primary">
                   <i class="fas fa-paper-plane"></i>發布活動
                 </button>
               </div>
             </div>
           </form>
+        </div>
+        </div>
+
+          <div class="right-col">
+            <div class="right-sticky">
+              <!-- 預覽區域 -->
+              <div class="preview-section" id="previewSection">
+                <h3><i class="fas fa-eye"></i>公告預覽</h3>
+                <div class="activity-preview">
+                  <div class="preview-header">
+                    <div>
+                      <div class="preview-title" id="previewTitle">活動名稱</div>
+                      <div class="preview-meta" id="previewMeta">日期與時間將顯示於此</div>
+                    </div>
+                  </div>
+                  <div class="preview-content" id="previewContent">活動描述將顯示於此...</div>
+                  <div class="media-preview" id="mediaPreview"></div>
+                </div>
+              </div>
+
+              <!-- 草稿箱 -->
+              <div class="preview-section" id="draftSection">
+                <h3><i class="fas fa-box-archive"></i>草稿箱</h3>
+                <div id="draftList" class="announcement-list"></div>
+              </div>
+
+              <!-- 已發佈活動 -->
+              <div class="preview-section">
+                <h3><i class="fas fa-list"></i>已發佈活動</h3>
+                <div id="publishedList" class="announcement-list"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1324,6 +1368,11 @@
         setInterval(updateTime, 1000);
         renderNotifications();
         updateNotificationBadge();
+        // 初始化右側清單空狀態
+        renderActivityDrafts();
+        renderPublishedActivities();
+        // 初始化字數計數
+        initActivityCharCounters();
       });
 
       // 通知數據
@@ -1510,8 +1559,9 @@
 
       // 圖片上傳處理
       const fileUpload = document.getElementById("fileUpload");
-      const fileInput = document.getElementById("activityImage");
-      const imagePreview = document.getElementById("imagePreview");
+      const fileInput = document.getElementById("activityFiles");
+      const fileList = document.getElementById("fileList");
+      let uploadedFiles = [];
 
       fileUpload.addEventListener("click", () => fileInput.click());
 
@@ -1527,39 +1577,90 @@
       fileUpload.addEventListener("drop", (e) => {
         e.preventDefault();
         fileUpload.classList.remove("dragover");
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-          fileInput.files = files;
-          handleImageUpload(files[0]);
-        }
+        handleFiles(e.dataTransfer.files);
       });
 
       fileInput.addEventListener("change", (e) => {
-        if (e.target.files.length > 0) {
-          handleImageUpload(e.target.files[0]);
-        }
+        handleFiles(e.target.files);
       });
 
-      function handleImageUpload(file) {
-        if (file && file.type.startsWith("image/")) {
-          if (file.size <= 5 * 1024 * 1024) {
-            // 5MB限制
-            const reader = new FileReader();
-            reader.onload = function (e) {
-              imagePreview.src = e.target.result;
-              imagePreview.style.display = "block";
-              fileUpload.querySelector("p").textContent = "✅ " + file.name;
-              fileUpload.querySelector("p").style.color = "#2ed573";
-            };
-            reader.readAsDataURL(file);
+      function handleFiles(files) {
+        Array.from(files).forEach(file => {
+          if (file.size <= 10 * 1024 * 1024) {
+            uploadedFiles.push(file);
+            addFileToList(file);
           } else {
-            alert("檔案大小超過 5MB 限制");
-            fileInput.value = "";
+            alert(`檔案 ${file.name} 超過 10MB 限制`);
           }
-        } else {
-          alert("請選擇有效的圖片檔案");
-          fileInput.value = "";
+        });
+      }
+
+      function addFileToList(file) {
+        const item = document.createElement('div');
+        item.className = 'file-item';
+        item.innerHTML = `
+          <div class="file-info">
+            <i class="fas fa-file"></i>
+            <span>${file.name} (${formatFileSize(file.size)})</span>
+          </div>
+          <i class="fas fa-times remove-file" onclick="removeFile('${file.name}', this)"></i>
+        `;
+        fileList.appendChild(item);
+      }
+
+      function removeFile(fileName, el) {
+        uploadedFiles = uploadedFiles.filter(f => f.name !== fileName);
+        el.parentElement.remove();
+      }
+
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024; const sizes = ['Bytes','KB','MB','GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k,i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      // 媒體預覽功能（與公告頁一致）
+      function updateMediaPreview() {
+        const container = document.getElementById('mediaPreview');
+        if (!container) return;
+        container.innerHTML = '';
+        
+        const src = document.getElementById('imagePreview').getAttribute('src');
+        if (src) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'media-thumb';
+          const img = document.createElement('img');
+          img.src = src;
+          wrapper.appendChild(img);
+          container.appendChild(wrapper);
         }
+      }
+
+      // 預覽功能（與公告頁一致的體驗）
+      function previewActivity() {
+        const name = document.getElementById('activityName').value || '活動名稱';
+        const desc = document.getElementById('description').value || '';
+        const sDate = document.getElementById('startDate').value;
+        const eDate = document.getElementById('endDate').value;
+        const sTime = document.getElementById('startTime').value;
+        const eTime = document.getElementById('endTime').value;
+        const regDeadline = document.getElementById('registrationDeadline').value;
+        const metaParts = [];
+        if (sDate) metaParts.push(`開始：${sDate} ${sTime || ''}`.trim());
+        if (eDate) metaParts.push(`結束：${eDate} ${eTime || ''}`.trim());
+        if (regDeadline) metaParts.push(`報名截止：${regDeadline}`.trim());
+
+        document.getElementById('previewTitle').textContent = name;
+        document.getElementById('previewMeta').textContent = metaParts.join('  |  ');
+        document.getElementById('previewContent').textContent = desc;
+
+        // 更新媒體預覽
+        updateMediaPreview();
+
+        const section = document.getElementById('previewSection');
+        section.style.display = 'block';
+        section.scrollIntoView({ behavior: 'smooth' });
       }
 
       // 日期驗證
@@ -1633,11 +1734,21 @@
           const successMessage = document.getElementById("successMessage");
           successMessage.style.display = "block";
 
-          // 滾動到頂部
-          document.querySelector(".content").scrollTo({
-            top: 0,
-            behavior: "smooth",
+          // 將此次活動加入右側「已發佈活動」清單（僅前端暫存顯示）
+          addPublishedActivity({
+            title: document.getElementById('activityName').value,
+            startDate: document.getElementById('startDate').value,
+            startTime: document.getElementById('startTime').value,
+            endDate: document.getElementById('endDate').value,
+            endTime: document.getElementById('endTime').value,
+            publishDate: new Date().toLocaleString('zh-TW')
           });
+
+          // 滾動到已發佈活動區塊
+          const publishedSection = document.querySelector('.preview-section:last-child');
+          if (publishedSection) {
+            publishedSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
 
           // 3秒後隱藏成功訊息
           setTimeout(() => {
@@ -1645,22 +1756,100 @@
           }, 3000);
         });
 
+      // 右側已發佈活動清單
+      let publishedActivities = [];
+      function renderPublishedActivities() {
+        const list = document.getElementById('publishedList');
+        if (!list) return;
+        if (publishedActivities.length === 0) {
+          list.innerHTML = '<div style="color:#999; text-align:center; padding:12px;">目前沒有活動</div>';
+          return;
+        }
+        list.innerHTML = '';
+        publishedActivities.forEach((a, idx) => {
+          const card = document.createElement('div');
+          card.className = 'announcement-card';
+          const meta = [
+            a.startDate ? `開始：${a.startDate} ${a.startTime || ''}`.trim() : '',
+            a.endDate ? `結束：${a.endDate} ${a.endTime || ''}`.trim() : ''
+          ].filter(Boolean).join('  |  ');
+          card.innerHTML = `
+            <div class="announcement-info">
+              <div class="announcement-title">${a.title}</div>
+              <div class="announcement-meta">發布時間：${a.publishDate || new Date().toLocaleString('zh-TW')}</div>
+            </div>
+            <div class="announcement-actions">
+              <button class="btn btn-xs btn-edit" onclick="editPublishedActivity(${idx})"><i class="fas fa-edit"></i> 編輯</button>
+              <button class="btn btn-xs btn-delete" onclick="deletePublishedActivity(${idx})"><i class="fas fa-trash"></i> 刪除</button>
+            </div>`;
+          list.appendChild(card);
+        });
+      }
+      function addPublishedActivity(a) {
+        publishedActivities.unshift(a);
+        renderPublishedActivities();
+        
+        // 同步到 localStorage，供名單管理頁面使用
+        try {
+          localStorage.setItem('sc_published_activities', JSON.stringify(publishedActivities));
+        } catch (error) {
+          console.error('儲存已發佈活動時發生錯誤:', error);
+        }
+      }
+      function deletePublishedActivity(i) {
+        const activity = publishedActivities[i];
+        if (!confirm(`確定刪除活動「${activity.title}」嗎？`)) return;
+        publishedActivities.splice(i, 1);
+        renderPublishedActivities();
+        
+        // 同步到 localStorage
+        try {
+          localStorage.setItem('sc_published_activities', JSON.stringify(publishedActivities));
+        } catch (error) {
+          console.error('更新已發佈活動時發生錯誤:', error);
+        }
+        
+        alert('✅ 活動已刪除');
+      }
+      
+      function editPublishedActivity(i) {
+        const activity = publishedActivities[i];
+        if (!activity) return;
+        
+        // 帶入表單
+        document.getElementById('activityName').value = activity.title;
+        document.getElementById('startDate').value = activity.startDate;
+        document.getElementById('endDate').value = activity.endDate;
+        document.getElementById('startTime').value = activity.startTime;
+        document.getElementById('endTime').value = activity.endTime;
+        
+        // 變更送出按鈕文字
+        const submitBtn = document.querySelector('#activityForm .btn-primary');
+        if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-save"></i>儲存修改';
+        
+        // 捲動到表單頂部
+        document.getElementById('activityForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // 顯示預覽
+        previewActivity();
+      }
+
       // 清空表單
       function clearForm() {
         if (confirm("確定要清空表單嗎？此操作無法復原。")) {
           document.getElementById("activityForm").reset();
-          imagePreview.style.display = "none";
-          fileUpload.querySelector("p").textContent =
-            "拖放圖片至此處或點擊選擇檔案";
+          // 重置已上傳檔案列表
+          uploadedFiles = [];
+          if (fileList) fileList.innerHTML = '';
+          fileUpload.querySelector("p").textContent = "拖放檔案至此處或點擊選擇檔案";
           fileUpload.querySelector("p").style.color = "#666";
         }
       }
 
       // 儲存草稿
       function saveAsDraft() {
-        const formData = {
+        const draftData = {
           activityName: document.getElementById("activityName").value,
-          activityCategory: document.getElementById("activityCategory").value,
           description: document.getElementById("description").value,
           startDate: document.getElementById("startDate").value,
           endDate: document.getElementById("endDate").value,
@@ -1668,17 +1857,155 @@
           endTime: document.getElementById("endTime").value,
           location: document.getElementById("location").value,
           maxParticipants: document.getElementById("maxParticipants").value,
-          registrationDeadline: document.getElementById("registrationDeadline")
-            .value,
-          organizer: document.getElementById("organizer").value,
-          contact: document.getElementById("contact").value,
-          tags: document.getElementById("tags").value,
-          featured: document.getElementById("featured").checked,
+          registrationDeadline: document.getElementById("registrationDeadline").value,
           emailNotify: document.getElementById("emailNotify").checked,
-          pushNotify: document.getElementById("pushNotify").checked,
+          pushNotify: document.getElementById("pushNotify").checked
         };
 
+        const drafts = loadActivityDrafts();
+        const id = Date.now();
+        drafts.unshift({ id, ...draftData, createdAt: Date.now(), updatedAt: Date.now() });
+        saveActivityDrafts(drafts);
+        renderActivityDrafts();
         alert("草稿已儲存！");
+      }
+
+      // 活動草稿：localStorage 管理
+      const ACTIVITY_DRAFTS_KEY = 'sc_activity_drafts';
+      function loadActivityDrafts() {
+        try { const raw = localStorage.getItem(ACTIVITY_DRAFTS_KEY); return raw ? JSON.parse(raw) : []; } catch (e) { return []; }
+      }
+      function saveActivityDrafts(list) {
+        localStorage.setItem(ACTIVITY_DRAFTS_KEY, JSON.stringify(list));
+      }
+      function renderActivityDrafts() {
+        const container = document.getElementById('draftList');
+        if (!container) return;
+        const drafts = loadActivityDrafts();
+        if (drafts.length === 0) { container.innerHTML = '<div style="color:#999; text-align:center; padding:12px;">目前沒有草稿</div>'; return; }
+        container.innerHTML = '';
+        drafts.forEach(d => {
+          const card = document.createElement('div');
+          card.className = 'announcement-card';
+          card.innerHTML = `
+            <div class="announcement-info">
+              <div class="announcement-title">${d.activityName || '未命名草稿'}</div>
+              <div class="announcement-meta">更新時間：${new Date(d.updatedAt).toLocaleString('zh-TW')}</div>
+            </div>
+            <div class="announcement-actions">
+              <button class="btn btn-xs btn-success" onclick="publishActivityDraft(${d.id})"><i class=\"fas fa-paper-plane\"></i> 發佈</button>
+              <button class="btn btn-xs btn-edit" onclick="editActivityDraft(${d.id})"><i class=\"fas fa-edit\"></i> 修改</button>
+              <button class="btn btn-xs btn-delete" onclick="deleteActivityDraft(${d.id})"><i class=\"fas fa-trash\"></i> 刪除</button>
+            </div>`;
+          container.appendChild(card);
+        });
+      }
+      function publishActivityDraft(id) {
+        const drafts = loadActivityDrafts();
+        const d = drafts.find(x => x.id === id);
+        if (!d) return;
+        
+        // 直接發佈草稿，不帶回表單
+        const newActivity = {
+          title: d.activityName || '未命名活動',
+          startDate: d.startDate || '',
+          startTime: d.startTime || '',
+          endDate: d.endDate || '',
+          endTime: d.endTime || '',
+          publishDate: new Date().toLocaleString('zh-TW')
+        };
+        
+        // 加入已發佈活動清單
+        addPublishedActivity(newActivity);
+        
+        // 從草稿箱移除
+        const filtered = drafts.filter(x => x.id !== id);
+        saveActivityDrafts(filtered);
+        renderActivityDrafts();
+        
+        // 顯示成功訊息
+        const successMessage = document.getElementById("successMessage");
+        successMessage.style.display = "block";
+        
+        // 滾動到已發佈活動區塊
+        const publishedSection = document.querySelector('.preview-section:last-child');
+        if (publishedSection) {
+          publishedSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        
+        // 3秒後隱藏成功訊息
+        setTimeout(() => {
+          successMessage.style.display = "none";
+        }, 3000);
+      }
+      function editActivityDraft(id) {
+        const drafts = loadActivityDrafts();
+        const d = drafts.find(x => x.id === id);
+        if (!d) return;
+        document.getElementById('activityName').value = d.activityName || '';
+        document.getElementById('description').value = d.description || '';
+        document.getElementById('startDate').value = d.startDate || '';
+        document.getElementById('endDate').value = d.endDate || '';
+        document.getElementById('startTime').value = d.startTime || '';
+        document.getElementById('endTime').value = d.endTime || '';
+        document.getElementById('location').value = d.location || '';
+        document.getElementById('maxParticipants').value = d.maxParticipants || '';
+        document.getElementById('registrationDeadline').value = d.registrationDeadline || '';
+        document.getElementById('emailNotify').checked = !!d.emailNotify;
+        document.getElementById('pushNotify').checked = !!d.pushNotify;
+        document.getElementById('activityForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      function deleteActivityDraft(id) {
+        if (!confirm('確定刪除此草稿嗎？')) return;
+        const drafts = loadActivityDrafts();
+        const filtered = drafts.filter(x => x.id !== id);
+        saveActivityDrafts(filtered);
+        renderActivityDrafts();
+        alert('草稿已刪除');
+      }
+
+      // 與公告頁一致的字數計數邏輯
+      const nameInput = document.getElementById('activityName');
+      const descTextarea = document.getElementById('description');
+      function initActivityCharCounters() {
+        if (nameInput && !document.getElementById('activityNameCount')) {
+          const el = document.createElement('small');
+          el.id = 'activityNameCount';
+          el.style.color = '#999';
+          el.style.fontSize = '12px';
+          el.textContent = '0/15 字';
+          nameInput.parentNode.appendChild(el);
+        }
+        if (descTextarea && !document.getElementById('activityDescCount')) {
+          const el = document.createElement('small');
+          el.id = 'activityDescCount';
+          el.style.color = '#999';
+          el.style.fontSize = '12px';
+          el.textContent = '0 字';
+          descTextarea.parentNode.appendChild(el);
+        }
+      }
+      if (nameInput) {
+        nameInput.addEventListener('input', function () {
+          const countEl = document.getElementById('activityNameCount');
+          if (countEl) countEl.textContent = this.value.length + '/15 字';
+          if (this.value.length > 15) {
+            if (countEl) countEl.style.color = '#ff4757';
+          } else {
+            if (countEl) countEl.style.color = '#999';
+          }
+        });
+      }
+      if (descTextarea) {
+        descTextarea.addEventListener('input', function () {
+          const countEl = document.getElementById('activityDescCount');
+          if (countEl) countEl.textContent = this.value.length + ' 字';
+          if (this.value.length > 1000) {
+            if (countEl) countEl.style.color = '#ff4757';
+          } else {
+            if (countEl) countEl.style.color = '#999';
+          }
+        });
       }
 
       // 設定最小日期為今天
@@ -1687,6 +2014,16 @@
         document.getElementById("startDate").min = today;
         document.getElementById("endDate").min = today;
         document.getElementById("registrationDeadline").min = today;
+        renderActivityDrafts();
+        
+        // 載入已發佈的活動到 localStorage
+        try {
+          const existingActivities = JSON.parse(localStorage.getItem('sc_published_activities') || '[]');
+          publishedActivities = existingActivities;
+          renderPublishedActivities();
+        } catch (error) {
+          console.error('載入已發佈活動時發生錯誤:', error);
+        }
       });
     </script>
   </body>

@@ -2,7 +2,7 @@
 <html lang="zh-TW">
   <head>
     <meta charset="UTF-8" />
-    <title>發布活動反饋表單 - 科學會管理系統</title>
+    <title>科學會管理系統-發布活動反饋表單</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -809,6 +809,45 @@
         background: #d0d0d0;
       }
 
+      /* 兩欄版面（與發佈比賽及活動頁一致） */
+      .content-grid { display:grid; grid-template-columns: 1.6fr 1fr; gap:24px; align-items:start; }
+      .right-sticky { position: sticky; top: 20px; display:flex; flex-direction:column; gap:24px; }
+
+      @media (max-width: 768px) {
+        .content-grid { grid-template-columns: 1fr; }
+        .right-sticky { position: static; }
+      }
+
+      /* 預覽 Modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.35);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+      }
+      .modal {
+        width: min(900px, 92vw);
+        max-height: 86vh;
+        overflow: auto;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+        padding: 24px;
+      }
+      .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom: 12px; }
+      .modal-title { font-size: 18px; font-weight: 700; color:#333; display:flex; align-items:center; gap:10px; }
+      .modal-title i { color:#8360c3; }
+      .modal-close { border:none; background:#f3f3f3; color:#666; padding:8px 12px; border-radius:8px; cursor:pointer; }
+      .modal-section { border:1px solid #f0f0f0; border-radius:10px; padding:16px; margin-top:12px; background:#fff; }
+      .modal-section h4 { margin:0 0 10px; font-size:15px; color:#555; display:flex; align-items:center; gap:8px; }
+      .q-preview { border-left:4px solid #8360c3; padding-left:10px; margin-bottom:12px; }
+      .q-title { font-weight:600; color:#333; margin-bottom:6px; }
+      .q-meta { font-size:12px; color:#888; margin-bottom:6px; }
+      .q-options { margin-left:6px; color:#555; }
+
       @media (max-width: 768px) {
         .main {
           flex-direction: column;
@@ -834,7 +873,7 @@
     <div class="header">
       <div
         class="header-left"
-        onclick="location.href='activity_calendar.html';"
+        onclick="location.href='science_club_activity_calendar.html';"
       >
         <img src="image/logo1.gif" alt="Logo" class="logo" />
       </div>
@@ -863,7 +902,7 @@
           <i class="fas fa-user-shield"></i>
         </div>
         <div class="dropdown" id="dropdown">
-          <a href="login_admin.html">
+          <a href="login_science_club.html">
             <i class="fas fa-sign-out-alt"></i>
             登出
           </a>
@@ -875,7 +914,7 @@
       <div class="sidebar">
         <div class="menu">
           <div class="menu-item">
-            <a href="activity_calendar.html" class="menu-link">
+            <a href="science_club_activity_calendar.html" class="menu-link">
               <i class="fas fa-calendar"></i>
               行事曆
             </a>
@@ -896,7 +935,7 @@
             </div>
             <div class="submenu show">
               <div class="submenu-item">
-                <a href="publish_announcement.html" class="submenu-link">
+                <a href="science_club_publish_announcement.html" class="submenu-link">
                   <i class="fas fa-bullhorn"></i>
                   發佈公告
                 </a>
@@ -944,13 +983,6 @@
           </div>
 
           <div class="menu-item">
-            <a href="online_scheduling.html" class="menu-link">
-              <i class="fas fa-user-check"></i>
-              線上簽到表
-            </a>
-          </div>
-
-          <div class="menu-item">
             <a href="science_club_request_review.html" class="menu-link">
               <i class="fas fa-file-signature"></i>
               請假申請
@@ -958,21 +990,14 @@
           </div>
 
           <div class="menu-item">
-            <a href="meeting_records.html" class="menu-link">
+            <a href="science_club_meeting_records.html" class="menu-link">
               <i class="fas fa-clipboard"></i>
               開會紀錄
             </a>
           </div>
 
           <div class="menu-item">
-            <a href="auto_notification.html" class="menu-link">
-              <i class="fas fa-bell"></i>
-              自動推播通知
-            </a>
-          </div>
-
-          <div class="menu-item">
-            <a href="image_recognition.html" class="menu-link">
+            <a href="science_club_image_recognition.html" class="menu-link">
               <i class="fas fa-eye"></i>
               圖片識別
             </a>
@@ -986,6 +1011,8 @@
           <p>建立活動反饋問卷,收集參與者的意見和建議</p>
         </div>
 
+        <div class="content-grid">
+          <div>
         <form id="feedbackForm">
           <div class="form-section">
             <div class="section-title">
@@ -1323,7 +1350,7 @@
               <i class="fas fa-eye"></i>
               預覽表單
             </button>
-            <button type="button" class="btn btn-secondary">
+            <button type="button" class="btn btn-secondary" id="saveDraftBtn">
               <i class="fas fa-save"></i>
               儲存草稿
             </button>
@@ -1333,6 +1360,30 @@
             </button>
           </div>
         </form>
+          </div>
+
+          <div class="right-sticky">
+            <div class="form-section">
+              <div class="section-title"><i class="fas fa-box-archive"></i>草稿箱</div>
+              <div id="draftList"></div>
+            </div>
+            <div class="form-section">
+              <div class="section-title"><i class="fas fa-list"></i>已發佈表單</div>
+              <div id="publishedList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 預覽 Modal -->
+    <div class="modal-overlay" id="previewModal">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title"><i class="fas fa-eye"></i>表單預覽</div>
+          <button class="modal-close" onclick="closePreview()">關閉</button>
+        </div>
+        <div id="previewBody"></div>
       </div>
     </div>
 
@@ -1654,9 +1705,260 @@
         button.closest(".option-item").remove();
       }
 
-      function previewForm() {
-        alert("預覽表單功能開發中...");
+      function getFormData() {
+        const form = document.getElementById('feedbackForm');
+        const activity = form.querySelector('select.form-select').value;
+        const title = form.querySelector('input.form-input').value.trim();
+        const desc = form.querySelector('textarea.form-textarea').value.trim();
+
+        // 收集題目
+        const questions = [];
+        document.querySelectorAll('.question-item').forEach((item, idx) => {
+          const qTitleEl = item.querySelector('input.form-input');
+          const qTitle = qTitleEl ? qTitleEl.value.trim() : '';
+          const qTypeEl = item.querySelector('select.form-select');
+          const qType = qTypeEl ? qTypeEl.value : 'text';
+          const options = [];
+          item.querySelectorAll('.option-list .option-item .option-input').forEach(opt => {
+            const v = opt.value.trim();
+            if (v) options.push(v);
+          });
+          questions.push({ index: idx + 1, type: qType, title: qTitle, options });
+        });
+
+        // 發布設定
+        const publishSection = Array.from(form.querySelectorAll('.form-section')).slice(-1)[0];
+        const deadline = publishSection.querySelector('input[type="date"]').value;
+        const selects = publishSection.querySelectorAll('select.form-select');
+        const audience = selects[0] ? selects[0].value : 'all';
+        const anonymous = selects[1] ? selects[1].value : 'no';
+
+        return { activity, title, desc, questions, deadline, audience, anonymous, savedAt: Date.now() };
       }
+
+      function previewForm() {
+        const data = getFormData();
+        const body = document.getElementById('previewBody');
+        const formatAudience = (v) => ({ all: '所有報名參與者', attended: '實際出席者', custom: '自訂名單' }[v] || v);
+        const formatAnon = (v) => v === 'yes' ? '匿名' : '記名';
+
+        const qHtml = data.questions.map(q => {
+          const typeMap = { rating: '評分題(1-5分)', text: '簡答題', textarea: '問答題', choice: '單選題', multiple: '多選題' };
+          const optionsHtml = (q.type === 'choice' || q.type === 'multiple') && q.options.length
+            ? `<div class="q-options">選項：${q.options.map(o => `<span>「${o}」</span>`).join('、')}</div>`
+            : '';
+          return `
+            <div class="q-preview">
+              <div class="q-title">Q${q.index}. ${q.title || '(未填寫題目)'} </div>
+              <div class="q-meta">類型：${typeMap[q.type] || q.type}</div>
+              ${optionsHtml}
+            </div>`;
+        }).join('');
+
+        body.innerHTML = `
+          <div class="modal-section">
+            <h4><i class="fas fa-info-circle"></i>基本資訊</h4>
+            <div>活動：${data.activity ? data.activity : '（未選擇）'}</div>
+            <div>表單標題：${data.title || '（未填寫）'}</div>
+            <div style="margin-top:6px; color:#666;">說明：${data.desc || '（無）'}</div>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-question-circle"></i>問卷題目</h4>
+            ${qHtml || '<div style="color:#999;">尚未新增任何題目</div>'}
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-cog"></i>發布設定</h4>
+            <div>截止日期：${data.deadline || '（未設定）'}</div>
+            <div>填寫對象：${formatAudience(data.audience)}</div>
+            <div>是否匿名：${formatAnon(data.anonymous)}</div>
+          </div>
+        `;
+        document.getElementById('previewModal').style.display = 'flex';
+      }
+
+      function closePreview() {
+        document.getElementById('previewModal').style.display = 'none';
+      }
+
+      // 草稿儲存
+      const DRAFTS_KEY = 'sc_feedback_form_drafts';
+      function loadDrafts() {
+        try { const raw = localStorage.getItem(DRAFTS_KEY); return raw ? JSON.parse(raw) : []; } catch(e) { return []; }
+      }
+      function saveDrafts(list) { localStorage.setItem(DRAFTS_KEY, JSON.stringify(list)); }
+      let draftEditingId = null; // 當前編輯中的草稿 id
+      function saveDraft() {
+        const data = getFormData();
+        const drafts = loadDrafts();
+        if (draftEditingId) {
+          const idx = drafts.findIndex(d => d.id === draftEditingId);
+          if (idx > -1) drafts[idx] = { ...drafts[idx], ...data, savedAt: Date.now() };
+          saveDrafts(drafts);
+          renderDrafts();
+          alert('草稿已更新！');
+        } else {
+          const id = Date.now();
+          drafts.unshift({ id, ...data });
+          saveDrafts(drafts);
+          renderDrafts();
+          alert('草稿已儲存！');
+        }
+      }
+      document.getElementById('saveDraftBtn').addEventListener('click', saveDraft);
+
+      // 草稿箱渲染與操作
+      function renderDrafts() {
+        const container = document.getElementById('draftList');
+        if (!container) return;
+        const drafts = loadDrafts();
+        if (drafts.length === 0) {
+          container.innerHTML = '<div style="color:#999; text-align:center; padding:12px;">目前沒有草稿</div>';
+          return;
+        }
+        container.innerHTML = '';
+        drafts.forEach(d => {
+          const card = document.createElement('div');
+          card.className = 'announcement-card';
+          card.style = 'display:flex; justify-content:space-between; align-items:flex-start; background:#fff; border:1px solid #e1e8ed; border-radius:12px; padding:16px 18px; box-shadow:0 2px 8px rgba(0,0,0,0.04); margin-bottom:12px;';
+          card.innerHTML = `
+            <div class="announcement-info">
+              <div class="announcement-title">${(d.title || '未命名草稿')}</div>
+              <div class="announcement-meta">更新時間：${new Date(d.savedAt || d.savedAt || d.savedAt).toLocaleString('zh-TW')}</div>
+            </div>
+            <div class="announcement-actions" style="display:flex; gap:8px;">
+              <button class="btn btn-xs btn-success" onclick="publishDraft(${d.id})"><i class=\"fas fa-paper-plane\"></i> 發佈</button>
+              <button class="btn btn-xs btn-edit" onclick="editDraft(${d.id})"><i class=\"fas fa-edit\"></i> 修改</button>
+              <button class="btn btn-xs btn-delete" onclick="deleteDraft(${d.id})"><i class=\"fas fa-trash\"></i> 刪除</button>
+            </div>`;
+          container.appendChild(card);
+        });
+      }
+
+      function editDraft(id) {
+        const drafts = loadDrafts();
+        const d = drafts.find(x => x.id === id);
+        if (!d) return;
+        draftEditingId = id;
+        const form = document.getElementById('feedbackForm');
+        // 基本資訊
+        form.querySelector('select.form-select').value = d.activity || '';
+        form.querySelector('input.form-input').value = d.title || '';
+        form.querySelector('textarea.form-textarea').value = d.desc || '';
+        // 清空現有題目，重新建立
+        const qb = document.getElementById('questionBuilder');
+        qb.innerHTML = '';
+        (d.questions || []).forEach((q, i) => {
+          const item = document.createElement('div');
+          item.className = 'question-item';
+          item.innerHTML = `
+            <div class="question-header">
+              <span class="question-number">問題 ${i+1}</span>
+              <div class="question-actions">
+                <button type="button" class="action-btn" onclick="moveQuestion(this, 'up')"><i class=\"fas fa-arrow-up\"></i></button>
+                <button type="button" class="action-btn" onclick="moveQuestion(this, 'down')"><i class=\"fas fa-arrow-down\"></i></button>
+                <button type="button" class="action-btn" onclick="deleteQuestion(this)"><i class=\"fas fa-trash\"></i></button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">問題內容<span class="required">*</span></label>
+              <input type="text" class="form-input" placeholder="請輸入問題內容" value="${q.title || ''}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">問題類型</label>
+              <select class="form-select" onchange="changeQuestionType(this)">
+                <option value="rating" ${q.type==='rating'?'selected':''}>評分題(1-5分)</option>
+                <option value="text" ${q.type==='text'?'selected':''}>簡答題</option>
+                <option value="textarea" ${q.type==='textarea'?'selected':''}>問答題</option>
+                <option value="choice" ${q.type==='choice'?'selected':''}>單選題</option>
+                <option value="multiple" ${q.type==='multiple'?'selected':''}>多選題</option>
+              </select>
+            </div>`;
+          qb.appendChild(item);
+          if ((q.type==='choice' || q.type==='multiple') && q.options && q.options.length) {
+            const select = item.querySelector('select.form-select');
+            changeQuestionType(select);
+            const list = item.querySelector('.option-list');
+            list.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+              const op = document.createElement('div');
+              op.className = 'option-item';
+              op.innerHTML = `
+                <input type="text" class="option-input" value="${opt}" placeholder="選項 ${idx+1}">
+                <button type="button" class="remove-option" onclick="removeOption(this)"><i class=\"fas fa-times\"></i></button>`;
+              list.appendChild(op);
+            });
+          }
+        });
+        updateQuestionNumbers();
+        // 發布設定
+        const publishSection = Array.from(form.querySelectorAll('.form-section')).slice(-1)[0];
+        publishSection.querySelector('input[type="date"]').value = d.deadline || '';
+        const selects = publishSection.querySelectorAll('select.form-select');
+        if (selects[0]) selects[0].value = d.audience || 'all';
+        if (selects[1]) selects[1].value = d.anonymous || 'no';
+        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function deleteDraft(id) {
+        if (!confirm('確定刪除此草稿嗎？')) return;
+        const drafts = loadDrafts();
+        const filtered = drafts.filter(x => x.id !== id);
+        saveDrafts(filtered);
+        if (draftEditingId === id) draftEditingId = null;
+        renderDrafts();
+        alert('草稿已刪除');
+      }
+
+      // 已發佈表單（前端暫存顯示）
+      let publishedForms = [];
+      function renderPublished() {
+        const list = document.getElementById('publishedList');
+        if (!list) return;
+        if (publishedForms.length === 0) {
+          list.innerHTML = '<div style="color:#999; text-align:center; padding:12px;">目前沒有表單</div>';
+          return;
+        }
+        list.innerHTML = '';
+        publishedForms.forEach((f, idx) => {
+          const card = document.createElement('div');
+          card.className = 'announcement-card';
+          card.style = 'display:flex; justify-content:space-between; align-items:flex-start; background:#fff; border:1px solid #e1e8ed; border-radius:12px; padding:16px 18px; box-shadow:0 2px 8px rgba(0,0,0,0.04); margin-bottom:12px;';
+          card.innerHTML = `
+            <div class="announcement-info">
+              <div class="announcement-title">${f.title || '未命名表單'}</div>
+              <div class="announcement-meta">發布時間：${f.publishDate}</div>
+            </div>
+            <div class="announcement-actions" style="display:flex; gap:8px;">
+              <button class="btn btn-xs btn-delete" onclick="deletePublished(${idx})"><i class=\"fas fa-trash\"></i> 刪除</button>
+            </div>`;
+          list.appendChild(card);
+        });
+      }
+      function deletePublished(i) {
+        const f = publishedForms[i];
+        if (!confirm(`確定刪除表單「${f.title || '未命名表單'}」嗎？`)) return;
+        publishedForms.splice(i, 1);
+        renderPublished();
+        alert('✅ 已刪除');
+      }
+
+      function publishDraft(id) {
+        const drafts = loadDrafts();
+        const d = drafts.find(x => x.id === id);
+        if (!d) return;
+        publishedForms.unshift({ title: d.title, publishDate: new Date().toLocaleString('zh-TW') });
+        const filtered = drafts.filter(x => x.id !== id);
+        saveDrafts(filtered);
+        renderDrafts();
+        renderPublished();
+        alert('表單已發佈！');
+      }
+
+      // 初始化右側清單
+      window.addEventListener('load', function() {
+        renderDrafts();
+        renderPublished();
+      });
 
       document
         .getElementById("feedbackForm")

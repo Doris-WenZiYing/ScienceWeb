@@ -2,8 +2,8 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <title>老師系統首頁</title>
-  <!-- FontAwesome CDN -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>工作時數與出席記錄 - 老師系統</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     * {
@@ -18,7 +18,6 @@
       background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
     }
 
-    /* 頂部區域 */
     .header {
       height: 70px;
       background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -58,6 +57,10 @@
       position: relative;
     }
 
+    .icon-wrapper {
+      position: relative;
+    }
+
     .icon {
       position: relative;
       padding: 10px;
@@ -65,33 +68,286 @@
       background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
       transition: all 0.3s ease;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .icon:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(17, 153, 142, 0.5);
     }
 
     .icon i {
       font-size: 18px;
       color: white;
+      animation: bellRing 0.6s ease-in-out infinite;
     }
 
-    .icon::after {
-      content: '3';
+    @keyframes bellRing {
+      0%, 100% { transform: rotate(0deg); }
+      15% { transform: rotate(15deg); }
+      30% { transform: rotate(-15deg); }
+      45% { transform: rotate(10deg); }
+      60% { transform: rotate(-10deg); }
+      75% { transform: rotate(5deg); }
+    }
+
+    .notification-badge {
       position: absolute;
-      top: -2px;
-      right: -2px;
-      background: #ff4757;
+      top: -8px;
+      right: -8px;
+      background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
       color: white;
       border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      font-size: 11px;
-      display: flex;
+      width: 26px;
+      height: 26px;
+      font-size: 12px;
+      display: none;
       align-items: center;
       justify-content: center;
       font-weight: bold;
+      border: 2px solid white;
+      box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+      animation: badgePulse 2s infinite;
+    }
+
+    .notification-badge.active {
+      display: flex;
+    }
+
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5); }
+      50% { transform: scale(1.2); box-shadow: 0 6px 20px rgba(255, 71, 87, 0.8); }
+    }
+
+    .notification-panel {
+      position: absolute;
+      top: 65px;
+      right: 0;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+      display: none;
+      width: 400px;
+      max-height: 550px;
+      z-index: 1001;
+      overflow: hidden;
+      animation: panelFade 0.3s ease;
+      flex-direction: column;
+    }
+
+    @keyframes panelFade {
+      from {
+        opacity: 0;
+        transform: translateY(-15px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .notification-panel.active {
+      display: flex;
+    }
+
+    .notification-header {
+      padding: 20px 25px;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .notification-header h3 {
+      font-size: 17px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notification-header i {
+      font-size: 20px;
+    }
+
+    .mark-all-read {
+      background: rgba(255,255,255,0.25);
+      border: 2px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 7px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .mark-all-read:hover {
+      background: rgba(255,255,255,0.35);
+      border-color: rgba(255,255,255,0.5);
+      transform: translateY(-2px);
+    }
+
+    .notification-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .notification-item {
+      padding: 16px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #f8f9fa;
+      border-left: 4px solid transparent;
+      position: relative;
+    }
+
+    .notification-item:hover {
+      background: #f0f1f2;
+      transform: translateX(4px);
+    }
+
+    .notification-item.unread {
+      background: linear-gradient(135deg, #e8f9f8 0%, #f0fffe 100%);
+      border-left-color: #11998e;
+      box-shadow: 0 2px 8px rgba(17, 153, 142, 0.15);
+    }
+
+    .notification-item.unread::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 10px;
+      height: 10px;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      border-radius: 50%;
+      animation: unreadPulse 2s infinite;
+    }
+
+    @keyframes unreadPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+    }
+
+    .notification-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .notification-item-title {
+      font-weight: 700;
+      color: #333;
+      flex: 1;
+      margin-right: 10px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notification-type-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .notification-type-icon.info {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .notification-type-icon.warning {
+      background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
+    }
+
+    .notification-item-time {
+      font-size: 12px;
+      color: #999;
+      white-space: nowrap;
+    }
+
+    .notification-item-message {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .notification-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .notification-btn {
+      font-size: 11px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .notification-btn-read {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(17, 153, 142, 0.2);
+    }
+
+    .notification-btn-read:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+    }
+
+    .notification-btn-clear {
+      background: #ffe8e8;
+      color: #d32f2f;
+      box-shadow: 0 2px 8px rgba(211, 47, 47, 0.1);
+    }
+
+    .notification-btn-clear:hover {
+      background: #ffcccb;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+    }
+
+    .empty-notification {
+      padding: 50px 20px;
+      text-align: center;
+      color: #999;
+    }
+
+    .empty-notification i {
+      font-size: 45px;
+      margin-bottom: 15px;
+      opacity: 0.4;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .empty-notification p {
+      font-weight: 600;
+      font-size: 14px;
     }
 
     .avatar {
@@ -118,7 +374,6 @@
       color: white;
     }
 
-    /* 下拉選單 */
     .dropdown {
       position: absolute;
       top: 65px;
@@ -164,7 +419,6 @@
       width: 16px;
     }
 
-    /* 主體區域 */
     .main {
       display: flex;
       height: calc(100% - 70px);
@@ -180,6 +434,7 @@
       flex-direction: column;
       box-shadow: 2px 0 20px rgba(0,0,0,0.1);
       position: relative;
+      overflow-y: auto;
     }
 
     .sidebar::before {
@@ -192,6 +447,47 @@
       background: linear-gradient(180deg, #11998e 0%, #38ef7d 100%);
     }
 
+    .sidebar h2 {
+      font-size: 16px;
+      margin: 0;
+      padding: 18px 30px;
+      color: #555;
+      font-weight: 400;
+      text-align: left;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-left: 4px solid transparent;
+      flex-shrink: 0;
+    }
+
+    .sidebar h2 i {
+      font-size: 17px;
+      color: #555;
+      width: 20px;
+      text-align: center;
+    }
+
+    .sidebar h2:hover {
+      color: #11998e;
+      background: rgba(17, 153, 142, 0.1);
+      border-left: 4px solid #11998e;
+      transform: translateX(5px);
+    }
+
+    .sidebar h2:hover i {
+      color: #11998e;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
     .menu a {
       display: flex;
       align-items: center;
@@ -202,6 +498,7 @@
       transition: all 0.3s ease;
       border-left: 4px solid transparent;
       position: relative;
+      flex-shrink: 0;
     }
 
     .menu a:hover, .menu a.active {
@@ -227,217 +524,441 @@
       overflow-y: auto;
     }
 
-    .welcome-section {
+    .page-container {
       background: rgba(255, 255, 255, 0.9);
       border-radius: 20px;
-      padding: 40px;
-      margin-bottom: 30px;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 30px;
       backdrop-filter: blur(10px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     }
 
-    .welcome-section h1 {
-      font-size: 32px;
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .page-title {
+      font-size: 28px;
       color: #333;
-      margin-bottom: 15px;
       font-weight: 300;
+      display: flex;
+      align-items: center;
     }
 
-    .welcome-section p {
-      font-size: 18px;
-      color: #666;
-      line-height: 1.6;
+    .page-title i {
+      margin-right: 15px;
+      color: #11998e;
+      font-size: 32px;
     }
 
-    .time-display {
+    .header-time {
       background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
       color: white;
-      padding: 15px 30px;
-      border-radius: 50px;
-      font-size: 16px;
-      margin-top: 20px;
-      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 14px;
       font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 10px rgba(17, 153, 142, 0.3);
+    }
+
+    .filter-section {
+      background: rgba(248, 249, 250, 0.8);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: flex-end;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 200px;
+      flex: 1;
+    }
+
+    .filter-group label {
+      font-size: 14px;
+      color: #555;
+      font-weight: 600;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      padding: 10px 15px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .filter-group select:focus,
+    .filter-group input:focus {
+      outline: none;
+      border-color: #11998e;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+    }
+
+    .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 25px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
       margin-bottom: 30px;
     }
 
     .stat-card {
-      background: rgba(255, 255, 255, 0.9);
+      background: white;
       border-radius: 15px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
       transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
+      border-left: 4px solid #11998e;
     }
 
     .stat-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     }
 
-    .stat-card i {
-      font-size: 40px;
-      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .stat-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 15px;
     }
 
-    .stat-card h3 {
-      font-size: 24px;
-      color: #333;
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
-
-    .stat-card p {
+    .stat-card-title {
+      font-size: 14px;
       color: #666;
-      font-size: 14px;
-    }
-
-    /* 今日課程表 */
-    .schedule-section {
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 20px;
-      padding: 30px;
-      margin-bottom: 30px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    }
-
-    .schedule-section h2 {
-      font-size: 24px;
-      color: #333;
-      margin-bottom: 25px;
-      display: flex;
-      align-items: center;
-    }
-
-    .schedule-section h2 i {
-      margin-right: 10px;
-      color: #11998e;
-    }
-
-    .schedule-item {
-      display: flex;
-      align-items: center;
-      padding: 15px 0;
-      border-bottom: 1px solid #eee;
-      transition: all 0.3s ease;
-    }
-
-    .schedule-item:last-child {
-      border-bottom: none;
-    }
-
-    .schedule-item:hover {
-      background: rgba(17, 153, 142, 0.05);
-      border-radius: 10px;
-      padding-left: 15px;
-    }
-
-    .schedule-time {
-      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-      color: white;
-      padding: 8px 15px;
-      border-radius: 20px;
-      font-size: 14px;
       font-weight: 500;
-      min-width: 100px;
-      text-align: center;
     }
 
-    .schedule-info {
-      margin-left: 20px;
-      flex: 1;
+    .stat-card-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
     }
 
-    .schedule-title {
-      font-size: 16px;
+    .stat-card-icon i {
+      font-size: 22px;
+      color: white;
+    }
+
+    .stat-card-value {
+      font-size: 32px;
       font-weight: 600;
       color: #333;
       margin-bottom: 5px;
     }
 
-    .schedule-location {
-      font-size: 14px;
-      color: #666;
+    .stat-card-desc {
+      font-size: 12px;
+      color: #999;
     }
 
-    /* 快捷操作 */
-    .quick-actions {
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 20px;
-      padding: 30px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    .table-container {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      overflow-x: auto;
     }
 
-    .quick-actions h2 {
-      font-size: 24px;
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
       color: #333;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
     }
 
-    .quick-actions h2 i {
+    .section-title i {
       margin-right: 10px;
       color: #11998e;
     }
 
-    .action-buttons {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .data-table th {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .data-table td {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .data-table tbody tr {
+      transition: all 0.3s ease;
+    }
+
+    .data-table tbody tr:hover {
+      background: rgba(17, 153, 142, 0.05);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-present {
+      background: rgba(40, 167, 69, 0.1);
+      color: #28a745;
+    }
+
+    .status-absent {
+      background: rgba(220, 53, 69, 0.1);
+      color: #dc3545;
+    }
+
+    .status-late {
+      background: rgba(255, 193, 7, 0.1);
+      color: #ffc107;
     }
 
     .action-btn {
-      display: flex;
-      align-items: center;
-      padding: 20px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s ease;
       background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
       color: white;
-      text-decoration: none;
-      border-radius: 15px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+      margin-right: 5px;
     }
 
     .action-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
     }
 
-    .action-btn i {
-      font-size: 24px;
-      margin-right: 15px;
+    .action-btn.delete {
+      background: #dc3545;
     }
 
-    .action-btn-text {
-      flex: 1;
+    .action-btn.delete:hover {
+      background: #c82333;
+      box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
     }
 
-    .action-btn-title {
-      font-size: 16px;
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .pagination button {
+      padding: 8px 15px;
+      border: 2px solid #11998e;
+      background: white;
+      color: #11998e;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background: #11998e;
+      color: white;
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pagination span {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      animation: modalFade 0.3s ease;
+    }
+
+    @keyframes modalFade {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 22px;
       font-weight: 600;
-      margin-bottom: 5px;
+      color: #333;
     }
 
-    .action-btn-desc {
-      font-size: 12px;
-      opacity: 0.9;
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #999;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
-    /* 響應式設計 */
+    .close-btn:hover {
+      color: #333;
+      transform: rotate(90deg);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 15px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #11998e;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
     @media (max-width: 768px) {
       .main {
         flex-direction: column;
@@ -450,6 +971,7 @@
       
       .menu {
         display: flex;
+        flex-direction: row;
         overflow-x: auto;
       }
       
@@ -466,14 +988,22 @@
         grid-template-columns: 1fr;
       }
 
-      .action-buttons {
-        grid-template-columns: 1fr;
+      .filter-section {
+        flex-direction: column;
+      }
+
+      .filter-group {
+        min-width: 100%;
+      }
+
+      .notification-panel {
+        width: 320px;
       }
     }
 
-    /* 滾動條美化 */
     ::-webkit-scrollbar {
       width: 8px;
+      height: 8px;
     }
 
     ::-webkit-scrollbar-track {
@@ -488,23 +1018,55 @@
     ::-webkit-scrollbar-thumb:hover {
       background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
     }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- 頂部欄 -->
   <div class="header">
-    <img src="image/logo1.gif" alt="Logo" class="logo">
+    <a href="teacher_dashboard.html">
+  <img src="image/logo1.gif" alt="Logo" class="logo">
+</a>
     
     <div class="header-right">
-      <!-- 通知圖標 -->
-      <div class="icon"><i class="fas fa-bell"></i></div>
+      <div class="icon-wrapper">
+        <div class="icon" id="notificationBell">
+          <i class="fas fa-bell"></i>
+        </div>
+        <div class="notification-badge" id="notificationBadge">0</div>
+      </div>
+      <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+          <h3><i class="fas fa-bell"></i> 通知中心</h3>
+          <button class="mark-all-read" onclick="markAllAsRead()"><i class="fas fa-check-double"></i> 全部已讀</button>
+        </div>
+        <div class="notification-list" id="notificationList"></div>
+      </div>
       
-      <!-- 頭像 -->
       <div class="avatar" id="avatar">
         <i class="fas fa-user"></i>
       </div>
       
-      <!-- 下拉選單 -->
       <div class="dropdown" id="dropdown">
         <a href="login_teacher.html">
           <i class="fas fa-sign-out-alt"></i>
@@ -514,14 +1076,13 @@
     </div>
   </div>
 
-  <!-- 主區塊 -->
   <div class="main">
     <div class="sidebar">
+      <h2 onclick="location.href='teacher_dashboard.html';">
+        <i class="fas fa-home"></i>
+        老師首頁
+      </h2>
       <div class="menu">
-        <a href="teacher_dashboard.html" class="active">
-          <i class="fas fa-home"></i>
-          老師首頁
-        </a>
         <a href="activity_status.html">
           <i class="fas fa-chart-bar"></i>
           查看活動情況
@@ -534,205 +1095,552 @@
           <i class="fas fa-comments"></i>
           學生表單反饋
         </a>
-         <a href="Teacher_schedules_classes.html">
+        <a href="Teacher_schedules_classes.html">
           <i class="fas fa-calendar-alt"></i>
           線上排班
         </a>
-        <a href="askforleave.html">
+        <a href="askfor_leave.html">
           <i class="fas fa-clipboard-check"></i>
           請假審核
         </a>
-        <a href="work_hours_attendance.html">
+        <a href="teacher_rollcall.html">
+          <i class="fas fa-user-check"></i>
+          點名系統
+        </a>
+        <a href="working_hours.html" class="active">
           <i class="fas fa-clock"></i>
           工作時數與出席記錄
         </a>
-           </div>
+      </div>
     </div>
     
     <div class="content">
-      <!-- 歡迎區域 -->
-      <div class="welcome-section">
-        <h1>歡迎回來，王老師！</h1>
-        <p>今天又是充滿活力的一天，讓我們一起為學生們創造美好的學習體驗</p>
-        <div class="time-display" id="currentTime"></div>
-      </div>
+      <div class="page-container">
+        <div class="page-header">
+          <div class="page-title">
+            <i class="fas fa-clock"></i>
+            工作時數與出席記錄
+          </div>
+          <div class="header-time" id="currentTime">
+            <i class="fas fa-clock"></i>
+            <span id="timeText"></span>
+          </div>
+        </div>
 
-      <!-- 統計卡片 -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <i class="fas fa-calendar-check"></i>
-          <h3 id="activeActivities">12</h3>
-          <p>進行中的活動</p>
+        <div class="filter-section">
+          <div class="filter-group">
+            <label>選擇成員</label>
+            <select id="staffSelect">
+              <option value="all">所有成員</option>
+              <option value="王老師">王老師</option>
+              <option value="李老師">李老師</option>
+              <option value="張老師">張老師</option>
+              <option value="陳老師">陳老師</option>
+              <option value="林老師">林老師</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>開始日期</label>
+            <input type="date" id="startDate">
+          </div>
+          <div class="filter-group">
+            <label>結束日期</label>
+            <input type="date" id="endDate">
+          </div>
+          <div class="filter-group">
+            <label>&nbsp;</label>
+            <button class="btn btn-primary" onclick="filterRecords()">
+              <i class="fas fa-search"></i>
+              查詢
+            </button>
+          </div>
+          <div class="filter-group">
+            <label>&nbsp;</label>
+            <button class="btn btn-secondary" onclick="exportData()">
+              <i class="fas fa-file-export"></i>
+              匯出報表
+            </button>
+          </div>
         </div>
-        <div class="stat-card">
-          <i class="fas fa-user-graduate"></i>
-          <h3 id="totalStudents">156</h3>
-          <p>總報名人數</p>
-        </div>
-        <div class="stat-card">
-          <i class="fas fa-star"></i>
-          <h3 id="averageRating">4.8</h3>
-          <p>平均評分</p>
-        </div>
-        <div class="stat-card">
-          <i class="fas fa-clipboard-check"></i>
-          <h3 id="pendingReviews">23</h3>
-          <p>待審核表單</p>
-        </div>
-      </div>
 
-      <!-- 今日課程表 -->
-      <div class="schedule-section">
-        <h2><i class="fas fa-calendar-day"></i>今日課程安排</h2>
-        <div class="schedule-item">
-          <div class="schedule-time">09:00-10:30</div>
-          <div class="schedule-info">
-            <div class="schedule-title">數學進階課程</div>
-            <div class="schedule-location">教室 A101</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-card-title">總工作時數</div>
+              <div class="stat-card-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+            </div>
+            <div class="stat-card-value" id="totalHours">0</div>
+            <div class="stat-card-desc">本月累計小時</div>
           </div>
-        </div>
-        <div class="schedule-item">
-          <div class="schedule-time">11:00-12:30</div>
-          <div class="schedule-info">
-            <div class="schedule-title">科學實驗課</div>
-            <div class="schedule-location">實驗室 B201</div>
-          </div>
-        </div>
-        <div class="schedule-item">
-          <div class="schedule-time">14:00-15:30</div>
-          <div class="schedule-info">
-            <div class="schedule-title">英語會話練習</div>
-            <div class="schedule-location">教室 C102</div>
-          </div>
-        </div>
-        <div class="schedule-item">
-          <div class="schedule-time">16:00-17:00</div>
-          <div class="schedule-info">
-            <div class="schedule-title">課後輔導</div>
-            <div class="schedule-location">辦公室</div>
-          </div>
-        </div>
-      </div>
 
-      <!-- 快捷操作 -->
-      <div class="quick-actions">
-        <h2><i class="fas fa-bolt"></i>快捷操作</h2>
-        <div class="action-buttons">
-          <a href="activity_status.html" class="action-btn">
-            <i class="fas fa-chart-line"></i>
-            <div class="action-btn-text">
-              <div class="action-btn-title">活動監控</div>
-              <div class="action-btn-desc">查看所有活動進度</div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-card-title">平均出席率</div>
+              <div class="stat-card-icon">
+                <i class="fas fa-user-check"></i>
+              </div>
             </div>
-          </a>
-          <a href="registration_statistics.html" class="action-btn">
-            <i class="fas fa-analytics"></i>
-            <div class="action-btn-text">
-              <div class="action-btn-title">數據分析</div>
-              <div class="action-btn-desc">分析報名趨勢</div>
+            <div class="stat-card-value" id="avgAttendance">0%</div>
+            <div class="stat-card-desc">本月平均出席率</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-card-title">遲到次數</div>
+              <div class="stat-card-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
             </div>
-          </a>
-          <a href="form_feedback.html" class="action-btn">
-            <i class="fas fa-comment-dots"></i>
-            <div class="action-btn-text">
-              <div class="action-btn-title">學生反饋</div>
-              <div class="action-btn-desc">查看最新意見</div>
+            <div class="stat-card-value" id="lateCount">0</div>
+            <div class="stat-card-desc">本月累計次數</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-card-title">請假次數</div>
+              <div class="stat-card-icon">
+                <i class="fas fa-calendar-times"></i>
+              </div>
             </div>
-          </a>
-          <a href="#" class="action-btn" onclick="alert('功能開發中...')">
-            <i class="fas fa-plus-circle"></i>
-            <div class="action-btn-text">
-              <div class="action-btn-title">新增活動</div>
-              <div class="action-btn-desc">創建新的學習活動</div>
-            </div>
-          </a>
+            <div class="stat-card-value" id="absentCount">0</div>
+            <div class="stat-card-desc">本月累計次數</div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="section-title">
+            <span><i class="fas fa-list-alt"></i>出席記錄詳情</span>
+            <button class="btn btn-success" onclick="openAddModal()">
+              <i class="fas fa-plus"></i>
+              新增記錄
+            </button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>日期</th>
+                <th>成員姓名</th>
+                <th>班次時段</th>
+                <th>簽到時間</th>
+                <th>簽退時間</th>
+                <th>工作時數</th>
+                <th>狀態</th>
+                <th>備註</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="recordBody"></tbody>
+          </table>
+
+          <div class="pagination">
+            <button onclick="previousPage()" id="prevBtn">
+              <i class="fas fa-chevron-left"></i> 上一頁
+            </button>
+            <span id="pageInfo">第 1 頁 / 共 1 頁</span>
+            <button onclick="nextPage()" id="nextBtn">
+              下一頁 <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- JS 控制 -->
+  <div class="modal" id="recordModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">新增記錄</h3>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      
+      <form id="recordForm">
+        <input type="hidden" id="recordId">
+        
+        <div class="form-group">
+          <label>日期 *</label>
+          <input type="date" id="recordDate" required>
+        </div>
+        
+        <div class="form-group">
+          <label>成員姓名 *</label>
+          <select id="recordName" required>
+            <option value="">請選擇</option>
+            <option value="王老師">王老師</option>
+            <option value="李老師">李老師</option>
+            <option value="張老師">張老師</option>
+            <option value="陳老師">陳老師</option>
+            <option value="林老師">林老師</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>班次時段 *</label>
+          <select id="recordShift" required>
+            <option value="">請選擇</option>
+            <option value="早班 08:00-12:00">早班 08:00-12:00</option>
+            <option value="午班 13:00-17:00">午班 13:00-17:00</option>
+            <option value="晚班 18:00-22:00">晚班 18:00-22:00</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>簽到時間</label>
+          <input type="time" id="recordCheckIn">
+        </div>
+        
+        <div class="form-group">
+          <label>簽退時間</label>
+          <input type="time" id="recordCheckOut">
+        </div>
+        
+        <div class="form-group">
+          <label>工作時數</label>
+          <input type="number" id="recordHours" step="0.1" min="0" placeholder="將自動計算">
+        </div>
+        
+        <div class="form-group">
+          <label>狀態 *</label>
+          <select id="recordStatus" required>
+            <option value="present">正常出席</option>
+            <option value="late">遲到</option>
+            <option value="absent">請假/缺席</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>備註</label>
+          <textarea id="recordNote" placeholder="請輸入備註資訊"></textarea>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+          <button type="submit" class="btn btn-primary">儲存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
+    let notifications = [
+      {id: 1, title: '出席記錄提醒', message: '請記得每日完成簽到簽退記錄', time: '2小時前', status: 'unread', type: 'info'},
+      {id: 2, title: '工時統計', message: '本月工作時數已達168小時', time: '1小時前', status: 'unread', type: 'info'},
+      {id: 3, title: '遲到記錄', message: '李老師本月有2次遲到記錄', time: '30分鐘前', status: 'read', type: 'warning'}
+    ];
+
     const avatar = document.getElementById('avatar');
     const dropdown = document.getElementById('dropdown');
+    const notificationBell = document.getElementById('notificationBell');
+    const notificationPanel = document.getElementById('notificationPanel');
 
-    // 下拉選單控制
     avatar.addEventListener('click', () => {
       dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+      notificationPanel.classList.remove('active');
     });
 
-    // 點擊其他地方關閉選單
+    notificationBell.addEventListener('click', () => {
+      notificationPanel.classList.toggle('active');
+      dropdown.style.display = 'none';
+    });
+
     window.addEventListener('click', function(e) {
       if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.style.display = 'none';
       }
+      if (!notificationBell.contains(e.target) && !notificationPanel.contains(e.target)) {
+        notificationPanel.classList.remove('active');
+      }
     });
 
-    // 選單項目點擊效果
-    document.querySelectorAll('.menu a').forEach(link => {
-      link.addEventListener('click', function(e) {
-        document.querySelectorAll('.menu a').forEach(l => l.classList.remove('active'));
-        this.classList.add('active');
-      });
-    });
-
-    // 統計卡片數字動畫
-    function animateNumbers() {
-      const numbers = [
-        { element: document.getElementById('activeActivities'), target: 12 },
-        { element: document.getElementById('totalStudents'), target: 156 },
-        { element: document.getElementById('averageRating'), target: 4.8, isFloat: true },
-        { element: document.getElementById('pendingReviews'), target: 23 }
-      ];
-
-      numbers.forEach(({ element, target, isFloat }) => {
-        let count = 0;
-        const increment = target / 30;
-        const timer = setInterval(() => {
-          count += increment;
-          if (count >= target) {
-            element.innerText = isFloat ? target.toFixed(1) : target;
-            clearInterval(timer);
-          } else {
-            element.innerText = isFloat ? count.toFixed(1) : Math.floor(count);
-          }
-        }, 50);
-      });
+    function updateNotificationBadge() {
+      const unreadCount = notifications.filter(n => n.status === 'unread').length;
+      const badge = document.getElementById('notificationBadge');
+      badge.textContent = unreadCount;
+      if (unreadCount > 0) badge.classList.add('active');
+      else badge.classList.remove('active');
     }
 
-    // 時間顯示
-    function updateTime() {
-      const now = new Date();
-      const options = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        weekday: 'long'
-      };
-      
-      const timeString = now.toLocaleDateString('zh-TW', options);
-      document.getElementById('currentTime').textContent = timeString;
+    function renderNotifications() {
+      const notificationList = document.getElementById('notificationList');
+      if (notifications.length === 0) {
+        notificationList.innerHTML = '<div class="empty-notification"><i class="fas fa-inbox"></i><p>沒有通知</p></div>';
+        return;
+      }
+      notificationList.innerHTML = notifications.map(n => `
+        <div class="notification-item ${n.status === 'unread' ? 'unread' : ''}">
+          <div class="notification-item-header">
+            <div class="notification-item-title">
+              <span class="notification-type-icon ${n.type}">
+                <i class="fas fa-${n.type === 'warning' ? 'exclamation' : 'info'}"></i>
+              </span>
+              ${n.title}
+            </div>
+            <div class="notification-item-time">${n.time}</div>
+          </div>
+          <div class="notification-item-message">${n.message}</div>
+          <div class="notification-actions">
+            ${n.status === 'unread' ? `<button class="notification-btn notification-btn-read" onclick="markAsRead(${n.id})"><i class="fas fa-check"></i> 標記已讀</button>` : ''}
+            <button class="notification-btn notification-btn-clear" onclick="deleteNotification(${n.id})"><i class="fas fa-trash"></i> 刪除</button>
+          </div>
+        </div>
+      `).join('');
+      updateNotificationBadge();
     }
 
-    // 頁面載入後執行
+    function markAsRead(id) {
+      const n = notifications.find(n => n.id === id);
+      if (n && n.status === 'unread') {
+        n.status = 'read';
+        renderNotifications();
+        showNotification('已標記為已讀', 'success');
+      }
+    }
+
+    function markAllAsRead() {
+      notifications.forEach(n => { if (n.status === 'unread') n.status = 'read'; });
+      renderNotifications();
+      showNotification('全部已標記為已讀', 'success');
+    }
+
+    function deleteNotification(id) {
+      notifications = notifications.filter(n => n.id !== id);
+      renderNotifications();
+      showNotification('通知已刪除', 'success');
+    }
+
+    let allRecords = [
+      {id: 1, date: '2025-10-08', name: '王老師', shift: '早班 08:00-12:00', checkIn: '07:55', checkOut: '12:03', hours: 4.1, status: 'present', note: ''},
+      {id: 2, date: '2025-10-08', name: '李老師', shift: '午班 13:00-17:00', checkIn: '13:10', checkOut: '17:00', hours: 3.8, status: 'late', note: '遲到10分鐘'},
+      {id: 3, date: '2025-10-08', name: '張老師', shift: '早班 08:00-12:00', checkIn: '08:00', checkOut: '12:00', hours: 4.0, status: 'present', note: ''},
+      {id: 4, date: '2025-10-07', name: '陳老師', shift: '午班 13:00-17:00', checkIn: '', checkOut: '', hours: 0, status: 'absent', note: '事假'},
+      {id: 5, date: '2025-10-07', name: '林老師', shift: '早班 08:00-12:00', checkIn: '08:02', checkOut: '12:05', hours: 4.0, status: 'present', note: ''},
+      {id: 6, date: '2025-10-06', name: '王老師', shift: '午班 13:00-17:00', checkIn: '12:58', checkOut: '17:02', hours: 4.1, status: 'present', note: ''},
+      {id: 7, date: '2025-10-06', name: '李老師', shift: '早班 08:00-12:00', checkIn: '08:00', checkOut: '12:00', hours: 4.0, status: 'present', note: ''},
+      {id: 8, date: '2025-10-05', name: '張老師', shift: '午班 13:00-17:00', checkIn: '13:05', checkOut: '17:00', hours: 3.9, status: 'late', note: '遲到5分鐘'},
+      {id: 9, date: '2025-10-05', name: '陳老師', shift: '早班 08:00-12:00', checkIn: '08:00', checkOut: '12:00', hours: 4.0, status: 'present', note: ''},
+      {id: 10, date: '2025-10-04', name: '林老師', shift: '午班 13:00-17:00', checkIn: '', checkOut: '', hours: 0, status: 'absent', note: '病假'},
+      {id: 11, date: '2025-10-04', name: '王老師', shift: '早班 08:00-12:00', checkIn: '07:58', checkOut: '12:00', hours: 4.0, status: 'present', note: ''},
+      {id: 12, date: '2025-10-03', name: '李老師', shift: '午班 13:00-17:00', checkIn: '13:15', checkOut: '17:00', hours: 3.75, status: 'late', note: '遲到15分鐘'}
+    ];
+
+    let filteredRecords = [...allRecords];
+    let currentPage = 1;
+    const recordsPerPage = 10;
+    let editingId = null;
+    let nextId = 13;
+
     window.addEventListener('load', () => {
       updateTime();
-      setInterval(updateTime, 1000); // 每秒更新時間
-      setTimeout(animateNumbers, 500); // 延遲執行動畫
+      setInterval(updateTime, 1000);
+      initializeDates();
+      renderRecords();
+      updateStats();
+      renderNotifications();
     });
 
-    // 課程項目懸停效果
-    document.querySelectorAll('.schedule-item').forEach(item => {
-      item.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateX(10px)';
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('timeText').textContent = now.toLocaleString('zh-TW', {
+        year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
       });
-      
-      item.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateX(0)';
+    }
+
+    function initializeDates() {
+      const today = new Date();
+      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+      document.getElementById('startDate').valueAsDate = firstDay;
+      document.getElementById('endDate').valueAsDate = today;
+    }
+
+    function filterRecords() {
+      const staff = document.getElementById('staffSelect').value;
+      const start = document.getElementById('startDate').value;
+      const end = document.getElementById('endDate').value;
+      filteredRecords = allRecords.filter(r => {
+        const matchStaff = staff === 'all' || r.name === staff;
+        const matchDate = (!start || r.date >= start) && (!end || r.date <= end);
+        return matchStaff && matchDate;
       });
+      currentPage = 1;
+      renderRecords();
+      updateStats();
+    }
+
+    function renderRecords() {
+      const tbody = document.getElementById('recordBody');
+      const start = (currentPage - 1) * recordsPerPage;
+      const pageRecords = filteredRecords.slice(start, start + recordsPerPage);
+      if (pageRecords.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px; color: #999;">暫無記錄</td></tr>';
+      } else {
+        tbody.innerHTML = pageRecords.map(r => `
+          <tr>
+            <td>${r.date}</td>
+            <td>${r.name}</td>
+            <td>${r.shift}</td>
+            <td>${r.checkIn || '-'}</td>
+            <td>${r.checkOut || '-'}</td>
+            <td>${r.hours.toFixed(1)}</td>
+            <td><span class="status-badge status-${r.status}">${getStatusText(r.status)}</span></td>
+            <td>${r.note || '-'}</td>
+            <td>
+              <button class="action-btn" onclick="editRecord(${r.id})" title="編輯"><i class="fas fa-edit"></i></button>
+              <button class="action-btn delete" onclick="deleteRecord(${r.id})" title="刪除"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+        `).join('');
+      }
+      updatePagination();
+    }
+
+    function getStatusText(status) {
+      return {'present': '正常出席', 'late': '遲到', 'absent': '請假/缺席'}[status] || status;
+    }
+
+    function updatePagination() {
+      const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
+      document.getElementById('pageInfo').textContent = `第 ${currentPage} 頁 / 共 ${totalPages} 頁`;
+      document.getElementById('prevBtn').disabled = currentPage === 1;
+      document.getElementById('nextBtn').disabled = currentPage === totalPages || totalPages === 0;
+    }
+
+    function previousPage() {
+      if (currentPage > 1) { currentPage--; renderRecords(); }
+    }
+
+    function nextPage() {
+      const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
+      if (currentPage < totalPages) { currentPage++; renderRecords(); }
+    }
+
+    function updateStats() {
+      const totalHours = filteredRecords.reduce((sum, r) => sum + r.hours, 0);
+      const presentCount = filteredRecords.filter(r => r.status === 'present' || r.status === 'late').length;
+      const lateCount = filteredRecords.filter(r => r.status === 'late').length;
+      const absentCount = filteredRecords.filter(r => r.status === 'absent').length;
+      const avgAttendance = filteredRecords.length > 0 ? (presentCount / filteredRecords.length * 100).toFixed(1) : 0;
+      document.getElementById('totalHours').textContent = totalHours.toFixed(1);
+      document.getElementById('avgAttendance').textContent = avgAttendance + '%';
+      document.getElementById('lateCount').textContent = lateCount;
+      document.getElementById('absentCount').textContent = absentCount;
+    }
+
+    function openAddModal() {
+      editingId = null;
+      document.getElementById('modalTitle').textContent = '新增記錄';
+      document.getElementById('recordForm').reset();
+      document.getElementById('recordDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('recordModal').style.display = 'flex';
+    }
+
+    function editRecord(id) {
+      const r = allRecords.find(r => r.id === id);
+      if (!r) return;
+      editingId = id;
+      document.getElementById('modalTitle').textContent = '編輯記錄';
+      document.getElementById('recordId').value = id;
+      document.getElementById('recordDate').value = r.date;
+      document.getElementById('recordName').value = r.name;
+      document.getElementById('recordShift').value = r.shift;
+      document.getElementById('recordCheckIn').value = r.checkIn;
+      document.getElementById('recordCheckOut').value = r.checkOut;
+      document.getElementById('recordHours').value = r.hours;
+      document.getElementById('recordStatus').value = r.status;
+      document.getElementById('recordNote').value = r.note;
+      document.getElementById('recordModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('recordModal').style.display = 'none';
+      document.getElementById('recordForm').reset();
+      editingId = null;
+    }
+
+    function calculateHours(checkIn, checkOut) {
+      if (!checkIn || !checkOut) return 0;
+      const [inH, inM] = checkIn.split(':').map(Number);
+      const [outH, outM] = checkOut.split(':').map(Number);
+      return ((outH * 60 + outM - inH * 60 - inM) / 60).toFixed(1);
+    }
+
+    document.getElementById('recordCheckIn').addEventListener('change', autoCalculateHours);
+    document.getElementById('recordCheckOut').addEventListener('change', autoCalculateHours);
+
+    function autoCalculateHours() {
+      const checkIn = document.getElementById('recordCheckIn').value;
+      const checkOut = document.getElementById('recordCheckOut').value;
+      if (checkIn && checkOut) {
+        document.getElementById('recordHours').value = calculateHours(checkIn, checkOut);
+      }
+    }
+
+    document.getElementById('recordForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = {
+        date: document.getElementById('recordDate').value,
+        name: document.getElementById('recordName').value,
+        shift: document.getElementById('recordShift').value,
+        checkIn: document.getElementById('recordCheckIn').value,
+        checkOut: document.getElementById('recordCheckOut').value,
+        hours: parseFloat(document.getElementById('recordHours').value) || 0,
+        status: document.getElementById('recordStatus').value,
+        note: document.getElementById('recordNote').value
+      };
+      if (editingId) {
+        const index = allRecords.findIndex(r => r.id === editingId);
+        if (index !== -1) allRecords[index] = { ...allRecords[index], ...formData };
+      } else {
+        allRecords.unshift({ id: nextId++, ...formData });
+      }
+      allRecords.sort((a, b) => b.date.localeCompare(a.date));
+      closeModal();
+      filterRecords();
+      showNotification(editingId ? '記錄已更新！' : '記錄已新增！', 'success');
+    });
+
+    function deleteRecord(id) {
+      if (confirm('確定要刪除此記錄嗎？')) {
+        allRecords = allRecords.filter(r => r.id !== id);
+        filterRecords();
+        showNotification('記錄已刪除！', 'success');
+      }
+    }
+
+    function exportData() {
+      if (filteredRecords.length === 0) {
+        showNotification('沒有可匯出的資料！', 'warning');
+        return;
+      }
+      let csv = '\uFEFF日期,成員姓名,班次時段,簽到時間,簽退時間,工作時數,狀態,備註\n';
+      filteredRecords.forEach(r => {
+        csv += `${r.date},${r.name},${r.shift},${r.checkIn || '-'},${r.checkOut || '-'},${r.hours},${getStatusText(r.status)},${r.note || '-'}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `工作時數記錄_${new Date().toISOString().split('T')[0]}.csv`;
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showNotification('報表已匯出！', 'success');
+    }
+
+    function showNotification(message, type) {
+      const colors = {success: '#28a745', info: '#17a2b8', warning: '#ffc107', error: '#dc3545'};
+      const notification = document.createElement('div');
+      notification.textContent = message;
+      notification.style.cssText = `position: fixed; top: 100px; right: 30px; background: ${colors[type] || colors.info}; color: white; padding: 15px 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10001; animation: slideIn 0.3s ease; font-size: 15px;`;
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => document.body.removeChild(notification), 300);
+      }, 3000);
+    }
+
+    document.getElementById('recordModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
     });
   </script>
 </body>

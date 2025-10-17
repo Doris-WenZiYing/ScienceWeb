@@ -58,6 +58,10 @@
       position: relative;
     }
 
+    .icon-wrapper {
+      position: relative;
+    }
+
     .icon {
       position: relative;
       padding: 10px;
@@ -65,33 +69,286 @@
       background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
       transition: all 0.3s ease;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .icon:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(17, 153, 142, 0.5);
     }
 
     .icon i {
       font-size: 18px;
       color: white;
+      animation: bellRing 0.6s ease-in-out infinite;
     }
 
-    .icon::after {
-      content: '3';
+    @keyframes bellRing {
+      0%, 100% { transform: rotate(0deg); }
+      15% { transform: rotate(15deg); }
+      30% { transform: rotate(-15deg); }
+      45% { transform: rotate(10deg); }
+      60% { transform: rotate(-10deg); }
+      75% { transform: rotate(5deg); }
+    }
+
+    .notification-badge {
       position: absolute;
-      top: -2px;
-      right: -2px;
-      background: #ff4757;
+      top: -8px;
+      right: -8px;
+      background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
       color: white;
       border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      font-size: 11px;
-      display: flex;
+      width: 26px;
+      height: 26px;
+      font-size: 12px;
+      display: none;
       align-items: center;
       justify-content: center;
       font-weight: bold;
+      border: 2px solid white;
+      box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+      animation: badgePulse 2s infinite;
+    }
+
+    .notification-badge.active {
+      display: flex;
+    }
+
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5); }
+      50% { transform: scale(1.2); box-shadow: 0 6px 20px rgba(255, 71, 87, 0.8); }
+    }
+
+    .notification-panel {
+      position: absolute;
+      top: 65px;
+      right: 0;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+      display: none;
+      width: 400px;
+      max-height: 550px;
+      z-index: 1001;
+      overflow: hidden;
+      animation: panelFade 0.3s ease;
+      flex-direction: column;
+    }
+
+    @keyframes panelFade {
+      from {
+        opacity: 0;
+        transform: translateY(-15px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .notification-panel.active {
+      display: flex;
+    }
+
+    .notification-header {
+      padding: 20px 25px;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .notification-header h3 {
+      font-size: 17px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notification-header i {
+      font-size: 20px;
+    }
+
+    .mark-all-read {
+      background: rgba(255,255,255,0.25);
+      border: 2px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 7px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .mark-all-read:hover {
+      background: rgba(255,255,255,0.35);
+      border-color: rgba(255,255,255,0.5);
+      transform: translateY(-2px);
+    }
+
+    .notification-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .notification-item {
+      padding: 16px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #f8f9fa;
+      border-left: 4px solid transparent;
+      position: relative;
+    }
+
+    .notification-item:hover {
+      background: #f0f1f2;
+      transform: translateX(4px);
+    }
+
+    .notification-item.unread {
+      background: linear-gradient(135deg, #e8f9f8 0%, #f0fffe 100%);
+      border-left-color: #11998e;
+      box-shadow: 0 2px 8px rgba(17, 153, 142, 0.15);
+    }
+
+    .notification-item.unread::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 10px;
+      height: 10px;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      border-radius: 50%;
+      animation: unreadPulse 2s infinite;
+    }
+
+    @keyframes unreadPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+    }
+
+    .notification-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .notification-item-title {
+      font-weight: 700;
+      color: #333;
+      flex: 1;
+      margin-right: 10px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notification-type-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .notification-type-icon.info {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .notification-type-icon.warning {
+      background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
+    }
+
+    .notification-item-time {
+      font-size: 12px;
+      color: #999;
+      white-space: nowrap;
+    }
+
+    .notification-item-message {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .notification-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .notification-btn {
+      font-size: 11px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .notification-btn-read {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(17, 153, 142, 0.2);
+    }
+
+    .notification-btn-read:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+    }
+
+    .notification-btn-clear {
+      background: #ffe8e8;
+      color: #d32f2f;
+      box-shadow: 0 2px 8px rgba(211, 47, 47, 0.1);
+    }
+
+    .notification-btn-clear:hover {
+      background: #ffcccb;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+    }
+
+    .empty-notification {
+      padding: 50px 20px;
+      text-align: center;
+      color: #999;
+    }
+
+    .empty-notification i {
+      font-size: 45px;
+      margin-bottom: 15px;
+      opacity: 0.4;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .empty-notification p {
+      font-weight: 600;
+      font-size: 14px;
     }
 
     .avatar {
@@ -469,6 +726,10 @@
       .action-buttons {
         grid-template-columns: 1fr;
       }
+
+      .notification-panel {
+        width: 320px;
+      }
     }
 
     /* 滾動條美化 */
@@ -493,11 +754,30 @@
 <body>
   <!-- 頂部欄 -->
   <div class="header">
-    <img src="image/logo1.gif" alt="Logo" class="logo">
+    <a href="teacher_dashboard.html">
+  <img src="image/logo1.gif" alt="Logo" class="logo">
+</a>
     
     <div class="header-right">
       <!-- 通知圖標 -->
-      <div class="icon"><i class="fas fa-bell"></i></div>
+      <div class="icon-wrapper">
+        <div class="icon" id="notificationBell">
+          <i class="fas fa-bell"></i>
+        </div>
+        <div class="notification-badge" id="notificationBadge">0</div>
+      </div>
+      <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+          <h3><i class="fas fa-bell"></i> 通知中心</h3>
+          <button class="mark-all-read" onclick="markAllAsRead()"><i class="fas fa-check-double"></i> 全部已讀</button>
+        </div>
+        <div class="notification-list" id="notificationList">
+          <div class="empty-notification">
+            <i class="fas fa-inbox"></i>
+            <p>沒有通知</p>
+          </div>
+        </div>
+      </div>
       
       <!-- 頭像 -->
       <div class="avatar" id="avatar">
@@ -534,19 +814,23 @@
           <i class="fas fa-comments"></i>
           學生表單反饋
         </a>
-         <a href="Teacher_schedules_classes.html">
+        <a href="Teacher_schedules_classes.html">
           <i class="fas fa-calendar-alt"></i>
           線上排班
         </a>
-        <a href="askforleave.html">
+        <a href="askfor_leave.html">
           <i class="fas fa-clipboard-check"></i>
           請假審核
         </a>
-        <a href="work_hours_attendance.html">
+        <a href="teacher_rollcall.html">
+          <i class="fas fa-user-check"></i>
+          點名系統
+        </a>
+        <a href="working_hours.html">
           <i class="fas fa-clock"></i>
           工作時數與出席記錄
         </a>
-             </div>
+      </div>
     </div>
     
     <div class="content">
@@ -653,18 +937,58 @@
 
   <!-- JS 控制 -->
   <script>
+    // 通知數據
+    let notifications = [
+      {
+        id: 1,
+        title: '新的活動提醒',
+        message: '「程式設計入門」即將在3天後開始，請確認教室安排',
+        time: '2小時前',
+        status: 'unread',
+        type: 'info'
+      },
+      {
+        id: 2,
+        title: '參與人數更新',
+        message: '「英語口語提升班」新增2名參與者，現已達22人',
+        time: '1小時前',
+        status: 'unread',
+        type: 'info'
+      },
+      {
+        id: 3,
+        title: '活動即將結束',
+        message: '「科學實驗探索營」將在明天結束，記得收集反饋',
+        time: '30分鐘前',
+        status: 'unread',
+        type: 'warning'
+      }
+    ];
+
     const avatar = document.getElementById('avatar');
     const dropdown = document.getElementById('dropdown');
+    const notificationBell = document.getElementById('notificationBell');
+    const notificationPanel = document.getElementById('notificationPanel');
 
     // 下拉選單控制
     avatar.addEventListener('click', () => {
       dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+      notificationPanel.classList.remove('active');
+    });
+
+    // 通知面板控制
+    notificationBell.addEventListener('click', () => {
+      notificationPanel.classList.toggle('active');
+      dropdown.style.display = 'none';
     });
 
     // 點擊其他地方關閉選單
     window.addEventListener('click', function(e) {
       if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.style.display = 'none';
+      }
+      if (!notificationBell.contains(e.target) && !notificationPanel.contains(e.target)) {
+        notificationPanel.classList.remove('active');
       }
     });
 
@@ -675,6 +999,89 @@
         this.classList.add('active');
       });
     });
+
+    // 更新通知徽章
+    function updateNotificationBadge() {
+      const unreadCount = notifications.filter(n => n.status === 'unread').length;
+      const badge = document.getElementById('notificationBadge');
+      
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount;
+        badge.classList.add('active');
+      } else {
+        badge.classList.remove('active');
+      }
+    }
+
+    // 渲染通知列表
+    function renderNotifications() {
+      const notificationList = document.getElementById('notificationList');
+      
+      if (notifications.length === 0) {
+        notificationList.innerHTML = `
+          <div class="empty-notification">
+            <i class="fas fa-inbox"></i>
+            <p>沒有通知</p>
+          </div>
+        `;
+        return;
+      }
+
+      notificationList.innerHTML = notifications.map(notification => `
+        <div class="notification-item ${notification.status === 'unread' ? 'unread' : ''}">
+          <div class="notification-item-header">
+            <div class="notification-item-title">
+              <span class="notification-type-icon ${notification.type}">
+                <i class="fas fa-${notification.type === 'warning' ? 'exclamation' : 'info'}"></i>
+              </span>
+              ${notification.title}
+            </div>
+            <div class="notification-item-time">${notification.time}</div>
+          </div>
+          <div class="notification-item-message">${notification.message}</div>
+          <div class="notification-actions">
+            ${notification.status === 'unread' ? `
+              <button class="notification-btn notification-btn-read" onclick="markAsRead(${notification.id})">
+                <i class="fas fa-check"></i> 標記已讀
+              </button>
+            ` : ''}
+            <button class="notification-btn notification-btn-clear" onclick="deleteNotification(${notification.id})">
+              <i class="fas fa-trash"></i> 刪除
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      updateNotificationBadge();
+    }
+
+    // 標記為已讀
+    function markAsRead(notificationId) {
+      const notification = notifications.find(n => n.id === notificationId);
+      if (notification && notification.status === 'unread') {
+        notification.status = 'read';
+        renderNotifications();
+        showNotification('已標記為已讀', 'success');
+      }
+    }
+
+    // 全部標記為已讀
+    function markAllAsRead() {
+      notifications.forEach(n => {
+        if (n.status === 'unread') {
+          n.status = 'read';
+        }
+      });
+      renderNotifications();
+      showNotification('全部已標記為已讀', 'success');
+    }
+
+    // 刪除通知
+    function deleteNotification(notificationId) {
+      notifications = notifications.filter(n => n.id !== notificationId);
+      renderNotifications();
+      showNotification('通知已刪除', 'success');
+    }
 
     // 統計卡片數字動畫
     function animateNumbers() {
@@ -721,6 +1128,7 @@
     window.addEventListener('load', () => {
       updateTime();
       setInterval(updateTime, 1000); // 每秒更新時間
+      renderNotifications(); // 初始化通知
       setTimeout(animateNumbers, 500); // 延遲執行動畫
     });
 
@@ -734,6 +1142,54 @@
         this.style.transform = 'translateX(0)';
       });
     });
+
+    // 顯示通知
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? 'linear-gradient(135deg, #28a745 0%, #20c997 100%)' : 'linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%)'};
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 10000;
+        font-weight: 500;
+        animation: slideIn 0.3s ease;
+        cursor: pointer;
+      `;
+      notification.textContent = message;
+      
+      notification.addEventListener('click', () => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+      });
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.style.animation = 'slideOut 0.3s ease';
+          setTimeout(() => notification.remove(), 300);
+        }
+      }, 3000);
+    }
+
+    // 動畫樣式
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 </body>
 </html>

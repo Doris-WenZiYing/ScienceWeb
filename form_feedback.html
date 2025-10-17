@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>學生表單反饋 - 老師系統</title>
-  <!-- FontAwesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     * {
@@ -18,7 +17,6 @@
       background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
     }
 
-    /* 頂部區域 */
     .header {
       height: 70px;
       background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -169,10 +167,6 @@
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-
-    .notification-header i {
-      font-size: 20px;
     }
 
     .mark-all-read {
@@ -375,7 +369,6 @@
       color: white;
     }
 
-    /* 下拉選單 */
     .dropdown {
       position: absolute;
       top: 65px;
@@ -421,7 +414,6 @@
       width: 16px;
     }
 
-    /* 主體區域 */
     .main {
       display: flex;
       height: calc(100% - 70px);
@@ -451,7 +443,7 @@
 
     .sidebar h2 {
       font-size: 16px;
-      margin: 0 0 0 0;
+      margin: 0;
       padding: 18px 30px;
       color: #555;
       font-weight: 400;
@@ -518,7 +510,6 @@
       overflow-y: auto;
     }
 
-    /* 反饋頁面專用樣式 */
     .feedback-container {
       background: rgba(255, 255, 255, 0.9);
       border-radius: 20px;
@@ -567,80 +558,6 @@
       font-size: 16px;
     }
 
-    /* 篩選區域 */
-    .feedback-filter {
-      background: rgba(248, 249, 250, 0.8);
-      border-radius: 15px;
-      padding: 20px;
-      margin-bottom: 30px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .filter-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .filter-label {
-      font-weight: 600;
-      color: #333;
-      font-size: 14px;
-    }
-
-    .filter-select, .filter-input {
-      padding: 10px 15px;
-      border: 2px solid #e9ecef;
-      border-radius: 10px;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      background: white;
-    }
-
-    .filter-select:focus, .filter-input:focus {
-      outline: none;
-      border-color: #11998e;
-      box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.1);
-    }
-
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-      color: white;
-      box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
-    }
-
-    .btn-secondary {
-      background: #6c757d;
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background: #5a6268;
-      transform: translateY(-2px);
-    }
-
-    /* 統計概覽 */
     .feedback-stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -695,38 +612,144 @@
       font-weight: 600;
     }
 
-    /* 反饋卡片 */
-    .feedback-list {
-      display: grid;
-      gap: 20px;
+    /* 活動分類區塊 */
+    .activity-group {
+      margin-bottom: 40px;
+      animation: fadeIn 0.5s ease;
     }
 
-    .feedback-card {
-      background: white;
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .activity-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 25px;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      border-radius: 15px 15px 0 0;
+      color: white;
+      cursor: pointer;
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
     }
 
-    .feedback-card::before {
+    .activity-header::before {
       content: '';
       position: absolute;
-      left: 0;
       top: 0;
-      width: 5px;
+      left: -100%;
+      width: 100%;
       height: 100%;
-      background: linear-gradient(180deg, #11998e 0%, #38ef7d 100%);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .activity-header:hover::before {
+      left: 100%;
+    }
+
+    .activity-header:hover {
+      box-shadow: 0 5px 20px rgba(17, 153, 142, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .activity-title-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex: 1;
+    }
+
+    .activity-icon {
+      font-size: 28px;
+      width: 50px;
+      height: 50px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .activity-info h3 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .activity-meta {
+      font-size: 14px;
+      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .activity-stats {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 14px;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 8px 15px;
+      border-radius: 20px;
+    }
+
+    .stat-item i {
+      font-size: 16px;
+    }
+
+    .toggle-icon {
+      font-size: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .activity-header.collapsed .toggle-icon {
+      transform: rotate(-90deg);
+    }
+
+    .feedback-list {
+      background: white;
+      border-radius: 0 0 15px 15px;
+      padding: 20px;
+      display: grid;
+      gap: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .feedback-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      border-left: 4px solid #11998e;
     }
 
     .feedback-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      transform: translateX(5px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      background: white;
     }
 
-    .feedback-header {
+    .feedback-header-card {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
@@ -735,7 +758,7 @@
       gap: 10px;
     }
 
-    .feedback-info {
+    .student-info {
       flex: 1;
     }
 
@@ -744,12 +767,17 @@
       font-weight: 600;
       color: #333;
       margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .activity-name {
-      font-size: 14px;
-      color: #11998e;
-      font-weight: 500;
+    .student-id {
+      font-size: 13px;
+      color: #666;
+      background: white;
+      padding: 3px 10px;
+      border-radius: 10px;
     }
 
     .feedback-meta {
@@ -782,33 +810,33 @@
     }
 
     .feedback-content {
-      margin: 20px 0;
+      margin: 15px 0;
     }
 
     .feedback-section {
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
 
     .section-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: #11998e;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
     }
 
     .section-title i {
-      margin-right: 8px;
-      width: 16px;
+      margin-right: 6px;
+      width: 14px;
     }
 
     .section-content {
       font-size: 14px;
       color: #666;
       line-height: 1.6;
-      background: rgba(248, 249, 250, 0.8);
-      padding: 12px 15px;
+      background: white;
+      padding: 10px 12px;
       border-radius: 8px;
     }
 
@@ -816,7 +844,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 15px;
+      margin-top: 12px;
     }
 
     .tag {
@@ -830,15 +858,24 @@
 
     .feedback-actions {
       display: flex;
-      gap: 10px;
-      margin-top: 20px;
-      padding-top: 15px;
+      gap: 8px;
+      margin-top: 15px;
+      padding-top: 12px;
       border-top: 1px solid #e9ecef;
+      flex-wrap: wrap;
     }
 
-    .btn-sm {
+    .btn {
       padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
       font-size: 12px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .btn-info {
@@ -856,15 +893,14 @@
       color: white;
     }
 
-    .btn-sm:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
-    /* 空狀態 */
     .empty-state {
       text-align: center;
-      padding: 80px 20px;
+      padding: 60px 20px;
       color: #666;
     }
 
@@ -880,12 +916,6 @@
       margin-bottom: 10px;
     }
 
-    .empty-description {
-      font-size: 16px;
-      opacity: 0.8;
-    }
-
-    /* 響應式設計 */
     @media (max-width: 768px) {
       .main {
         flex-direction: column;
@@ -910,43 +940,14 @@
         padding: 20px;
       }
 
-      .feedback-filter {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .filter-group {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-      }
-
       .feedback-stats {
         grid-template-columns: repeat(2, 1fr);
       }
 
-      .page-header {
+      .activity-stats {
         flex-direction: column;
         align-items: flex-start;
-        gap: 15px;
-      }
-
-      .header-time {
-        align-self: stretch;
-        justify-content: center;
-        font-size: 12px;
-        padding: 8px 15px;
-      }
-
-      .feedback-header {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .feedback-meta {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
+        gap: 8px;
       }
 
       .notification-panel {
@@ -954,7 +955,6 @@
       }
     }
 
-    /* 滾動條美化 */
     ::-webkit-scrollbar {
       width: 8px;
     }
@@ -967,21 +967,15 @@
       background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
       border-radius: 4px;
     }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
-    }
   </style>
 </head>
 <body>
-  <!-- 頂部欄 -->
   <div class="header">
     <a href="teacher_dashboard.html">
-  <img src="image/logo1.gif" alt="Logo" class="logo">
-</a>
+      <img src="image/logo1.gif" alt="Logo" class="logo">
+    </a>
     
     <div class="header-right">
-      <!-- 通知圖標 -->
       <div class="icon-wrapper">
         <div class="icon" id="notificationBell">
           <i class="fas fa-bell"></i>
@@ -1001,12 +995,10 @@
         </div>
       </div>
       
-      <!-- 頭像 -->
       <div class="avatar" id="avatar">
         <i class="fas fa-user"></i>
       </div>
       
-      <!-- 下拉選單 -->
       <div class="dropdown" id="dropdown">
         <a href="login_teacher.html">
           <i class="fas fa-sign-out-alt"></i>
@@ -1016,7 +1008,6 @@
     </div>
   </div>
 
-  <!-- 主區塊 -->
   <div class="main">
     <div class="sidebar">
       <h2 onclick="location.href='teacher_dashboard.html';">
@@ -1056,7 +1047,6 @@
     </div>
     
     <div class="content">
-      <!-- 反饋頁面主體 -->
       <div class="feedback-container">
         <div class="page-header">
           <div class="page-title">
@@ -1069,45 +1059,6 @@
           </div>
         </div>
 
-        <!-- 篩選區域 -->
-        <div class="feedback-filter">
-          <div class="filter-group">
-            <label class="filter-label">活動篩選：</label>
-            <select class="filter-select" id="activityFilter">
-              <option value="">全部活動</option>
-              <option value="science">科學實驗探索營</option>
-              <option value="math">數學思維訓練班</option>
-              <option value="english">英語口語提升班</option>
-              <option value="art">創意美術工作坊</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label class="filter-label">評分篩選：</label>
-            <select class="filter-select" id="ratingFilter">
-              <option value="">全部評分</option>
-              <option value="5">⭐⭐⭐⭐⭐ (5分)</option>
-              <option value="4">⭐⭐⭐⭐ (4分以上)</option>
-              <option value="3">⭐⭐⭐ (3分以上)</option>
-              <option value="2">⭐⭐ (2分以上)</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label class="filter-label">時間範圍：</label>
-            <input type="date" class="filter-input" id="startDate" value="2025-09-01">
-            <span style="color: #666;">至</span>
-            <input type="date" class="filter-input" id="endDate" value="2025-09-30">
-          </div>
-          <button class="btn btn-primary" onclick="filterFeedback()">
-            <i class="fas fa-filter"></i>
-            篩選
-          </button>
-          <button class="btn btn-secondary" onclick="resetFilters()">
-            <i class="fas fa-redo"></i>
-            重設
-          </button>
-        </div>
-
-        <!-- 統計概覽 -->
         <div class="feedback-stats">
           <div class="stat-card">
             <div class="stat-icon">
@@ -1132,24 +1083,19 @@
           </div>
           <div class="stat-card">
             <div class="stat-icon">
-              <i class="fas fa-clock"></i>
+              <i class="fas fa-graduation-cap"></i>
             </div>
-            <div class="stat-number" id="responseTime">2.5</div>
-            <div class="stat-label">平均回覆時間(天)</div>
+            <div class="stat-number" id="activityCount">4</div>
+            <div class="stat-label">活動數量</div>
           </div>
         </div>
 
-        <!-- 反饋列表 -->
-        <div class="feedback-list" id="feedbackList">
-          <!-- 反饋項目將由JavaScript動態生成 -->
-        </div>
+        <div id="feedbackGroupContainer"></div>
       </div>
     </div>
   </div>
 
-  <!-- JS 控制 -->
   <script>
-    // 通知數據
     let notifications = [
       {
         id: 1,
@@ -1177,11 +1123,11 @@
       }
     ];
 
-    // 模擬反饋數據
     const feedbackData = [
       {
         id: 1,
         studentName: '王小明',
+        studentId: 'A001',
         activity: '科學實驗探索營',
         activityId: 'science',
         rating: 5,
@@ -1198,6 +1144,7 @@
       {
         id: 2,
         studentName: '李小華',
+        studentId: 'A002',
         activity: '數學思維訓練班',
         activityId: 'math',
         rating: 4,
@@ -1214,6 +1161,7 @@
       {
         id: 3,
         studentName: '張同學',
+        studentId: 'A003',
         activity: '英語口語提升班',
         activityId: 'english',
         rating: 5,
@@ -1230,6 +1178,7 @@
       {
         id: 4,
         studentName: '陳美玲',
+        studentId: 'A004',
         activity: '創意美術工作坊',
         activityId: 'art',
         rating: 4,
@@ -1246,6 +1195,7 @@
       {
         id: 5,
         studentName: '劉志明',
+        studentId: 'A005',
         activity: '科學實驗探索營',
         activityId: 'science',
         rating: 3,
@@ -1258,37 +1208,88 @@
         },
         tags: ['進度較快', '內容充實', '需要復習'],
         status: 'read'
+      },
+      {
+        id: 6,
+        studentName: '黃大偉',
+        studentId: 'A006',
+        activity: '數學思維訓練班',
+        activityId: 'math',
+        rating: 5,
+        date: '2025-09-05',
+        feedback: {
+          overall: '非常喜歡這個課程！讓我發現數學其實很有趣。',
+          improvements: '希望能多一些競賽題目的練習。',
+          favorite: '數獨和邏輯謎題最有挑戰性,很有成就感。',
+          suggestions: '可以組織數學競賽活動。'
+        },
+        tags: ['邏輯思維', '挑戰性高', '成就感強'],
+        status: 'replied'
+      },
+      {
+        id: 7,
+        studentName: '周小玲',
+        studentId: 'A007',
+        activity: '英語口語提升班',
+        activityId: 'english',
+        rating: 4,
+        date: '2025-09-04',
+        feedback: {
+          overall: '英語課程很實用,學到了很多日常對話。',
+          improvements: '希望能有更多練習機會。',
+          favorite: '情境對話練習最實用。',
+          suggestions: '可以增加英語角活動。'
+        },
+        tags: ['實用性強', '互動良好'],
+        status: 'read'
+      },
+      {
+        id: 8,
+        studentName: '吳建國',
+        studentId: 'A008',
+        activity: '創意美術工作坊',
+        activityId: 'art',
+        rating: 5,
+        date: '2025-09-03',
+        feedback: {
+          overall: '老師很棒！激發了我的創作靈感。',
+          improvements: '材料可以更多樣化。',
+          favorite: '油畫創作最有意思。',
+          suggestions: '希望能有戶外寫生活動。'
+        },
+        tags: ['啟發創意', '教學優秀'],
+        status: 'unread'
       }
     ];
 
-    let filteredFeedback = [...feedbackData];
+    const activityIcons = {
+      'science': 'fa-flask',
+      'math': 'fa-calculator',
+      'english': 'fa-language',
+      'art': 'fa-palette'
+    };
 
-    // 狀態映射
     const statusMap = {
       'unread': { text: '未讀', class: 'btn-warning', icon: 'fa-envelope' },
       'read': { text: '已讀', class: 'btn-info', icon: 'fa-envelope-open' },
       'replied': { text: '已回覆', class: 'btn-success', icon: 'fa-check-circle' }
     };
 
-    // 通知相關函數
     const avatar = document.getElementById('avatar');
     const dropdown = document.getElementById('dropdown');
     const notificationBell = document.getElementById('notificationBell');
     const notificationPanel = document.getElementById('notificationPanel');
 
-    // 下拉選單控制
     avatar.addEventListener('click', () => {
       dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
       notificationPanel.classList.remove('active');
     });
 
-    // 通知面板控制
     notificationBell.addEventListener('click', () => {
       notificationPanel.classList.toggle('active');
       dropdown.style.display = 'none';
     });
 
-    // 點擊其他地方關閉選單
     window.addEventListener('click', function(e) {
       if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.style.display = 'none';
@@ -1298,7 +1299,6 @@
       }
     });
 
-    // 更新通知徽章
     function updateNotificationBadge() {
       const unreadCount = notifications.filter(n => n.status === 'unread').length;
       const badge = document.getElementById('notificationBadge');
@@ -1311,7 +1311,6 @@
       }
     }
 
-    // 渲染通知列表
     function renderNotifications() {
       const notificationList = document.getElementById('notificationList');
       
@@ -1353,7 +1352,6 @@
       updateNotificationBadge();
     }
 
-    // 標記為已讀
     function markAsRead(notificationId) {
       const notification = notifications.find(n => n.id === notificationId);
       if (notification && notification.status === 'unread') {
@@ -1363,7 +1361,6 @@
       }
     }
 
-    // 全部標記為已讀
     function markAllAsRead() {
       notifications.forEach(n => {
         if (n.status === 'unread') {
@@ -1374,23 +1371,20 @@
       showNotification('全部已標記為已讀', 'success');
     }
 
-    // 刪除通知
     function deleteNotification(notificationId) {
       notifications = notifications.filter(n => n.id !== notificationId);
       renderNotifications();
       showNotification('通知已刪除', 'success');
     }
 
-    // 頁面載入後執行
     window.addEventListener('load', () => {
       updateTime();
       setInterval(updateTime, 1000);
-      renderNotifications(); // 初始化通知
-      renderFeedback();
+      renderNotifications();
+      renderGroupedFeedback();
       updateStats();
     });
 
-    // 時間顯示
     function updateTime() {
       const now = new Date();
       const options = {
@@ -1407,35 +1401,77 @@
       document.getElementById('timeText').textContent = timeString;
     }
 
-    // 渲染反饋列表
-    function renderFeedback() {
-      const feedbackList = document.getElementById('feedbackList');
-      feedbackList.innerHTML = '';
+    function renderGroupedFeedback() {
+      const grouped = {};
+      
+      feedbackData.forEach(feedback => {
+        if (!grouped[feedback.activity]) {
+          grouped[feedback.activity] = {
+            activityId: feedback.activityId,
+            feedbacks: []
+          };
+        }
+        grouped[feedback.activity].feedbacks.push(feedback);
+      });
 
-      if (filteredFeedback.length === 0) {
-        feedbackList.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">
-              <i class="fas fa-comments"></i>
+      const container = document.getElementById('feedbackGroupContainer');
+      container.innerHTML = '';
+
+      Object.keys(grouped).forEach(activityName => {
+        const group = grouped[activityName];
+        const feedbacks = group.feedbacks;
+        const avgRating = (feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length).toFixed(1);
+        
+        const activityGroup = document.createElement('div');
+        activityGroup.className = 'activity-group';
+        
+        activityGroup.innerHTML = `
+          <div class="activity-header" onclick="toggleActivity(this)">
+            <div class="activity-title-wrapper">
+              <div class="activity-icon">
+                <i class="fas ${activityIcons[group.activityId]}"></i>
+              </div>
+              <div class="activity-info">
+                <h3>${activityName}</h3>
+                <div class="activity-meta">
+                  <span><i class="fas fa-users"></i> ${feedbacks.length} 則反饋</span>
+                  <span><i class="fas fa-star"></i> 平均 ${avgRating} 分</span>
+                </div>
+              </div>
             </div>
-            <div class="empty-title">暫無符合條件的反饋</div>
-            <div class="empty-description">請嘗試調整篩選條件或等待新的學生反饋</div>
+            <div class="activity-stats">
+              <div class="stat-item">
+                <i class="fas fa-star"></i>
+                <span>${avgRating}</span>
+              </div>
+              <div class="stat-item">
+                <i class="fas fa-comment"></i>
+                <span>${feedbacks.length}</span>
+              </div>
+            </div>
+            <i class="fas fa-chevron-down toggle-icon"></i>
+          </div>
+          <div class="feedback-list">
+            ${feedbacks.map(feedback => renderFeedbackCard(feedback)).join('')}
           </div>
         `;
-        return;
-      }
-
-      filteredFeedback.forEach(feedback => {
-        const statusInfo = statusMap[feedback.status];
-        const stars = '★'.repeat(feedback.rating) + '☆'.repeat(5 - feedback.rating);
         
-        const feedbackCard = document.createElement('div');
-        feedbackCard.className = 'feedback-card';
-        feedbackCard.innerHTML = `
-          <div class="feedback-header">
-            <div class="feedback-info">
-              <div class="student-name">${feedback.studentName}</div>
-              <div class="activity-name">${feedback.activity}</div>
+        container.appendChild(activityGroup);
+      });
+    }
+
+    function renderFeedbackCard(feedback) {
+      const statusInfo = statusMap[feedback.status];
+      const stars = '★'.repeat(feedback.rating) + '☆'.repeat(5 - feedback.rating);
+      
+      return `
+        <div class="feedback-card">
+          <div class="feedback-header-card">
+            <div class="student-info">
+              <div class="student-name">
+                ${feedback.studentName}
+                <span class="student-id">${feedback.studentId}</span>
+              </div>
             </div>
             <div class="feedback-meta">
               <div class="feedback-date">${feedback.date}</div>
@@ -1485,125 +1521,63 @@
           </div>
           
           <div class="feedback-actions">
-            <button class="btn ${statusInfo.class} btn-sm" onclick="markFeedbackAsRead(${feedback.id})">
+            <button class="btn ${statusInfo.class}" onclick="markFeedbackAsRead(${feedback.id})">
               <i class="fas ${statusInfo.icon}"></i>
               ${statusInfo.text}
             </button>
-            <button class="btn btn-info btn-sm" onclick="replyToFeedback(${feedback.id})">
+            <button class="btn btn-info" onclick="replyToFeedback(${feedback.id})">
               <i class="fas fa-reply"></i>
               回覆學生
             </button>
-            <button class="btn btn-secondary btn-sm" onclick="viewDetails(${feedback.id})">
-              <i class="fas fa-eye"></i>
-              詳細資訊
-            </button>
           </div>
-        `;
-        
-        feedbackList.appendChild(feedbackCard);
-      });
+        </div>
+      `;
     }
 
-    // 篩選反饋
-    function filterFeedback() {
-      const activityFilter = document.getElementById('activityFilter').value;
-      const ratingFilter = document.getElementById('ratingFilter').value;
-      const startDate = document.getElementById('startDate').value;
-      const endDate = document.getElementById('endDate').value;
-
-      filteredFeedback = feedbackData.filter(feedback => {
-        const matchesActivity = !activityFilter || feedback.activityId === activityFilter;
-        const matchesRating = !ratingFilter || feedback.rating >= parseInt(ratingFilter);
-        const matchesDateRange = (!startDate || feedback.date >= startDate) && 
-                                (!endDate || feedback.date <= endDate);
-
-        return matchesActivity && matchesRating && matchesDateRange;
-      });
-
-      renderFeedback();
-      updateStats();
-      showNotification('篩選已更新', 'success');
+    function toggleActivity(header) {
+      header.classList.toggle('collapsed');
+      const feedbackList = header.nextElementSibling;
+      
+      if (header.classList.contains('collapsed')) {
+        feedbackList.style.display = 'none';
+      } else {
+        feedbackList.style.display = 'grid';
+      }
     }
 
-    // 重設篩選器
-    function resetFilters() {
-      document.getElementById('activityFilter').value = '';
-      document.getElementById('ratingFilter').value = '';
-      document.getElementById('startDate').value = '2025-09-01';
-      document.getElementById('endDate').value = '2025-09-30';
-      filteredFeedback = [...feedbackData];
-      renderFeedback();
-      updateStats();
-      showNotification('篩選已重設', 'info');
-    }
-
-    // 更新統計數據
     function updateStats() {
-      const totalFeedback = filteredFeedback.length;
-      const avgRating = filteredFeedback.length > 0 ? 
-        (filteredFeedback.reduce((sum, f) => sum + f.rating, 0) / totalFeedback).toFixed(1) : 0;
-      const positiveRate = filteredFeedback.length > 0 ? 
-        Math.round((filteredFeedback.filter(f => f.rating >= 4).length / totalFeedback) * 100) : 0;
-      const responseTime = 2.5;
+      const totalFeedback = feedbackData.length;
+      const avgRating = (feedbackData.reduce((sum, f) => sum + f.rating, 0) / totalFeedback).toFixed(1);
+      const positiveRate = Math.round((feedbackData.filter(f => f.rating >= 4).length / totalFeedback) * 100);
+      const activityCount = new Set(feedbackData.map(f => f.activity)).size;
 
-      animateNumber('totalFeedback', totalFeedback);
-      animateNumber('avgRating', avgRating);
-      animateNumber('positiveRate', positiveRate, '%');
-      animateNumber('responseTime', responseTime);
+      document.getElementById('totalFeedback').textContent = totalFeedback;
+      document.getElementById('avgRating').textContent = avgRating;
+      document.getElementById('positiveRate').textContent = positiveRate + '%';
+      document.getElementById('activityCount').textContent = activityCount;
     }
 
-    // 數字動畫效果
-    function animateNumber(elementId, targetValue, suffix = '') {
-      const element = document.getElementById(elementId);
-      const startValue = parseFloat(element.textContent) || 0;
-      const increment = (targetValue - startValue) / 20;
-      let currentValue = startValue;
-
-      const timer = setInterval(() => {
-        currentValue += increment;
-        if ((increment > 0 && currentValue >= targetValue) || 
-            (increment < 0 && currentValue <= targetValue) ||
-            increment === 0) {
-          element.textContent = targetValue + suffix;
-          clearInterval(timer);
-        } else {
-          element.textContent = (elementId === 'avgRating' ? currentValue.toFixed(1) : Math.floor(currentValue)) + suffix;
-        }
-      }, 50);
-    }
-
-    // 標記反饋為已讀
     function markFeedbackAsRead(feedbackId) {
       const feedback = feedbackData.find(f => f.id === feedbackId);
       if (feedback && feedback.status === 'unread') {
         feedback.status = 'read';
-        renderFeedback();
+        renderGroupedFeedback();
         showNotification('已標記為已讀', 'success');
       }
     }
 
-    // 回覆反饋
     function replyToFeedback(feedbackId) {
       const feedback = feedbackData.find(f => f.id === feedbackId);
       if (feedback) {
         const reply = prompt(`回覆給 ${feedback.studentName} 的反饋：`);
         if (reply && reply.trim()) {
           feedback.status = 'replied';
-          renderFeedback();
+          renderGroupedFeedback();
           showNotification(`已回覆給 ${feedback.studentName}`, 'success');
         }
       }
     }
 
-    // 查看詳細資訊
-    function viewDetails(feedbackId) {
-      const feedback = feedbackData.find(f => f.id === feedbackId);
-      if (feedback) {
-        alert(`學生：${feedback.studentName}\n活動：${feedback.activity}\n評分：${feedback.rating}/5\n日期：${feedback.date}\n\n此功能正在開發中...`);
-      }
-    }
-
-    // 顯示通知
     function showNotification(message, type = 'info') {
       const notification = document.createElement('div');
       notification.style.cssText = `

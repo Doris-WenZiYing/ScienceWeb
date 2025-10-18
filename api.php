@@ -1,7 +1,7 @@
 <?php
 /**
- * 科學會管理系統 - 統一 API 接口
- * 處理所有前端請求
+ * 科學會管理系統 - 統一 API
+ * 所有12個功能完整實作
  */
 
 include("pdo.php");
@@ -67,6 +67,14 @@ switch ($action) {
     case 'upload_media':
         uploadMedia();
         break;
+        
+    case 'delete_album':
+        deleteAlbum();
+        break;
+        
+    case 'delete_media':
+        deleteMedia();
+        break;
     
     // ==========================================
     // 功能3：公告系統
@@ -83,6 +91,14 @@ switch ($action) {
     case 'get_announcement_detail':
         getAnnouncementDetail();
         break;
+        
+    case 'update_announcement':
+        updateAnnouncement();
+        break;
+        
+    case 'delete_announcement':
+        deleteAnnouncement();
+        break;
     
     // ==========================================
     // 功能4：活動發佈
@@ -98,6 +114,14 @@ switch ($action) {
         
     case 'update_activity':
         updateActivity();
+        break;
+        
+    case 'delete_activity':
+        deleteActivity();
+        break;
+        
+    case 'get_activity_detail':
+        getActivityDetail();
         break;
     
     // ==========================================
@@ -119,6 +143,10 @@ switch ($action) {
     case 'export_registrations':
         exportRegistrations();
         break;
+        
+    case 'get_my_registrations':
+        getMyRegistrations();
+        break;
     
     // ==========================================
     // 功能5：反饋表單
@@ -128,8 +156,16 @@ switch ($action) {
         getFeedbackForms();
         break;
         
+    case 'add_feedback_form':
+        addFeedbackForm();
+        break;
+        
     case 'submit_feedback':
         submitFeedback();
+        break;
+        
+    case 'get_feedback_responses':
+        getFeedbackResponses();
         break;
     
     // ==========================================
@@ -143,17 +179,53 @@ switch ($action) {
     case 'get_competition_results':
         getCompetitionResults();
         break;
+        
+    case 'update_competition_result':
+        updateCompetitionResult();
+        break;
+        
+    case 'delete_competition_result':
+        deleteCompetitionResult();
+        break;
+    
+    // ==========================================
+    // 功能8：檔案上傳
+    // ==========================================
+    
+    case 'create_upload_zone':
+        createUploadZone();
+        break;
+        
+    case 'get_upload_zones':
+        getUploadZones();
+        break;
+        
+    case 'upload_file':
+        uploadFile();
+        break;
+        
+    case 'get_uploaded_files':
+        getUploadedFiles();
+        break;
     
     // ==========================================
     // 功能9：簽到系統
     // ==========================================
     
+    case 'create_attendance_session':
+        createAttendanceSession();
+        break;
+        
     case 'get_attendance_sessions':
         getAttendanceSessions();
         break;
         
     case 'check_in':
         checkIn();
+        break;
+        
+    case 'get_attendance_records':
+        getAttendanceRecords();
         break;
     
     // ==========================================
@@ -183,6 +255,14 @@ switch ($action) {
     case 'add_meeting_record':
         addMeetingRecord();
         break;
+        
+    case 'update_meeting_record':
+        updateMeetingRecord();
+        break;
+        
+    case 'delete_meeting_record':
+        deleteMeetingRecord();
+        break;
     
     // ==========================================
     // 功能12：通知系統
@@ -194,6 +274,10 @@ switch ($action) {
         
     case 'mark_notification_read':
         markNotificationRead();
+        break;
+        
+    case 'get_unread_count':
+        getUnreadCount();
         break;
     
     default:
@@ -211,7 +295,6 @@ function handleLogin() {
     $password = trim($_POST['password'] ?? '');
     $role = trim($_POST['role'] ?? '');
     
-    // 防呆：欄位不能空白
     if (empty($account) || empty($password) || empty($role)) {
         ?>
         <script>
@@ -222,7 +305,6 @@ function handleLogin() {
         exit;
     }
     
-    // 查詢使用者
     $stmt = $pdo->prepare("
         SELECT * FROM `user` 
         WHERE `account` = ? AND `password` = ? AND `role` = ? AND `is_active` = 1
@@ -231,13 +313,11 @@ function handleLogin() {
     $user = $stmt->fetch();
     
     if ($user) {
-        // 登入成功，設定 Session
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['account'] = $user['account'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['login_time'] = time();
         
-        // 根據角色跳轉
         $redirect_map = [
             'admin' => 'science_club_event_album.html',
             'science_club' => 'science_club_activity_calendar.html',
@@ -255,7 +335,6 @@ function handleLogin() {
         <?php
         
     } else {
-        // 登入失敗
         ?>
         <script>
             alert("❌ 帳號、密碼或身分錯誤，請重新輸入");
@@ -293,10 +372,8 @@ function checkSession() {
 function getCalendarEvents() {
     global $pdo;
     
-    // 取得角色
     $role = $_SESSION['role'] ?? 'student';
     
-    // 學生只能看公開的行事曆
     if ($role === 'student') {
         $stmt = $pdo->query("
             SELECT * FROM `calendar_events` 
@@ -304,7 +381,6 @@ function getCalendarEvents() {
             ORDER BY `event_date` ASC
         ");
     } else {
-        // 科學會、老師、管理員可看全部
         $stmt = $pdo->query("
             SELECT * FROM `calendar_events` 
             ORDER BY `event_date` ASC
@@ -341,11 +417,7 @@ function addCalendarEvent() {
         $event_type, $color, $is_public, $location, $_SESSION['account']
     ]);
     
-    if ($result) {
-        jsonResponse(true, '新增成功');
-    } else {
-        jsonResponse(false, '新增失敗');
-    }
+    jsonResponse($result, $result ? '新增成功' : '新增失敗');
 }
 
 function updateCalendarEvent() {
@@ -392,127 +464,899 @@ function deleteCalendarEvent() {
 }
 
 // ==========================================
-// 其他功能待實作...
+// 功能2：活動相簿
 // ==========================================
 
 function getAlbums() {
     global $pdo;
-    $stmt = $pdo->query("SELECT * FROM `photo_albums` WHERE `is_public` = 1 ORDER BY `created_at` DESC");
+    
+    $role = $_SESSION['role'] ?? 'student';
+    
+    if ($role === 'student') {
+        $stmt = $pdo->query("SELECT * FROM `photo_albums` WHERE `is_public` = 1 ORDER BY `created_at` DESC");
+    } else {
+        $stmt = $pdo->query("SELECT * FROM `photo_albums` ORDER BY `created_at` DESC");
+    }
+    
     jsonResponse(true, '取得成功', $stmt->fetchAll());
 }
 
 function addAlbum() {
+    global $pdo;
     requireRole(['admin', 'science_club']);
-    jsonResponse(false, '功能開發中');
+    
+    $album_name = $_POST['album_name'] ?? '';
+    $activity_name = $_POST['activity_name'] ?? '';
+    $description = $_POST['description'] ?? '';
+    $is_public = $_POST['is_public'] ?? 1;
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO `photo_albums` 
+        (`album_name`, `activity_name`, `description`, `is_public`, `created_by`)
+        VALUES (?, ?, ?, ?, ?)
+    ");
+    
+    $result = $stmt->execute([$album_name, $activity_name, $description, $is_public, $_SESSION['account']]);
+    
+    if ($result) {
+        jsonResponse(true, '新增成功', ['album_id' => $pdo->lastInsertId()]);
+    } else {
+        jsonResponse(false, '新增失敗');
+    }
 }
 
 function getAlbumMedia() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    
+    $album_id = $_GET['album_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("
+        SELECT * FROM `album_media` 
+        WHERE `album_id` = ? 
+        ORDER BY `upload_order` ASC, `uploaded_at` DESC
+    ");
+    $stmt->execute([$album_id]);
+    
+    jsonResponse(true, '取得成功', $stmt->fetchAll());
 }
 
 function uploadMedia() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $album_id = $_POST['album_id'] ?? 0;
+    $description = $_POST['description'] ?? '';
+    
+    if (!isset($_FILES['media_file'])) {
+        jsonResponse(false, '沒有上傳檔案');
+    }
+    
+    $file = $_FILES['media_file'];
+    $upload_dir = 'uploads/albums/';
+    
+    if (!is_dir($upload_dir)) {
+        mkdir($upload_dir, 0777, true);
+    }
+    
+    $file_ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    $allowed_images = ['jpg', 'jpeg', 'png', 'gif'];
+    $allowed_videos = ['mp4', 'avi', 'mov'];
+    
+    if (in_array($file_ext, $allowed_images)) {
+        $media_type = 'image';
+    } elseif (in_array($file_ext, $allowed_videos)) {
+        $media_type = 'video';
+    } else {
+        jsonResponse(false, '不支援的檔案格式');
+    }
+    
+    $new_filename = uniqid() . '_' . time() . '.' . $file_ext;
+    $file_path = $upload_dir . $new_filename;
+    
+    if (move_uploaded_file($file['tmp_name'], $file_path)) {
+        $stmt = $pdo->prepare("
+            INSERT INTO `album_media` 
+            (`album_id`, `media_type`, `file_path`, `file_name`, `description`)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+        
+        $result = $stmt->execute([$album_id, $media_type, $file_path, $file['name'], $description]);
+        
+        jsonResponse($result, $result ? '上傳成功' : '上傳失敗');
+    } else {
+        jsonResponse(false, '檔案上傳失敗');
+    }
 }
+
+function deleteAlbum() {
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $album_id = $_POST['album_id'] ?? 0;
+    
+    // 先刪除相簿內的所有媒體檔案
+    $stmt = $pdo->prepare("SELECT file_path FROM `album_media` WHERE `album_id` = ?");
+    $stmt->execute([$album_id]);
+    $files = $stmt->fetchAll();
+    
+    foreach ($files as $file) {
+        if (file_exists($file['file_path'])) {
+            unlink($file['file_path']);
+        }
+    }
+    
+    // 刪除相簿
+    $stmt = $pdo->prepare("DELETE FROM `photo_albums` WHERE `album_id` = ?");
+    $result = $stmt->execute([$album_id]);
+    
+    jsonResponse($result, $result ? '刪除成功' : '刪除失敗');
+}
+
+function deleteMedia() {
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $media_id = $_POST['media_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("SELECT file_path FROM `album_media` WHERE `media_id` = ?");
+    $stmt->execute([$media_id]);
+    $media = $stmt->fetch();
+    
+    if ($media && file_exists($media['file_path'])) {
+        unlink($media['file_path']);
+    }
+    
+    $stmt = $pdo->prepare("DELETE FROM `album_media` WHERE `media_id` = ?");
+    $result = $stmt->execute([$media_id]);
+    
+    jsonResponse($result, $result ? '刪除成功' : '刪除失敗');
+}
+
+// ==========================================
+// 功能3：公告系統
+// ==========================================
 
 function getAnnouncements() {
     global $pdo;
-    $stmt = $pdo->query("SELECT * FROM `announcements` ORDER BY `publish_date` DESC LIMIT 20");
+    
+    $limit = $_GET['limit'] ?? 20;
+    $type = $_GET['type'] ?? '';
+    
+    $sql = "SELECT * FROM `announcements`";
+    if ($type) {
+        $sql .= " WHERE `announcement_type` = '$type'";
+    }
+    $sql .= " ORDER BY `publish_date` DESC LIMIT $limit";
+    
+    $stmt = $pdo->query($sql);
     jsonResponse(true, '取得成功', $stmt->fetchAll());
 }
 
 function addAnnouncement() {
+    global $pdo;
     requireRole(['admin', 'science_club']);
-    jsonResponse(false, '功能開發中');
+    
+    $title = $_POST['title'] ?? '';
+    $content = $_POST['content'] ?? '';
+    $type = $_POST['announcement_type'] ?? 'general';
+    $is_important = $_POST['is_important'] ?? 0;
+    $has_detail = $_POST['has_detail'] ?? 0;
+    $detail_content = $_POST['detail_content'] ?? '';
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO `announcements` 
+        (`title`, `content`, `announcement_type`, `is_important`, `has_detail`, `detail_content`, `created_by`)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    
+    $result = $stmt->execute([$title, $content, $type, $is_important, $has_detail, $detail_content, $_SESSION['account']]);
+    
+    jsonResponse($result, $result ? '發佈成功' : '發佈失敗');
 }
 
 function getAnnouncementDetail() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    
+    $id = $_GET['id'] ?? 0;
+    
+    $stmt = $pdo->prepare("SELECT * FROM `announcements` WHERE `announcement_id` = ?");
+    $stmt->execute([$id]);
+    $announcement = $stmt->fetch();
+    
+    if ($announcement) {
+        jsonResponse(true, '取得成功', $announcement);
+    } else {
+        jsonResponse(false, '公告不存在');
+    }
 }
+
+function updateAnnouncement() {
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $id = $_POST['announcement_id'] ?? 0;
+    $title = $_POST['title'] ?? '';
+    $content = $_POST['content'] ?? '';
+    
+    $stmt = $pdo->prepare("UPDATE `announcements` SET `title` = ?, `content` = ? WHERE `announcement_id` = ?");
+    $result = $stmt->execute([$title, $content, $id]);
+    
+    jsonResponse($result, $result ? '更新成功' : '更新失敗');
+}
+
+function deleteAnnouncement() {
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $id = $_POST['announcement_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("DELETE FROM `announcements` WHERE `announcement_id` = ?");
+    $result = $stmt->execute([$id]);
+    
+    jsonResponse($result, $result ? '刪除成功' : '刪除失敗');
+}
+
+// ==========================================
+// 功能4：活動發佈
+// ==========================================
 
 function getActivities() {
     global $pdo;
-    $stmt = $pdo->query("SELECT * FROM `activities` WHERE `status` = 'published' ORDER BY `start_date` DESC");
+    
+    $status = $_GET['status'] ?? 'published';
+    
+    $stmt = $pdo->prepare("SELECT * FROM `activities` WHERE `status` = ? ORDER BY `start_date` DESC");
+    $stmt->execute([$status]);
+    
     jsonResponse(true, '取得成功', $stmt->fetchAll());
 }
 
 function addActivity() {
+    global $pdo;
     requireRole(['admin', 'science_club']);
-    jsonResponse(false, '功能開發中');
+    
+    $activity_name = $_POST['activity_name'] ?? '';
+    $activity_type = $_POST['activity_type'] ?? 'activity';
+    $description = $_POST['description'] ?? '';
+    $start_date = $_POST['start_date'] ?? '';
+    $end_date = $_POST['end_date'] ?? '';
+    $registration_start = $_POST['registration_start'] ?? '';
+    $registration_end = $_POST['registration_end'] ?? '';
+    $modify_deadline = $_POST['modify_deadline'] ?? null;
+    $max_participants = $_POST['max_participants'] ?? null;
+    $location = $_POST['location'] ?? '';
+    $requirements = $_POST['requirements'] ?? '';
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO `activities` 
+        (`activity_name`, `activity_type`, `description`, `start_date`, `end_date`, 
+         `registration_start`, `registration_end`, `modify_deadline`, `max_participants`, 
+         `location`, `requirements`, `status`, `created_by`)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', ?)
+    ");
+    
+    $result = $stmt->execute([
+        $activity_name, $activity_type, $description, $start_date, $end_date,
+        $registration_start, $registration_end, $modify_deadline, $max_participants,
+        $location, $requirements, $_SESSION['account']
+    ]);
+    
+    jsonResponse($result, $result ? '發佈成功' : '發佈失敗');
 }
 
 function updateActivity() {
+    global $pdo;
     requireRole(['admin', 'science_club']);
-    jsonResponse(false, '功能開發中');
+    
+    $activity_id = $_POST['activity_id'] ?? 0;
+    $activity_name = $_POST['activity_name'] ?? '';
+    $description = $_POST['description'] ?? '';
+    
+    $stmt = $pdo->prepare("
+        UPDATE `activities` 
+        SET `activity_name` = ?, `description` = ? 
+        WHERE `activity_id` = ?
+    ");
+    
+    $result = $stmt->execute([$activity_name, $description, $activity_id]);
+    
+    jsonResponse($result, $result ? '更新成功' : '更新失敗');
 }
 
+function deleteActivity() {
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $activity_id = $_POST['activity_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("DELETE FROM `activities` WHERE `activity_id` = ?");
+    $result = $stmt->execute([$activity_id]);
+    
+    jsonResponse($result, $result ? '刪除成功' : '刪除失敗');
+}
+
+function getActivityDetail() {
+    global $pdo;
+    
+    $activity_id = $_GET['activity_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("SELECT * FROM `activities` WHERE `activity_id` = ?");
+    $stmt->execute([$activity_id]);
+    
+    jsonResponse(true, '取得成功', $stmt->fetch());
+}
+
+// ==========================================
+// 功能6：報名管理
+// ==========================================
+
 function registerActivity() {
+    global $pdo;
     requireRole('student');
-    jsonResponse(false, '功能開發中');
+    
+    $activity_id = $_POST['activity_id'] ?? 0;
+    $student_number = $_POST['student_number'] ?? '';
+    $student_name = $_POST['student_name'] ?? '';
+    $student_class = $_POST['student_class'] ?? '';
+    
+    // 檢查是否已報名
+    $stmt = $pdo->prepare("SELECT * FROM `registrations` WHERE `activity_id` = ? AND `student_number` = ?");
+    $stmt->execute([$activity_id, $student_number]);
+    
+    if ($stmt->fetch()) {
+        jsonResponse(false, '您已經報名過此活動');
+    }
+    
+    // 檢查人數限制
+    $stmt = $pdo->prepare("SELECT * FROM `activities` WHERE `activity_id` = ?");
+    $stmt->execute([$activity_id]);
+    $activity = $stmt->fetch();
+    
+    if ($activity['max_participants'] && $activity['current_participants'] >= $activity['max_participants']) {
+        jsonResponse(false, '報名人數已滿');
+    }
+    
+    // 新增報名
+    $stmt = $pdo->prepare("
+        INSERT INTO `registrations` 
+        (`activity_id`, `student_number`, `student_name`, `student_class`)
+        VALUES (?, ?, ?, ?)
+    ");
+    
+    $result = $stmt->execute([$activity_id, $student_number, $student_name, $student_class]);
+    
+    jsonResponse($result, $result ? '報名成功' : '報名失敗');
 }
 
 function cancelRegistration() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    
+    $registration_id = $_POST['registration_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("UPDATE `registrations` SET `status` = 'cancelled' WHERE `registration_id` = ?");
+    $result = $stmt->execute([$registration_id]);
+    
+    jsonResponse($result, $result ? '取消成功' : '取消失敗');
 }
 
 function getRegistrations() {
+    global $pdo;
     requireRole(['admin', 'science_club']);
-    jsonResponse(false, '功能開發中');
+    
+    $activity_id = $_GET['activity_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("SELECT * FROM `registrations` WHERE `activity_id` = ? ORDER BY `registration_time` DESC");
+    $stmt->execute([$activity_id]);
+    
+    jsonResponse(true, '取得成功', $stmt->fetchAll());
+}
+
+function getMyRegistrations() {
+    global $pdo;
+    requireRole('student');
+    
+    $student_number = $_SESSION['account'];
+    
+    $stmt = $pdo->prepare("
+        SELECT r.*, a.activity_name, a.start_date 
+        FROM `registrations` r 
+        JOIN `activities` a ON r.activity_id = a.activity_id 
+        WHERE r.student_number = ? 
+        ORDER BY r.registration_time DESC
+    ");
+    $stmt->execute([$student_number]);
+    
+    jsonResponse(true, '取得成功', $stmt->fetchAll());
 }
 
 function exportRegistrations() {
+    global $pdo;
     requireRole(['admin', 'science_club']);
-    jsonResponse(false, '功能開發中');
+    
+    $activity_id = $_GET['activity_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("SELECT * FROM `registrations` WHERE `activity_id` = ?");
+    $stmt->execute([$activity_id]);
+    $registrations = $stmt->fetchAll();
+    
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=registrations_' . $activity_id . '.csv');
+    
+    $output = fopen('php://output', 'w');
+    fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
+    
+    fputcsv($output, ['學號', '姓名', '班級', '報名時間', '狀態']);
+    
+    foreach ($registrations as $reg) {
+        fputcsv($output, [
+            $reg['student_number'],
+            $reg['student_name'],
+            $reg['student_class'],
+            $reg['registration_time'],
+            $reg['status']
+        ]);
+    }
+    
+    fclose($output);
+    exit;
 }
 
+// ==========================================
+// 功能5：反饋表單
+// ==========================================
+
 function getFeedbackForms() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    
+    $stmt = $pdo->query("SELECT * FROM `feedback_forms` WHERE `is_active` = 1 ORDER BY `created_at` DESC");
+    jsonResponse(true, '取得成功', $stmt->fetchAll());
+}
+
+function addFeedbackForm() {
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $form_name = $_POST['form_name'] ?? '';
+    $activity_name = $_POST['activity_name'] ?? '';
+    $description = $_POST['description'] ?? '';
+    $activity_id = $_POST['activity_id'] ?? null;
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO `feedback_forms` 
+        (`form_name`, `activity_name`, `description`, `activity_id`, `created_by`)
+        VALUES (?, ?, ?, ?, ?)
+    ");
+    
+    $result = $stmt->execute([$form_name, $activity_name, $description, $activity_id, $_SESSION['account']]);
+    
+    jsonResponse($result, $result ? '新增成功' : '新增失敗');
 }
 
 function submitFeedback() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    requireRole('student');
+    
+    $form_id = $_POST['form_id'] ?? 0;
+    $student_number = $_POST['student_number'] ?? '';
+    $student_name = $_POST['student_name'] ?? '';
+    $student_class = $_POST['student_class'] ?? '';
+    $satisfaction_score = $_POST['satisfaction_score'] ?? 0;
+    $feedback_text = $_POST['feedback_text'] ?? '';
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO `feedback_responses` 
+        (`form_id`, `student_number`, `student_name`, `student_class`, `satisfaction_score`, `feedback_text`)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ");
+    
+    $result = $stmt->execute([$form_id, $student_number, $student_name, $student_class, $satisfaction_score, $feedback_text]);
+    
+    jsonResponse($result, $result ? '提交成功' : '提交失敗');
 }
 
+function getFeedbackResponses() {
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $form_id = $_GET['form_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("SELECT * FROM `feedback_responses` WHERE `form_id` = ? ORDER BY `submitted_at` DESC");
+    $stmt->execute([$form_id]);
+    
+    jsonResponse(true, '取得成功', $stmt->fetchAll());
+}
+
+// ==========================================
+// 功能7：比賽成績
+// ==========================================
+
 function addCompetitionResult() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $activity_id = $_POST['activity_id'] ?? 0;
+    $student_number = $_POST['student_number'] ?? '';
+    $student_name = $_POST['student_name'] ?? '';
+    $student_class = $_POST['student_class'] ?? '';
+    $score = $_POST['score'] ?? null;
+    $rank = $_POST['rank'] ?? null;
+    $award = $_POST['award'] ?? '';
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO `competition_results` 
+        (`activity_id`, `student_number`, `student_name`, `student_class`, `score`, `rank`, `award`)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    
+    $result = $stmt->execute([$activity_id, $student_number, $student_name, $student_class, $score, $rank, $award]);
+    
+    jsonResponse($result, $result ? '新增成功' : '新增失敗');
 }
 
 function getCompetitionResults() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    
+    $activity_id = $_GET['activity_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("SELECT * FROM `competition_results` WHERE `activity_id` = ? ORDER BY `rank` ASC");
+    $stmt->execute([$activity_id]);
+    
+    jsonResponse(true, '取得成功', $stmt->fetchAll());
+}
+
+function updateCompetitionResult() {
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $result_id = $_POST['result_id'] ?? 0;
+    $score = $_POST['score'] ?? null;
+    $rank = $_POST['rank'] ?? null;
+    $award = $_POST['award'] ?? '';
+    
+    $stmt = $pdo->prepare("UPDATE `competition_results` SET `score` = ?, `rank` = ?, `award` = ? WHERE `result_id` = ?");
+    $result = $stmt->execute([$score, $rank, $award, $result_id]);
+    
+    jsonResponse($result, $result ? '更新成功' : '更新失敗');
+}
+
+function deleteCompetitionResult() {
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $result_id = $_POST['result_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("DELETE FROM `competition_results` WHERE `result_id` = ?");
+    $result = $stmt->execute([$result_id]);
+    
+    jsonResponse($result, $result ? '刪除成功' : '刪除失敗');
+}
+
+// ==========================================
+// 功能8：檔案上傳
+// ==========================================
+
+function createUploadZone() {
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $zone_name = $_POST['zone_name'] ?? '';
+    $description = $_POST['description'] ?? '';
+    $activity_id = $_POST['activity_id'] ?? null;
+    $file_types = $_POST['file_types'] ?? '';
+    $max_file_size = $_POST['max_file_size'] ?? 10;
+    $deadline = $_POST['deadline'] ?? null;
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO `file_upload_zones` 
+        (`zone_name`, `description`, `activity_id`, `file_types`, `max_file_size`, `deadline`, `created_by`)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    
+    $result = $stmt->execute([$zone_name, $description, $activity_id, $file_types, $max_file_size, $deadline, $_SESSION['account']]);
+    
+    jsonResponse($result, $result ? '新增成功' : '新增失敗');
+}
+
+function getUploadZones() {
+    global $pdo;
+    
+    $stmt = $pdo->query("SELECT * FROM `file_upload_zones` WHERE `is_active` = 1 ORDER BY `created_at` DESC");
+    jsonResponse(true, '取得成功', $stmt->fetchAll());
+}
+
+function uploadFile() {
+    global $pdo;
+    requireRole('student');
+    
+    $zone_id = $_POST['zone_id'] ?? 0;
+    $student_number = $_POST['student_number'] ?? '';
+    $student_name = $_POST['student_name'] ?? '';
+    $title = $_POST['title'] ?? '';
+    $upload_type = $_POST['upload_type'] ?? '其他';
+    
+    if (!isset($_FILES['file'])) {
+        jsonResponse(false, '沒有上傳檔案');
+    }
+    
+    $file = $_FILES['file'];
+    $upload_dir = 'uploads/files/';
+    
+    if (!is_dir($upload_dir)) {
+        mkdir($upload_dir, 0777, true);
+    }
+    
+    $file_ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    $new_filename = uniqid() . '_' . time() . '.' . $file_ext;
+    $file_path = $upload_dir . $new_filename;
+    
+    if (move_uploaded_file($file['tmp_name'], $file_path)) {
+        $stmt = $pdo->prepare("
+            INSERT INTO `student_uploads` 
+            (`zone_id`, `student_number`, `student_name`, `title`, `image`, `upload_type`, `file_size`)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ");
+        
+        $result = $stmt->execute([$zone_id, $student_number, $student_name, $title, $file_path, $upload_type, $file['size']]);
+        
+        jsonResponse($result, $result ? '上傳成功' : '上傳失敗');
+    } else {
+        jsonResponse(false, '檔案上傳失敗');
+    }
+}
+
+function getUploadedFiles() {
+    global $pdo;
+    
+    $zone_id = $_GET['zone_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("SELECT * FROM `student_uploads` WHERE `zone_id` = ? ORDER BY `uploaded_at` DESC");
+    $stmt->execute([$zone_id]);
+    
+    jsonResponse(true, '取得成功', $stmt->fetchAll());
+}
+
+// ==========================================
+// 功能9：簽到系統
+// ==========================================
+
+function createAttendanceSession() {
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $session_name = $_POST['session_name'] ?? '';
+    $session_date = $_POST['session_date'] ?? '';
+    $start_time = $_POST['start_time'] ?? null;
+    $end_time = $_POST['end_time'] ?? null;
+    $location = $_POST['location'] ?? '';
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO `attendance_sessions` 
+        (`session_name`, `session_date`, `start_time`, `end_time`, `location`, `created_by`)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ");
+    
+    $result = $stmt->execute([$session_name, $session_date, $start_time, $end_time, $location, $_SESSION['account']]);
+    
+    jsonResponse($result, $result ? '新增成功' : '新增失敗');
 }
 
 function getAttendanceSessions() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    
+    $stmt = $pdo->query("SELECT * FROM `attendance_sessions` ORDER BY `session_date` DESC");
+    jsonResponse(true, '取得成功', $stmt->fetchAll());
 }
 
 function checkIn() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    
+    $session_id = $_POST['session_id'] ?? 0;
+    $member_name = $_POST['member_name'] ?? '';
+    $member_number = $_POST['member_number'] ?? '';
+    
+    // 檢查是否已簽到
+    $stmt = $pdo->prepare("SELECT * FROM `attendance_records` WHERE `session_id` = ? AND `member_number` = ?");
+    $stmt->execute([$session_id, $member_number]);
+    
+    if ($stmt->fetch()) {
+        jsonResponse(false, '您已經簽到過了');
+    }
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO `attendance_records` 
+        (`session_id`, `member_name`, `member_number`)
+        VALUES (?, ?, ?)
+    ");
+    
+    $result = $stmt->execute([$session_id, $member_name, $member_number]);
+    
+    jsonResponse($result, $result ? '簽到成功' : '簽到失敗');
 }
 
+function getAttendanceRecords() {
+    global $pdo;
+    
+    $session_id = $_GET['session_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("SELECT * FROM `attendance_records` WHERE `session_id` = ? ORDER BY `check_in_time` DESC");
+    $stmt->execute([$session_id]);
+    
+    jsonResponse(true, '取得成功', $stmt->fetchAll());
+}
+
+// ==========================================
+// 功能10：請假系統
+// ==========================================
+
 function submitLeaveRequest() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    
+    $applicant_name = $_POST['applicant_name'] ?? '';
+    $applicant_number = $_POST['applicant_number'] ?? '';
+    $leave_type = $_POST['leave_type'] ?? 'personal';
+    $leave_date = $_POST['leave_date'] ?? '';
+    $start_time = $_POST['start_time'] ?? null;
+    $end_time = $_POST['end_time'] ?? null;
+    $reason = $_POST['reason'] ?? '';
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO `leave_requests` 
+        (`applicant_name`, `applicant_number`, `leave_type`, `leave_date`, `start_time`, `end_time`, `reason`)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    
+    $result = $stmt->execute([$applicant_name, $applicant_number, $leave_type, $leave_date, $start_time, $end_time, $reason]);
+    
+    jsonResponse($result, $result ? '提交成功' : '提交失敗');
 }
 
 function getLeaveRequests() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    
+    $status = $_GET['status'] ?? 'all';
+    
+    if ($status === 'all') {
+        $stmt = $pdo->query("SELECT * FROM `leave_requests` ORDER BY `submitted_at` DESC");
+    } else {
+        $stmt = $pdo->prepare("SELECT * FROM `leave_requests` WHERE `status` = ? ORDER BY `submitted_at` DESC");
+        $stmt->execute([$status]);
+    }
+    
+    jsonResponse(true, '取得成功', $stmt->fetchAll());
 }
 
 function reviewLeaveRequest() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $request_id = $_POST['request_id'] ?? 0;
+    $status = $_POST['status'] ?? 'approved';
+    $review_comment = $_POST['review_comment'] ?? '';
+    
+    $stmt = $pdo->prepare("
+        UPDATE `leave_requests` 
+        SET `status` = ?, `review_comment` = ?, `reviewed_by` = ?, `reviewed_at` = NOW() 
+        WHERE `request_id` = ?
+    ");
+    
+    $result = $stmt->execute([$status, $review_comment, $_SESSION['account'], $request_id]);
+    
+    jsonResponse($result, $result ? '審核成功' : '審核失敗');
 }
 
+// ==========================================
+// 功能11：開會紀錄
+// ==========================================
+
 function getMeetingRecords() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    
+    $stmt = $pdo->query("SELECT * FROM `meeting_records` ORDER BY `meeting_date` DESC");
+    jsonResponse(true, '取得成功', $stmt->fetchAll());
 }
 
 function addMeetingRecord() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $meeting_title = $_POST['meeting_title'] ?? '';
+    $meeting_date = $_POST['meeting_date'] ?? '';
+    $start_time = $_POST['start_time'] ?? null;
+    $end_time = $_POST['end_time'] ?? null;
+    $location = $_POST['location'] ?? '';
+    $attendees = $_POST['attendees'] ?? '';
+    $agenda = $_POST['agenda'] ?? '';
+    $content = $_POST['content'] ?? '';
+    $decisions = $_POST['decisions'] ?? '';
+    $action_items = $_POST['action_items'] ?? '';
+    $next_meeting = $_POST['next_meeting'] ?? null;
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO `meeting_records` 
+        (`meeting_title`, `meeting_date`, `start_time`, `end_time`, `location`, 
+         `attendees`, `agenda`, `content`, `decisions`, `action_items`, `next_meeting`, `created_by`)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    
+    $result = $stmt->execute([
+        $meeting_title, $meeting_date, $start_time, $end_time, $location,
+        $attendees, $agenda, $content, $decisions, $action_items, $next_meeting, $_SESSION['account']
+    ]);
+    
+    jsonResponse($result, $result ? '新增成功' : '新增失敗');
 }
 
+function updateMeetingRecord() {
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $meeting_id = $_POST['meeting_id'] ?? 0;
+    $content = $_POST['content'] ?? '';
+    $decisions = $_POST['decisions'] ?? '';
+    
+    $stmt = $pdo->prepare("UPDATE `meeting_records` SET `content` = ?, `decisions` = ? WHERE `meeting_id` = ?");
+    $result = $stmt->execute([$content, $decisions, $meeting_id]);
+    
+    jsonResponse($result, $result ? '更新成功' : '更新失敗');
+}
+
+function deleteMeetingRecord() {
+    global $pdo;
+    requireRole(['admin', 'science_club']);
+    
+    $meeting_id = $_POST['meeting_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("DELETE FROM `meeting_records` WHERE `meeting_id` = ?");
+    $result = $stmt->execute([$meeting_id]);
+    
+    jsonResponse($result, $result ? '刪除成功' : '刪除失敗');
+}
+
+// ==========================================
+// 功能12：通知系統
+// ==========================================
+
 function getNotifications() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    
+    $recipient_account = $_SESSION['account'];
+    $recipient_type = $_SESSION['role'];
+    
+    $stmt = $pdo->prepare("
+        SELECT * FROM `notifications` 
+        WHERE (`recipient_account` = ? OR `recipient_type` = 'all') 
+        AND `recipient_type` IN (?, 'all')
+        ORDER BY `created_at` DESC 
+        LIMIT 50
+    ");
+    $stmt->execute([$recipient_account, $recipient_type]);
+    
+    jsonResponse(true, '取得成功', $stmt->fetchAll());
 }
 
 function markNotificationRead() {
-    jsonResponse(false, '功能開發中');
+    global $pdo;
+    
+    $notification_id = $_POST['notification_id'] ?? 0;
+    
+    $stmt = $pdo->prepare("UPDATE `notifications` SET `is_read` = 1, `read_at` = NOW() WHERE `notification_id` = ?");
+    $result = $stmt->execute([$notification_id]);
+    
+    jsonResponse($result, $result ? '標記成功' : '標記失敗');
+}
+
+function getUnreadCount() {
+    global $pdo;
+    
+    $recipient_account = $_SESSION['account'];
+    
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) as count FROM `notifications` 
+        WHERE `recipient_account` = ? AND `is_read` = 0
+    ");
+    $stmt->execute([$recipient_account]);
+    $result = $stmt->fetch();
+    
+    jsonResponse(true, '取得成功', ['count' => $result['count']]);
 }
 ?>

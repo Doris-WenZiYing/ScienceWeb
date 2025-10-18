@@ -1,1423 +1,1530 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <title>發佈公告 - 科學會管理系統</title>
+    <!-- FontAwesome CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-<head>
-  <meta charset="UTF-8">
-  <title>發佈公告 - 科學會管理系統</title>
-  <!-- FontAwesome CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+      html,
+      body {
+        height: 100%;
+        font-family: "Microsoft JhengHei", "Arial", sans-serif;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      }
 
-    html,
-    body {
-      height: 100%;
-      font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-    }
+      /* 頂部區域 */
+      .header {
+        height: 70px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 100;
+      }
 
-    /* 頂部區域 */
-    .header {
-      height: 70px;
-      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 30px;
-      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-      position: relative;
-      z-index: 100;
-    }
+      .header::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+      }
 
-    .header::before {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
-    }
+      /* Logo 和標題區域 */
+      .header-left {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
 
-    /* Logo 和標題區域 */
-    .header-left {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
+      .header-left:hover {
+        transform: scale(1.02);
+      }
 
-    .header-left:hover {
-      transform: scale(1.02);
-    }
+      .header img.logo {
+        height: 50px;
+        filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+        transition: transform 0.3s ease;
+        margin-right: 15px;
+      }
 
-    .header img.logo {
-      height: 50px;
-      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
-      transition: transform 0.3s ease;
-      margin-right: 15px;
-    }
+      .header-title {
+        font-size: 24px;
+        font-weight: 300;
+        color: #333;
+        transition: color 0.3s ease;
+      }
 
-    .header-title {
-      font-size: 24px;
-      font-weight: 300;
-      color: #333;
-      transition: color 0.3s ease;
-    }
+      .header-left:hover .header-title {
+        color: #8360c3;
+      }
 
-    .header-left:hover .header-title {
-      color: #8360c3;
-    }
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        position: relative;
+      }
 
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 25px;
-      position: relative;
-    }
+      .icon {
+        position: relative;
+        padding: 12px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        animation: pulse 2s infinite;
+      }
 
-    .icon {
-      position: relative;
-      padding: 12px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      animation: pulse 2s infinite;
-    }
+      .icon:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 12px 35px rgba(131, 96, 195, 0.5);
+        background: linear-gradient(135deg, #9d7ce6 0%, #3dd5a3 100%);
+      }
 
-    .icon:hover {
-      transform: translateY(-3px) scale(1.1);
-      box-shadow: 0 12px 35px rgba(131, 96, 195, 0.5);
-      background: linear-gradient(135deg, #9d7ce6 0%, #3dd5a3 100%);
-    }
+      .icon:active {
+        transform: translateY(-1px) scale(1.05);
+        transition: all 0.1s ease;
+      }
 
-    .icon:active {
-      transform: translateY(-1px) scale(1.05);
-      transition: all 0.1s ease;
-    }
+      .icon i {
+        font-size: 20px;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        animation: bellShake 0.5s ease-in-out infinite alternate;
+      }
 
-    .icon i {
-      font-size: 20px;
-      color: white;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      animation: bellShake 0.5s ease-in-out infinite alternate;
-    }
+      .icon::after {
+        content: "3";
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+        color: white;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+        border: 2px solid white;
+        animation: bounce 1s ease-in-out infinite;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
 
-    .icon::after {
-      content: '3';
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
-      color: white;
-      border-radius: 50%;
-      width: 22px;
-      height: 22px;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
-      border: 2px solid white;
-      animation: bounce 1s ease-in-out infinite;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
+      .avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 3px solid #fff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
 
-    .avatar {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 3px solid #fff;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
+      .avatar:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
+      }
 
-    .avatar:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
-    }
+      .avatar i {
+        font-size: 20px;
+        color: white;
+      }
 
-    .avatar i {
-      font-size: 20px;
-      color: white;
-    }
+      /* 下拉選單 */
+      .dropdown {
+        position: absolute;
+        top: 65px;
+        right: 0;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        display: none;
+        min-width: 120px;
+        z-index: 1000;
+        overflow: hidden;
+        animation: dropdownFade 0.3s ease;
+      }
 
-    /* 下拉選單 */
-    .dropdown {
-      position: absolute;
-      top: 65px;
-      right: 0;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      display: none;
-      min-width: 120px;
-      z-index: 1000;
-      overflow: hidden;
-      animation: dropdownFade 0.3s ease;
-    }
+      @keyframes dropdownFade {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
 
-    @keyframes dropdownFade {
-      from {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+        }
+        50% {
+          box-shadow: 0 4px 25px rgba(131, 96, 195, 0.6);
+        }
+        100% {
+          box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+        }
+      }
+
+      @keyframes bellShake {
+        0% {
+          transform: rotate(-5deg);
+        }
+        100% {
+          transform: rotate(5deg);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-3px);
+        }
+        60% {
+          transform: translateY(-2px);
+        }
+      }
+
+      .dropdown a {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .dropdown a:hover {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+      }
+
+      .dropdown a i {
+        margin-right: 8px;
+        width: 16px;
+      }
+
+      /* 通知面板樣式 */
+      .notification-panel {
+        position: absolute;
+        top: 65px;
+        right: 80px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        display: none;
+        width: 380px;
+        max-height: 500px;
+        z-index: 1000;
+        animation: dropdownFade 0.3s ease;
+        overflow: hidden;
+      }
+
+      .notification-header {
+        padding: 20px;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 15px 15px 0 0;
+      }
+
+      .notification-header h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .notification-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .notification-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.3s ease;
+      }
+
+      .notification-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+
+      .notification-list {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .notification-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        display: flex;
+        gap: 12px;
+      }
+
+      .notification-item:hover {
+        background: rgba(131, 96, 195, 0.05);
+      }
+
+      .notification-item.unread {
+        background: rgba(131, 96, 195, 0.08);
+      }
+
+      .notification-item.unread::before {
+        content: "";
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        background: #e74c3c;
+        border-radius: 50%;
+      }
+
+      .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      .notification-icon.activity {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+      }
+
+      .notification-icon.deadline {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+      }
+
+      .notification-icon.announcement {
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        color: white;
+      }
+
+      .notification-content {
+        flex: 1;
+      }
+
+      .notification-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+      }
+
+      .notification-text {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 4px;
+      }
+
+      .notification-time {
+        font-size: 11px;
+        color: #999;
+      }
+
+      .notification-delete {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(231, 76, 60, 0.1);
+        color: #e74c3c;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
         opacity: 0;
-        transform: translateY(-10px);
+        transition: all 0.3s ease;
       }
 
-      to {
+      .notification-item:hover .notification-delete {
         opacity: 1;
-        transform: translateY(0);
       }
-    }
 
-    @keyframes pulse {
-      0% { box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3); }
-      50% { box-shadow: 0 4px 25px rgba(131, 96, 195, 0.6); }
-      100% { box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3); }
-    }
-
-    @keyframes bellShake {
-      0% { transform: rotate(-5deg); }
-      100% { transform: rotate(5deg); }
-    }
-
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(-3px); }
-      60% { transform: translateY(-2px); }
-    }
-
-    .dropdown a {
-      display: flex;
-      align-items: center;
-      padding: 12px 16px;
-      text-decoration: none;
-      color: #333;
-      font-size: 14px;
-      transition: all 0.2s ease;
-    }
-
-    .dropdown a:hover {
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      color: white;
-    }
-
-    .dropdown a i {
-      margin-right: 8px;
-      width: 16px;
-    }
-
-    /* 通知面板樣式 */
-    .notification-panel {
-      position: absolute;
-      top: 65px;
-      right: 80px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      display: none;
-      width: 380px;
-      max-height: 500px;
-      z-index: 1000;
-      animation: dropdownFade 0.3s ease;
-      overflow: hidden;
-    }
-
-    .notification-header {
-      padding: 20px;
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-radius: 15px 15px 0 0;
-    }
-
-    .notification-header h3 {
-      font-size: 16px;
-      font-weight: 600;
-      margin: 0;
-    }
-
-    .notification-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .notification-btn {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: white;
-      padding: 5px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      transition: all 0.3s ease;
-    }
-
-    .notification-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: scale(1.05);
-    }
-
-    .notification-list {
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    .notification-item {
-      padding: 15px 20px;
-      border-bottom: 1px solid #f0f0f0;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      position: relative;
-      display: flex;
-      gap: 12px;
-    }
-
-    .notification-item:hover {
-      background: rgba(131, 96, 195, 0.05);
-    }
-
-    .notification-item.unread {
-      background: rgba(131, 96, 195, 0.08);
-    }
-
-    .notification-item.unread::before {
-      content: '';
-      position: absolute;
-      left: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 8px;
-      height: 8px;
-      background: #e74c3c;
-      border-radius: 50%;
-    }
-
-    .notification-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-
-    .notification-icon.activity {
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      color: white;
-    }
-
-    .notification-icon.deadline {
-      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-      color: white;
-    }
-
-    .notification-icon.announcement {
-      background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-      color: white;
-    }
-
-    .notification-content {
-      flex: 1;
-    }
-
-    .notification-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 4px;
-    }
-
-    .notification-text {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 4px;
-    }
-
-    .notification-time {
-      font-size: 11px;
-      color: #999;
-    }
-
-    .notification-delete {
-      position: absolute;
-      right: 15px;
-      top: 15px;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: rgba(231, 76, 60, 0.1);
-      color: #e74c3c;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      opacity: 0;
-      transition: all 0.3s ease;
-    }
-
-    .notification-item:hover .notification-delete {
-      opacity: 1;
-    }
-
-    .notification-delete:hover {
-      background: #e74c3c;
-      color: white;
-      transform: scale(1.1);
-    }
-
-    .notification-empty {
-      padding: 60px 20px;
-      text-align: center;
-      color: #999;
-    }
-
-    .notification-empty i {
-      font-size: 48px;
-      color: #ddd;
-      margin-bottom: 15px;
-    }
-
-    .notification-list::-webkit-scrollbar { width: 6px; }
-    .notification-list::-webkit-scrollbar-track { background: #f0f0f0; }
-    .notification-list::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      border-radius: 3px;
-    }
-
-    /* 主體區域 */
-    .main {
-      display: flex;
-      height: calc(100% - 70px);
-      gap: 0;
-    }
-
-    .sidebar {
-      width: 280px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 30px 0;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
-      position: relative;
-      overflow-y: auto;
-    }
-
-    .sidebar::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 4px;
-      height: 100%;
-      background: linear-gradient(180deg, #8360c3 0%, #2ebf91 100%);
-    }
-
-    .menu {
-      flex: 1;
-      margin-top: 20px;
-    }
-
-    .menu-item {
-      display: block;
-      position: relative;
-    }
-
-    .menu-link {
-      display: flex;
-      align-items: center;
-      padding: 15px 25px;
-      text-decoration: none;
-      color: #555;
-      font-size: 15px;
-      transition: all 0.3s ease;
-      border-left: 4px solid transparent;
-      cursor: pointer;
-    }
-
-    .menu-link:hover,
-    .menu-link.active {
-      color: #8360c3;
-      background: rgba(131, 96, 195, 0.1);
-      border-left: 4px solid #8360c3;
-      transform: translateX(5px);
-    }
-
-    .menu-link i {
-      margin-right: 12px;
-      width: 20px;
-      font-size: 16px;
-    }
-
-    .menu-arrow {
-      margin-left: auto;
-      font-size: 12px;
-      transition: transform 0.3s ease;
-    }
-
-    .menu-item.expanded .menu-arrow {
-      transform: rotate(180deg);
-    }
-
-    /* 二級選單 */
-    .submenu {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-      background: rgba(131, 96, 195, 0.05);
-    }
-
-    .submenu.show {
-      max-height: 500px;
-    }
-
-    .submenu-item {
-      position: relative;
-    }
-
-    .submenu-link {
-      display: flex;
-      align-items: center;
-      padding: 12px 25px 12px 45px;
-      text-decoration: none;
-      color: #666;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      border-left: 4px solid transparent;
-      cursor: pointer;
-    }
-
-    .submenu-link:hover {
-      color: #8360c3;
-      background: rgba(131, 96, 195, 0.1);
-      border-left: 4px solid #8360c3;
-      transform: translateX(5px);
-    }
-
-    .submenu-link.active {
-      color: #8360c3;
-      background: rgba(131, 96, 195, 0.1);
-      border-left: 4px solid #8360c3;
-      transform: translateX(5px);
-    }
-
-    .submenu-link i {
-      margin-right: 10px;
-      width: 16px;
-      font-size: 14px;
-    }
-
-    /* 三級選單 */
-    .sub-submenu {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-      background: rgba(131, 96, 195, 0.03);
-    }
-
-    .sub-submenu.show {
-      max-height: 300px;
-    }
-
-    .sub-submenu-link {
-      display: flex;
-      align-items: center;
-      padding: 10px 25px 10px 65px;
-      text-decoration: none;
-      color: #777;
-      font-size: 13px;
-      transition: all 0.3s ease;
-      border-left: 4px solid transparent;
-    }
-
-    .sub-submenu-link:hover {
-      color: #8360c3;
-      background: rgba(131, 96, 195, 0.08);
-      border-left: 4px solid #8360c3;
-      transform: translateX(5px);
-    }
-
-    .sub-submenu-link i {
-      margin-right: 8px;
-      width: 14px;
-      font-size: 12px;
-    }
-
-    /* 內容區域 */
-    .content {
-      flex: 1;
-      padding: 40px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-
-    /* 頁面標題 */
-    .page-header {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      padding: 30px 40px;
-      margin-bottom: 30px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .page-title-section h1 {
-      font-size: 28px;
-      color: #333;
-      margin-bottom: 10px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-    }
-
-    .page-title-section h1 i {
-      margin-right: 15px;
-      color: #8360c3;
-      font-size: 32px;
-    }
-
-    .page-title-section p {
-      color: #666;
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    /* 時間顯示區域 */
-    .time-display {
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 25px;
-      font-size: 14px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 2px 10px rgba(131, 96, 195, 0.3);
-      white-space: nowrap;
-    }
-
-    .time-display i {
-      font-size: 16px;
-      color: white;
-    }
-
-    /* 發佈表單 */
-    .publish-form {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      margin-bottom: 30px;
-    }
-
-    .form-section {
-      margin-bottom: 30px;
-    }
-
-    .form-section h3 {
-      font-size: 18px;
-      color: #333;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      font-weight: 600;
-    }
-
-    .form-section h3 i {
-      margin-right: 10px;
-      color: #8360c3;
-      font-size: 20px;
-    }
-
-    .form-group {
-      margin-bottom: 25px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #444;
-      font-size: 14px;
-    }
-
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #e1e8ed;
-      border-radius: 10px;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      background: white;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus {
-      outline: none;
-      border-color: #8360c3;
-      box-shadow: 0 0 0 3px rgba(131, 96, 195, 0.1);
-      transform: translateY(-1px);
-    }
-
-    .form-group textarea {
-      min-height: 120px;
-      resize: vertical;
-      font-family: inherit;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    /* 優先級選擇 */
-    .priority-options {
-      display: flex;
-      gap: 15px;
-      margin-top: 8px;
-    }
-
-    .priority-option {
-      display: flex;
-      align-items: center;
-      padding: 10px 16px;
-      border: 2px solid #e1e8ed;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background: white;
-    }
-
-    .priority-option:hover {
-      border-color: #8360c3;
-      transform: translateY(-1px);
-    }
-
-    .priority-option.selected {
-      border-color: #8360c3;
-      background: rgba(131, 96, 195, 0.1);
-    }
-
-    .priority-option input[type="radio"] {
-      margin-right: 8px;
-      width: auto;
-    }
-
-    .priority-high {
-      border-color: #ff4757;
-    }
-
-    .priority-high.selected {
-      border-color: #ff4757;
-      background: rgba(255, 71, 87, 0.1);
-    }
-
-    .priority-medium {
-      border-color: #ffa502;
-    }
-
-    .priority-medium.selected {
-      border-color: #ffa502;
-      background: rgba(255, 165, 2, 0.1);
-    }
-
-    .priority-normal {
-      border-color: #2ed573;
-    }
-
-    .priority-normal.selected {
-      border-color: #2ed573;
-      background: rgba(46, 213, 115, 0.1);
-    }
-
-    /* 附件上傳 */
-    .file-upload {
-      border: 2px dashed #e1e8ed;
-      border-radius: 10px;
-      padding: 40px 20px;
-      text-align: center;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      background: #fafbfc;
-    }
-
-    .file-upload:hover {
-      border-color: #8360c3;
-      background: rgba(131, 96, 195, 0.05);
-    }
-
-    .file-upload.dragover {
-      border-color: #8360c3;
-      background: rgba(131, 96, 195, 0.1);
-      transform: scale(1.02);
-    }
-
-    .file-upload i {
-      font-size: 48px;
-      color: #8360c3;
-      margin-bottom: 15px;
-    }
-
-    .file-upload p {
-      color: #666;
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
-
-    .file-upload small {
-      color: #999;
-      font-size: 12px;
-    }
-
-    .file-list {
-      margin-top: 15px;
-    }
-
-    .file-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 15px;
-      background: white;
-      border: 1px solid #e1e8ed;
-      border-radius: 8px;
-      margin-bottom: 8px;
-    }
-
-    .file-info {
-      display: flex;
-      align-items: center;
-    }
-
-    .file-info i {
-      margin-right: 10px;
-      color: #8360c3;
-    }
-
-    .remove-file {
-      color: #ff4757;
-      cursor: pointer;
-      padding: 5px;
-      border-radius: 5px;
-      transition: all 0.2s ease;
-    }
-
-    .remove-file:hover {
-      background: rgba(255, 71, 87, 0.1);
-    }
-
-    /* 按鈕區域 */
-    .form-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 30px;
-      border-top: 1px solid #e1e8ed;
-      margin-top: 30px;
-    }
-
-    .btn {
-      padding: 12px 30px;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(131, 96, 195, 0.4);
-    }
-
-    .btn-secondary {
-      background: #f8f9fa;
-      color: #666;
-      border: 2px solid #e1e8ed;
-    }
-
-    .btn-secondary:hover {
-      background: #e9ecef;
-      transform: translateY(-1px);
-    }
-
-    .btn-success {
-      background: linear-gradient(135deg, #2ed573 0%, #17a2b8 100%);
-      color: white;
-    }
-
-    .btn-success:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(46, 213, 115, 0.4);
-    }
-
-    /* 預覽區域 */
-    .preview-section {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .preview-section h3 {
-      font-size: 20px;
-      color: #333;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      font-weight: 600;
-    }
-
-    .preview-section h3 i {
-      margin-right: 10px;
-      color: #8360c3;
-    }
-
-    .announcement-preview {
-      border: 1px solid #e1e8ed;
-      border-radius: 15px;
-      padding: 25px;
-      background: white;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    }
-
-    .preview-header {
-      display: flex;
-      align-items: center;
-      justify-content: between;
-      margin-bottom: 15px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #f1f3f4;
-    }
-
-    .preview-title {
-      font-size: 20px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 5px;
-    }
-
-    .preview-meta {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      font-size: 14px;
-      color: #666;
-    }
-
-    .preview-content {
-      line-height: 1.8;
-      color: #444;
-      font-size: 15px;
-      white-space: pre-wrap;
-    }
-
-    /* 響應式設計 */
-    @media (max-width: 768px) {
+      .notification-delete:hover {
+        background: #e74c3c;
+        color: white;
+        transform: scale(1.1);
+      }
+
+      .notification-empty {
+        padding: 60px 20px;
+        text-align: center;
+        color: #999;
+      }
+
+      .notification-empty i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 15px;
+      }
+
+      .notification-list::-webkit-scrollbar {
+        width: 6px;
+      }
+      .notification-list::-webkit-scrollbar-track {
+        background: #f0f0f0;
+      }
+      .notification-list::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        border-radius: 3px;
+      }
+
+      /* 主體區域 */
       .main {
-        flex-direction: column;
+        display: flex;
+        height: calc(100% - 70px);
+        gap: 0;
       }
 
       .sidebar {
-        width: 100%;
-        height: auto;
+        width: 280px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 30px 0;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow-y: auto;
       }
 
+      .sidebar::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, #8360c3 0%, #2ebf91 100%);
+      }
+
+      .menu {
+        flex: 1;
+        margin-top: 20px;
+      }
+
+      .menu-item {
+        display: block;
+        position: relative;
+      }
+
+      .menu-link {
+        display: flex;
+        align-items: center;
+        padding: 15px 25px;
+        text-decoration: none;
+        color: #555;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+        cursor: pointer;
+      }
+
+      .menu-link:hover,
+      .menu-link.active {
+        color: #8360c3;
+        background: rgba(131, 96, 195, 0.1);
+        border-left: 4px solid #8360c3;
+        transform: translateX(5px);
+      }
+
+      .menu-link i {
+        margin-right: 12px;
+        width: 20px;
+        font-size: 16px;
+      }
+
+      .menu-arrow {
+        margin-left: auto;
+        font-size: 12px;
+        transition: transform 0.3s ease;
+      }
+
+      .menu-item.expanded .menu-arrow {
+        transform: rotate(180deg);
+      }
+
+      /* 二級選單 */
+      .submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        background: rgba(131, 96, 195, 0.05);
+      }
+
+      .submenu.show {
+        max-height: 500px;
+      }
+
+      .submenu-item {
+        position: relative;
+      }
+
+      .submenu-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 25px 12px 45px;
+        text-decoration: none;
+        color: #666;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+        cursor: pointer;
+      }
+
+      .submenu-link:hover {
+        color: #8360c3;
+        background: rgba(131, 96, 195, 0.1);
+        border-left: 4px solid #8360c3;
+        transform: translateX(5px);
+      }
+
+      .submenu-link.active {
+        color: #8360c3;
+        background: rgba(131, 96, 195, 0.1);
+        border-left: 4px solid #8360c3;
+        transform: translateX(5px);
+      }
+
+      .submenu-link i {
+        margin-right: 10px;
+        width: 16px;
+        font-size: 14px;
+      }
+
+      /* 三級選單 */
+      .sub-submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        background: rgba(131, 96, 195, 0.03);
+      }
+
+      .sub-submenu.show {
+        max-height: 300px;
+      }
+
+      .sub-submenu-link {
+        display: flex;
+        align-items: center;
+        padding: 10px 25px 10px 65px;
+        text-decoration: none;
+        color: #777;
+        font-size: 13px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+      }
+
+      .sub-submenu-link:hover {
+        color: #8360c3;
+        background: rgba(131, 96, 195, 0.08);
+        border-left: 4px solid #8360c3;
+        transform: translateX(5px);
+      }
+
+      .sub-submenu-link i {
+        margin-right: 8px;
+        width: 14px;
+        font-size: 12px;
+      }
+
+      /* 內容區域 */
       .content {
-        padding: 20px;
+        flex: 1;
+        padding: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+
+      /* 頁面標題 */
+      .page-header {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 30px 40px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .page-title-section h1 {
+        font-size: 28px;
+        color: #333;
+        margin-bottom: 10px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+      }
+
+      .page-title-section h1 i {
+        margin-right: 15px;
+        color: #8360c3;
+        font-size: 32px;
+      }
+
+      .page-title-section p {
+        color: #666;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      /* 時間顯示區域 */
+      .time-display {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 10px rgba(131, 96, 195, 0.3);
+        white-space: nowrap;
+      }
+
+      .time-display i {
+        font-size: 16px;
+        color: white;
+      }
+
+      /* 發佈表單 */
+      .publish-form {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 30px;
+      }
+
+      .form-section {
+        margin-bottom: 30px;
+      }
+
+      .form-section h3 {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+      }
+
+      .form-section h3 i {
+        margin-right: 10px;
+        color: #8360c3;
+        font-size: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 25px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #444;
+        font-size: 14px;
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e1e8ed;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: white;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #8360c3;
+        box-shadow: 0 0 0 3px rgba(131, 96, 195, 0.1);
+        transform: translateY(-1px);
+      }
+
+      .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+        font-family: inherit;
       }
 
       .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .priority-options {
-        flex-direction: column;
-      }
-
-      .form-actions {
-        flex-direction: column;
-        gap: 15px;
-      }
-
-      .page-header {
-        flex-direction: column;
-        align-items: flex-start;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 20px;
       }
 
-      .time-display {
-        align-items: flex-start;
+      /* 優先級選擇 */
+      .priority-options {
+        display: flex;
+        gap: 15px;
+        margin-top: 8px;
       }
-    }
 
-    /* 滾動條美化 */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.1);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(135deg, #2ebf91 0%, #8360c3 100%);
-    }
-
-    /* 成功提示 */
-    .success-message {
-      background: rgba(46, 213, 115, 0.1);
-      border: 1px solid #2ed573;
-      color: #27ae60;
-      padding: 15px 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      display: none;
-    }
-
-    .success-message i {
-      margin-right: 10px;
-    }
-  </style>
-</head>
-
-<body>
-  <!-- 頂部欄 -->
-  <div class="header">
-    <div class="header-left" onclick="location.href='activity_calendar.html';">
-      <img src="image/logo1.gif" alt="Logo" class="logo">
-    </div>
-    <div class="header-right">
-      <div class="icon" id="notificationIcon"><i class="fas fa-bell"></i></div>
-      <div class="notification-panel" id="notificationPanel">
-        <div class="notification-header">
-          <h3>通知</h3>
-          <div class="notification-actions">
-            <button class="notification-btn" onclick="markAllAsRead()">全部已讀</button>
-            <button class="notification-btn" onclick="clearAllNotifications()">清除全部</button>
-          </div>
-        </div>
-        <div class="notification-list" id="notificationList">
-          <!-- 通知項目將由 JavaScript 動態生成 -->
-        </div>
-      </div>
-      <div class="avatar" id="avatar">
-        <i class="fas fa-user-shield"></i>
-      </div>
-      <div class="dropdown" id="dropdown">
-        <a href="login_admin.html">
-          <i class="fas fa-sign-out-alt"></i>
-          登出
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div class="main">
-    <div class="sidebar">
-      <div class="menu">
-        <div class="menu-item">
-          <a href="activity_calendar.html" class="menu-link">
-            <i class="fas fa-calendar"></i>
-            行事曆
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="admin_dashboard.html" class="menu-link">
-            <i class="fas fa-home"></i>
-            活動相簿
-          </a>
-        </div>
-
-         <div class="menu-item expanded">
-           <div class="menu-link" onclick="toggleMenu(this); return false;">
-             <i class="fas fa-bullhorn"></i>
-             發佈公告/活動/表單
-             <i class="fas fa-chevron-down menu-arrow"></i>
-           </div>
-           <div class="submenu show">
-             <div class="submenu-item">
-               <a href="publish_announcement.html" class="submenu-link active">
-                 <i class="fas fa-bullhorn"></i>
-                 發佈公告
-               </a>
-             </div>
-             <div class="submenu-item">
-               <a href="admin_activity_publish.html" class="submenu-link">
-                 <i class="fas fa-plus-circle"></i>
-                 發佈比賽及活動
-               </a>
-             </div>
-             <div class="submenu-item">
-               <a href="admin_table_publish.html" class="submenu-link">
-                 <i class="fas fa-comment-alt"></i>
-                 發佈活動反饋表單
-               </a>
-             </div>
-           </div>
-         </div>
-
-        <div class="menu-item">
-          <a href="admin_name_manage.html" class="menu-link">
-            <i class="fas fa-user-edit"></i>
-            報名人員名單管理
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="admin_statistics.html" class="menu-link">
-            <i class="fas fa-trophy"></i>
-            統計比賽名次
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="admin_upload_files.html" class="menu-link">
-            <i class="fas fa-upload"></i>
-            開放上傳檔案
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="online_scheduling.html" class="menu-link">
-            <i class="fas fa-user-check"></i>
-            線上簽到表
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="admin_request_review.html" class="menu-link">
-            <i class="fas fa-file-signature"></i>
-            請假申請
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="meeting_records.html" class="menu-link">
-            <i class="fas fa-clipboard"></i>
-            開會紀錄
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="auto_notification.html" class="menu-link">
-            <i class="fas fa-bell"></i>
-            自動推播通知
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="image_recognition.html" class="menu-link">
-            <i class="fas fa-eye"></i>
-            圖片識別
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="content">
-      <!-- 頁面標題 -->
-      <div class="page-header">
-        <div class="page-title-section">
-          <h1><i class="fas fa-bullhorn"></i>發布公告</h1>
-          <p>發布重要公告訊息，讓科學會成員及時了解最新資訊</p>
-        </div>
-        <div class="time-display">
-          <i class="fas fa-clock"></i>
-          <span id="timeDisplay">2025年09月18日 星期四 上午09:56:44</span>
-        </div>
-      </div>
-
-      <!-- 成功訊息 -->
-      <div class="success-message" id="successMessage">
-        <i class="fas fa-check-circle"></i>
-        公告發布成功！
-      </div>
-
-      <!-- 發佈表單 -->
-      <div class="publish-form">
-        <form id="announcementForm">
-          <!-- 基本資訊 -->
-          <div class="form-section">
-            <h3><i class="fas fa-info-circle"></i>基本資訊</h3>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="title">公告標題 *</label>
-                <input type="text" id="title" name="title" placeholder="請輸入公告標題" required>
-              </div>
-              <div class="form-group">
-                <label for="category">公告類別</label>
-                <select id="category" name="category">
-                  <option value="general">一般公告</option>
-                  <option value="urgent">緊急通知</option>
-                  <option value="activity">活動公告</option>
-                  <option value="meeting">會議通知</option>
-                  <option value="competition">競賽資訊</option>
-                  <option value="academic">學術活動</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="content">公告內容 *</label>
-              <textarea id="content" name="content" placeholder="請輸入公告詳細內容..." required></textarea>
-            </div>
-          </div>
-
-          <!-- 發佈設定 -->
-          <div class="form-section">
-            <h3><i class="fas fa-cog"></i>發佈設定</h3>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="publishDate">發佈日期</label>
-                <input type="datetime-local" id="publishDate" name="publishDate">
-              </div>
-              <div class="form-group">
-                <label for="expireDate">到期日期</label>
-                <input type="datetime-local" id="expireDate" name="expireDate">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>優先級別</label>
-              <div class="priority-options">
-                <div class="priority-option priority-high">
-                  <input type="radio" name="priority" value="high" id="priorityHigh">
-                  <label for="priorityHigh">🔴 高優先級</label>
-                </div>
-                <div class="priority-option priority-medium">
-                  <input type="radio" name="priority" value="medium" id="priorityMedium">
-                  <label for="priorityMedium">🟡 中優先級</label>
-                </div>
-                <div class="priority-option priority-normal selected">
-                  <input type="radio" name="priority" value="normal" id="priorityNormal" checked>
-                  <label for="priorityNormal">🟢 一般優先級</label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 附件上傳 -->
-          <div class="form-section">
-            <h3><i class="fas fa-paperclip"></i>附件上傳</h3>
-
-            <div class="file-upload" id="fileUpload">
-              <i class="fas fa-cloud-upload-alt"></i>
-              <p>拖放檔案至此處或點擊選擇檔案</p>
-              <small>支援圖片、PDF、Word 文件等格式，單檔最大 10MB</small>
-              <input type="file" id="fileInput" multiple style="display: none;">
-            </div>
-
-            <div class="file-list" id="fileList"></div>
-          </div>
-
-          <!-- 通知設定 -->
-          <div class="form-section">
-            <h3><i class="fas fa-bell"></i>通知設定</h3>
-
-            <div class="form-group">
-              <label>
-                <input type="checkbox" id="emailNotify" name="emailNotify" checked>
-                發送電子郵件通知
-              </label>
-            </div>
-
-            <div class="form-group">
-              <label>
-                <input type="checkbox" id="pushNotify" name="pushNotify" checked>
-                推送即時通知
-              </label>
-            </div>
-
-            <div class="form-group">
-              <label>
-                <input type="checkbox" id="smsNotify" name="smsNotify">
-                發送簡訊通知（緊急公告）
-              </label>
-            </div>
-          </div>
-
-          <!-- 按鈕區域 -->
-          <div class="form-actions">
-            <div>
-              <button type="button" class="btn btn-secondary" onclick="clearForm()">
-                <i class="fas fa-eraser"></i>清空表單
-              </button>
-              <button type="button" class="btn btn-secondary" onclick="saveAsDraft()">
-                <i class="fas fa-save"></i>儲存草稿
-              </button>
-            </div>
-            <div>
-              <button type="button" class="btn btn-success" onclick="previewAnnouncement()">
-                <i class="fas fa-eye"></i>預覽
-              </button>
-              <button type="submit" class="btn btn-primary">
-                <i class="fas fa-paper-plane"></i>發布公告
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-
-      <!-- 預覽區域 -->
-      <div class="preview-section" id="previewSection" style="display: none;">
-        <h3><i class="fas fa-eye"></i>公告預覽</h3>
-        <div class="announcement-preview">
-          <div class="preview-header">
-            <div>
-              <div class="preview-title" id="previewTitle">公告標題</div>
-              <div class="preview-meta">
-                <span id="previewCategory">一般公告</span>
-                <span id="previewDate">2025-09-18</span>
-                <span id="previewPriority">🟢 一般優先級</span>
-              </div>
-            </div>
-          </div>
-          <div class="preview-content" id="previewContent">
-            公告內容將在此顯示...
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- JavaScript -->
-  <script>
-    // 通知數據
-    let notifications = [
-      {
-        id: 1,
-        type: 'activity',
-        icon: 'fa-calendar-check',
-        title: '新活動發布',
-        text: '科學營活動已發布，請查看詳情並報名',
-        time: '2小時前',
-        read: false
-      },
-      {
-        id: 2,
-        type: 'deadline',
-        icon: 'fa-clock',
-        title: '報名即將截止',
-        text: '下月活動報名將於今日16:00截止',
-        time: '5小時前',
-        read: false
-      },
-      {
-        id: 3,
-        type: 'announcement',
-        icon: 'fa-bullhorn',
-        title: '系統公告',
-        text: '月會時間調整至10月15日上午10點',
-        time: '1天前',
-        read: false
+      .priority-option {
+        display: flex;
+        align-items: center;
+        padding: 10px 16px;
+        border: 2px solid #e1e8ed;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
       }
-    ];
 
-    // 更新時間顯示
-    function updateTime() {
-      const now = new Date();
+      .priority-option:hover {
+        border-color: #8360c3;
+        transform: translateY(-1px);
+      }
 
-      // 格式化完整的時間日期字串
-      const options = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        weekday: 'long',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      };
+      .priority-option.selected {
+        border-color: #8360c3;
+        background: rgba(131, 96, 195, 0.1);
+      }
 
-      let timeString = now.toLocaleDateString('zh-TW', options);
+      .priority-option input[type="radio"] {
+        margin-right: 8px;
+        width: auto;
+      }
 
-      // 調整格式為：2025年09月18日 星期四 上午09:56:44
-      timeString = timeString
-        .replace(/(\d{4})\/(\d{1,2})\/(\d{1,2})/, '$1年$2月$3日')
-        .replace(/\s+/g, ' '); // 規範化空白字符
+      .priority-high {
+        border-color: #ff4757;
+      }
 
-      document.getElementById('timeDisplay').textContent = timeString;
-    }
+      .priority-high.selected {
+        border-color: #ff4757;
+        background: rgba(255, 71, 87, 0.1);
+      }
 
-    // 頁面載入後立即執行
-    document.addEventListener('DOMContentLoaded', function () {
-      updateTime();
-      // 每秒更新時間
-      setInterval(updateTime, 1000);
-      renderNotifications();
-      updateNotificationBadge();
-    });
+      .priority-medium {
+        border-color: #ffa502;
+      }
 
-    // 渲染通知列表
-    function renderNotifications() {
-      const notificationList = document.getElementById('notificationList');
-      
-      if (notifications.length === 0) {
-        notificationList.innerHTML = `
+      .priority-medium.selected {
+        border-color: #ffa502;
+        background: rgba(255, 165, 2, 0.1);
+      }
+
+      .priority-normal {
+        border-color: #2ed573;
+      }
+
+      .priority-normal.selected {
+        border-color: #2ed573;
+        background: rgba(46, 213, 115, 0.1);
+      }
+
+      /* 附件上傳 */
+      .file-upload {
+        border: 2px dashed #e1e8ed;
+        border-radius: 10px;
+        padding: 40px 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        background: #fafbfc;
+      }
+
+      .file-upload:hover {
+        border-color: #8360c3;
+        background: rgba(131, 96, 195, 0.05);
+      }
+
+      .file-upload.dragover {
+        border-color: #8360c3;
+        background: rgba(131, 96, 195, 0.1);
+        transform: scale(1.02);
+      }
+
+      .file-upload i {
+        font-size: 48px;
+        color: #8360c3;
+        margin-bottom: 15px;
+      }
+
+      .file-upload p {
+        color: #666;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+
+      .file-upload small {
+        color: #999;
+        font-size: 12px;
+      }
+
+      .file-list {
+        margin-top: 15px;
+      }
+
+      .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 15px;
+        background: white;
+        border: 1px solid #e1e8ed;
+        border-radius: 8px;
+        margin-bottom: 8px;
+      }
+
+      .file-info {
+        display: flex;
+        align-items: center;
+      }
+
+      .file-info i {
+        margin-right: 10px;
+        color: #8360c3;
+      }
+
+      .remove-file {
+        color: #ff4757;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 5px;
+        transition: all 0.2s ease;
+      }
+
+      .remove-file:hover {
+        background: rgba(255, 71, 87, 0.1);
+      }
+
+      /* 按鈕區域 */
+      .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 30px;
+        border-top: 1px solid #e1e8ed;
+        margin-top: 30px;
+      }
+
+      .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(131, 96, 195, 0.4);
+      }
+
+      .btn-secondary {
+        background: #f8f9fa;
+        color: #666;
+        border: 2px solid #e1e8ed;
+      }
+
+      .btn-secondary:hover {
+        background: #e9ecef;
+        transform: translateY(-1px);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, #2ed573 0%, #17a2b8 100%);
+        color: white;
+      }
+
+      .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(46, 213, 115, 0.4);
+      }
+
+      /* 預覽區域 */
+      .preview-section {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .preview-section h3 {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+      }
+
+      .preview-section h3 i {
+        margin-right: 10px;
+        color: #8360c3;
+      }
+
+      .announcement-preview {
+        border: 1px solid #e1e8ed;
+        border-radius: 15px;
+        padding: 25px;
+        background: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: between;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f1f3f4;
+      }
+
+      .preview-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .preview-meta {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .preview-content {
+        line-height: 1.8;
+        color: #444;
+        font-size: 15px;
+        white-space: pre-wrap;
+      }
+
+      /* 響應式設計 */
+      @media (max-width: 768px) {
+        .main {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          height: auto;
+        }
+
+        .content {
+          padding: 20px;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .priority-options {
+          flex-direction: column;
+        }
+
+        .form-actions {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .page-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 20px;
+        }
+
+        .time-display {
+          align-items: flex-start;
+        }
+      }
+
+      /* 滾動條美化 */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #2ebf91 0%, #8360c3 100%);
+      }
+
+      /* 成功提示 */
+      .success-message {
+        background: rgba(46, 213, 115, 0.1);
+        border: 1px solid #2ed573;
+        color: #27ae60;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      .success-message i {
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- 頂部欄 -->
+    <div class="header">
+      <div
+        class="header-left"
+        onclick="location.href='activity_calendar.html';"
+      >
+        <img src="image/logo1.gif" alt="Logo" class="logo" />
+      </div>
+      <div class="header-right">
+        <div class="icon" id="notificationIcon">
+          <i class="fas fa-bell"></i>
+        </div>
+        <div class="notification-panel" id="notificationPanel">
+          <div class="notification-header">
+            <h3>通知</h3>
+            <div class="notification-actions">
+              <button class="notification-btn" onclick="markAllAsRead()">
+                全部已讀
+              </button>
+              <button
+                class="notification-btn"
+                onclick="clearAllNotifications()"
+              >
+                清除全部
+              </button>
+            </div>
+          </div>
+          <div class="notification-list" id="notificationList">
+            <!-- 通知項目將由 JavaScript 動態生成 -->
+          </div>
+        </div>
+        <div class="avatar" id="avatar">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <div class="dropdown" id="dropdown">
+          <a href="login_admin.html">
+            <i class="fas fa-sign-out-alt"></i>
+            登出
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="sidebar">
+        <div class="menu">
+          <div class="menu-item">
+            <a href="activity_calendar.html" class="menu-link">
+              <i class="fas fa-calendar"></i>
+              行事曆
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_event_album.html" class="menu-link">
+              <i class="fas fa-home"></i>
+              活動相簿
+            </a>
+          </div>
+
+          <div class="menu-item expanded">
+            <div class="menu-link" onclick="toggleMenu(this); return false;">
+              <i class="fas fa-bullhorn"></i>
+              發佈公告/活動/表單
+              <i class="fas fa-chevron-down menu-arrow"></i>
+            </div>
+            <div class="submenu show">
+              <div class="submenu-item">
+                <a href="publish_announcement.html" class="submenu-link active">
+                  <i class="fas fa-bullhorn"></i>
+                  發佈公告
+                </a>
+              </div>
+              <div class="submenu-item">
+                <a
+                  href="science_club_activity_publish.html"
+                  class="submenu-link"
+                >
+                  <i class="fas fa-plus-circle"></i>
+                  發佈比賽及活動
+                </a>
+              </div>
+              <div class="submenu-item">
+                <a href="science_club_table_publish.html" class="submenu-link">
+                  <i class="fas fa-comment-alt"></i>
+                  發佈活動反饋表單
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_name_manage.html" class="menu-link">
+              <i class="fas fa-user-edit"></i>
+              報名人員名單管理
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_statistics.html" class="menu-link">
+              <i class="fas fa-trophy"></i>
+              統計比賽名次
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_upload_files.html" class="menu-link">
+              <i class="fas fa-upload"></i>
+              開放上傳檔案
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="online_scheduling.html" class="menu-link">
+              <i class="fas fa-user-check"></i>
+              線上簽到表
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_request_review.html" class="menu-link">
+              <i class="fas fa-file-signature"></i>
+              請假申請
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="meeting_records.html" class="menu-link">
+              <i class="fas fa-clipboard"></i>
+              開會紀錄
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="auto_notification.html" class="menu-link">
+              <i class="fas fa-bell"></i>
+              自動推播通知
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="image_recognition.html" class="menu-link">
+              <i class="fas fa-eye"></i>
+              圖片識別
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- 頁面標題 -->
+        <div class="page-header">
+          <div class="page-title-section">
+            <h1><i class="fas fa-bullhorn"></i>發布公告</h1>
+            <p>發布重要公告訊息，讓科學會成員及時了解最新資訊</p>
+          </div>
+          <div class="time-display">
+            <i class="fas fa-clock"></i>
+            <span id="timeDisplay">2025年09月18日 星期四 上午09:56:44</span>
+          </div>
+        </div>
+
+        <!-- 成功訊息 -->
+        <div class="success-message" id="successMessage">
+          <i class="fas fa-check-circle"></i>
+          公告發布成功！
+        </div>
+
+        <!-- 發佈表單 -->
+        <div class="publish-form">
+          <form id="announcementForm">
+            <!-- 基本資訊 -->
+            <div class="form-section">
+              <h3><i class="fas fa-info-circle"></i>基本資訊</h3>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="title">公告標題 *</label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="請輸入公告標題"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="category">公告類別</label>
+                  <select id="category" name="category">
+                    <option value="general">一般公告</option>
+                    <option value="urgent">緊急通知</option>
+                    <option value="activity">活動公告</option>
+                    <option value="meeting">會議通知</option>
+                    <option value="competition">競賽資訊</option>
+                    <option value="academic">學術活動</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="content">公告內容 *</label>
+                <textarea
+                  id="content"
+                  name="content"
+                  placeholder="請輸入公告詳細內容..."
+                  required
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- 發佈設定 -->
+            <div class="form-section">
+              <h3><i class="fas fa-cog"></i>發佈設定</h3>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="publishDate">發佈日期</label>
+                  <input
+                    type="datetime-local"
+                    id="publishDate"
+                    name="publishDate"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="expireDate">到期日期</label>
+                  <input
+                    type="datetime-local"
+                    id="expireDate"
+                    name="expireDate"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>優先級別</label>
+                <div class="priority-options">
+                  <div class="priority-option priority-high">
+                    <input
+                      type="radio"
+                      name="priority"
+                      value="high"
+                      id="priorityHigh"
+                    />
+                    <label for="priorityHigh">🔴 高優先級</label>
+                  </div>
+                  <div class="priority-option priority-medium">
+                    <input
+                      type="radio"
+                      name="priority"
+                      value="medium"
+                      id="priorityMedium"
+                    />
+                    <label for="priorityMedium">🟡 中優先級</label>
+                  </div>
+                  <div class="priority-option priority-normal selected">
+                    <input
+                      type="radio"
+                      name="priority"
+                      value="normal"
+                      id="priorityNormal"
+                      checked
+                    />
+                    <label for="priorityNormal">🟢 一般優先級</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 附件上傳 -->
+            <div class="form-section">
+              <h3><i class="fas fa-paperclip"></i>附件上傳</h3>
+
+              <div class="file-upload" id="fileUpload">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>拖放檔案至此處或點擊選擇檔案</p>
+                <small>支援圖片、PDF、Word 文件等格式，單檔最大 10MB</small>
+                <input
+                  type="file"
+                  id="fileInput"
+                  multiple
+                  style="display: none"
+                />
+              </div>
+
+              <div class="file-list" id="fileList"></div>
+            </div>
+
+            <!-- 通知設定 -->
+            <div class="form-section">
+              <h3><i class="fas fa-bell"></i>通知設定</h3>
+
+              <div class="form-group">
+                <label>
+                  <input
+                    type="checkbox"
+                    id="emailNotify"
+                    name="emailNotify"
+                    checked
+                  />
+                  發送電子郵件通知
+                </label>
+              </div>
+
+              <div class="form-group">
+                <label>
+                  <input
+                    type="checkbox"
+                    id="pushNotify"
+                    name="pushNotify"
+                    checked
+                  />
+                  推送即時通知
+                </label>
+              </div>
+
+              <div class="form-group">
+                <label>
+                  <input type="checkbox" id="smsNotify" name="smsNotify" />
+                  發送簡訊通知（緊急公告）
+                </label>
+              </div>
+            </div>
+
+            <!-- 按鈕區域 -->
+            <div class="form-actions">
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="clearForm()"
+                >
+                  <i class="fas fa-eraser"></i>清空表單
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="saveAsDraft()"
+                >
+                  <i class="fas fa-save"></i>儲存草稿
+                </button>
+              </div>
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  onclick="previewAnnouncement()"
+                >
+                  <i class="fas fa-eye"></i>預覽
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-paper-plane"></i>發布公告
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- 預覽區域 -->
+        <div class="preview-section" id="previewSection" style="display: none">
+          <h3><i class="fas fa-eye"></i>公告預覽</h3>
+          <div class="announcement-preview">
+            <div class="preview-header">
+              <div>
+                <div class="preview-title" id="previewTitle">公告標題</div>
+                <div class="preview-meta">
+                  <span id="previewCategory">一般公告</span>
+                  <span id="previewDate">2025-09-18</span>
+                  <span id="previewPriority">🟢 一般優先級</span>
+                </div>
+              </div>
+            </div>
+            <div class="preview-content" id="previewContent">
+              公告內容將在此顯示...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+      // 通知數據
+      let notifications = [
+        {
+          id: 1,
+          type: "activity",
+          icon: "fa-calendar-check",
+          title: "新活動發布",
+          text: "科學營活動已發布，請查看詳情並報名",
+          time: "2小時前",
+          read: false,
+        },
+        {
+          id: 2,
+          type: "deadline",
+          icon: "fa-clock",
+          title: "報名即將截止",
+          text: "下月活動報名將於今日16:00截止",
+          time: "5小時前",
+          read: false,
+        },
+        {
+          id: 3,
+          type: "announcement",
+          icon: "fa-bullhorn",
+          title: "系統公告",
+          text: "月會時間調整至10月15日上午10點",
+          time: "1天前",
+          read: false,
+        },
+      ];
+
+      // 更新時間顯示
+      function updateTime() {
+        const now = new Date();
+
+        // 格式化完整的時間日期字串
+        const options = {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          weekday: "long",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        };
+
+        let timeString = now.toLocaleDateString("zh-TW", options);
+
+        // 調整格式為：2025年09月18日 星期四 上午09:56:44
+        timeString = timeString
+          .replace(/(\d{4})\/(\d{1,2})\/(\d{1,2})/, "$1年$2月$3日")
+          .replace(/\s+/g, " "); // 規範化空白字符
+
+        document.getElementById("timeDisplay").textContent = timeString;
+      }
+
+      // 頁面載入後立即執行
+      document.addEventListener("DOMContentLoaded", function () {
+        updateTime();
+        // 每秒更新時間
+        setInterval(updateTime, 1000);
+        renderNotifications();
+        updateNotificationBadge();
+      });
+
+      // 渲染通知列表
+      function renderNotifications() {
+        const notificationList = document.getElementById("notificationList");
+
+        if (notifications.length === 0) {
+          notificationList.innerHTML = `
           <div class="notification-empty">
             <i class="fas fa-bell-slash"></i>
             <div>暫無通知</div>
           </div>
         `;
-        return;
-      }
+          return;
+        }
 
-      notificationList.innerHTML = notifications.map(notif => `
-        <div class="notification-item ${notif.read ? '' : 'unread'}" onclick="markAsRead(${notif.id})">
+        notificationList.innerHTML = notifications
+          .map(
+            (notif) => `
+        <div class="notification-item ${
+          notif.read ? "" : "unread"
+        }" onclick="markAsRead(${notif.id})">
           <div class="notification-icon ${notif.type}">
             <i class="fas ${notif.icon}"></i>
           </div>
@@ -1426,385 +1533,441 @@
             <div class="notification-text">${notif.text}</div>
             <div class="notification-time">${notif.time}</div>
           </div>
-          <button class="notification-delete" onclick="deleteNotification(event, ${notif.id})">
+          <button class="notification-delete" onclick="deleteNotification(event, ${
+            notif.id
+          })">
             <i class="fas fa-times"></i>
           </button>
         </div>
-      `).join('');
-    }
-
-    // 更新通知數量徽章
-    function updateNotificationBadge() {
-      const unreadCount = notifications.filter(n => !n.read).length;
-      const icon = document.querySelector('.icon');
-      
-      if (unreadCount > 0) {
-        icon.setAttribute('data-count', unreadCount);
-        // 更新 ::after 偽元素內容需要動態修改樣式
-        const style = document.createElement('style');
-        style.textContent = `.icon::after { content: '${unreadCount}'; }`;
-        document.head.appendChild(style);
-      } else {
-        // 移除徽章
-        const style = document.createElement('style');
-        style.textContent = `.icon::after { display: none; }`;
-        document.head.appendChild(style);
+      `
+          )
+          .join("");
       }
-    }
 
-    // 標記單個通知為已讀
-    function markAsRead(id) {
-      const notification = notifications.find(n => n.id === id);
-      if (notification && !notification.read) {
-        notification.read = true;
-        renderNotifications();
-        updateNotificationBadge();
-      }
-    }
+      // 更新通知數量徽章
+      function updateNotificationBadge() {
+        const unreadCount = notifications.filter((n) => !n.read).length;
+        const icon = document.querySelector(".icon");
 
-    // 標記全部為已讀
-    function markAllAsRead() {
-      notifications.forEach(n => n.read = true);
-      renderNotifications();
-      updateNotificationBadge();
-    }
-
-    // 刪除單個通知
-    function deleteNotification(event, id) {
-      event.stopPropagation();
-      notifications = notifications.filter(n => n.id !== id);
-      renderNotifications();
-      updateNotificationBadge();
-    }
-
-    // 清除全部通知
-    function clearAllNotifications() {
-      if (confirm('確定要清除所有通知嗎？')) {
-        notifications = [];
-        renderNotifications();
-        updateNotificationBadge();
-      }
-    }
-
-    // 通知面板控制
-    const notificationIcon = document.getElementById('notificationIcon');
-    const notificationPanel = document.getElementById('notificationPanel');
-
-    notificationIcon.addEventListener('click', (e) => {
-      e.stopPropagation();
-      notificationPanel.style.display = notificationPanel.style.display === 'block' ? 'none' : 'block';
-      // 關閉其他面板
-      dropdown.style.display = 'none';
-    });
-
-    // 頭像下拉選單控制
-    const avatar = document.getElementById('avatar');
-    const dropdown = document.getElementById('dropdown');
-
-    avatar.addEventListener('click', (e) => {
-      e.stopPropagation();
-      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-      // 關閉通知面板
-      notificationPanel.style.display = 'none';
-    });
-
-    window.addEventListener('click', function (e) {
-      if (!notificationIcon.contains(e.target) && !notificationPanel.contains(e.target)) {
-        notificationPanel.style.display = 'none';
-      }
-      if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.style.display = 'none';
-      }
-    });
-
-    // 一級選單控制
-    function toggleMenu(element) {
-      const menuItem = element.parentElement;
-      const submenu = menuItem.querySelector('.submenu');
-      const isExpanded = menuItem.classList.contains('expanded');
-
-      // 關閉所有其他一級選單
-      document.querySelectorAll('.menu-item').forEach(item => {
-        if (item !== menuItem) {
-          item.classList.remove('expanded');
-          const otherSubmenu = item.querySelector('.submenu');
-          if (otherSubmenu) {
-            otherSubmenu.classList.remove('show');
-          }
-        }
-      });
-
-      // 切換當前選單（可以展開也可以收合）
-      if (isExpanded) {
-        menuItem.classList.remove('expanded');
-        submenu.classList.remove('show');
-      } else {
-        menuItem.classList.add('expanded');
-        submenu.classList.add('show');
-      }
-    }
-
-    // 優先級選擇
-    document.querySelectorAll('.priority-option').forEach(option => {
-      option.addEventListener('click', function () {
-        document.querySelectorAll('.priority-option').forEach(opt => opt.classList.remove('selected'));
-        this.classList.add('selected');
-        this.querySelector('input[type="radio"]').checked = true;
-      });
-    });
-
-    // 檔案上傳處理
-    const fileUpload = document.getElementById('fileUpload');
-    const fileInput = document.getElementById('fileInput');
-    const fileList = document.getElementById('fileList');
-    let uploadedFiles = [];
-
-    fileUpload.addEventListener('click', () => fileInput.click());
-
-    fileUpload.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      fileUpload.classList.add('dragover');
-    });
-
-    fileUpload.addEventListener('dragleave', () => {
-      fileUpload.classList.remove('dragover');
-    });
-
-    fileUpload.addEventListener('drop', (e) => {
-      e.preventDefault();
-      fileUpload.classList.remove('dragover');
-      handleFiles(e.dataTransfer.files);
-    });
-
-    fileInput.addEventListener('change', (e) => {
-      handleFiles(e.target.files);
-    });
-
-    function handleFiles(files) {
-      Array.from(files).forEach(file => {
-        if (file.size <= 10 * 1024 * 1024) { // 10MB限制
-          uploadedFiles.push(file);
-          addFileToList(file);
+        if (unreadCount > 0) {
+          icon.setAttribute("data-count", unreadCount);
+          // 更新 ::after 偽元素內容需要動態修改樣式
+          const style = document.createElement("style");
+          style.textContent = `.icon::after { content: '${unreadCount}'; }`;
+          document.head.appendChild(style);
         } else {
-          alert(`檔案 ${file.name} 超過 10MB 限制`);
+          // 移除徽章
+          const style = document.createElement("style");
+          style.textContent = `.icon::after { display: none; }`;
+          document.head.appendChild(style);
+        }
+      }
+
+      // 標記單個通知為已讀
+      function markAsRead(id) {
+        const notification = notifications.find((n) => n.id === id);
+        if (notification && !notification.read) {
+          notification.read = true;
+          renderNotifications();
+          updateNotificationBadge();
+        }
+      }
+
+      // 標記全部為已讀
+      function markAllAsRead() {
+        notifications.forEach((n) => (n.read = true));
+        renderNotifications();
+        updateNotificationBadge();
+      }
+
+      // 刪除單個通知
+      function deleteNotification(event, id) {
+        event.stopPropagation();
+        notifications = notifications.filter((n) => n.id !== id);
+        renderNotifications();
+        updateNotificationBadge();
+      }
+
+      // 清除全部通知
+      function clearAllNotifications() {
+        if (confirm("確定要清除所有通知嗎？")) {
+          notifications = [];
+          renderNotifications();
+          updateNotificationBadge();
+        }
+      }
+
+      // 通知面板控制
+      const notificationIcon = document.getElementById("notificationIcon");
+      const notificationPanel = document.getElementById("notificationPanel");
+
+      notificationIcon.addEventListener("click", (e) => {
+        e.stopPropagation();
+        notificationPanel.style.display =
+          notificationPanel.style.display === "block" ? "none" : "block";
+        // 關閉其他面板
+        dropdown.style.display = "none";
+      });
+
+      // 頭像下拉選單控制
+      const avatar = document.getElementById("avatar");
+      const dropdown = document.getElementById("dropdown");
+
+      avatar.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdown.style.display =
+          dropdown.style.display === "block" ? "none" : "block";
+        // 關閉通知面板
+        notificationPanel.style.display = "none";
+      });
+
+      window.addEventListener("click", function (e) {
+        if (
+          !notificationIcon.contains(e.target) &&
+          !notificationPanel.contains(e.target)
+        ) {
+          notificationPanel.style.display = "none";
+        }
+        if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.style.display = "none";
         }
       });
-    }
 
-    function addFileToList(file) {
-      const fileItem = document.createElement('div');
-      fileItem.className = 'file-item';
-      fileItem.innerHTML = `
+      // 一級選單控制
+      function toggleMenu(element) {
+        const menuItem = element.parentElement;
+        const submenu = menuItem.querySelector(".submenu");
+        const isExpanded = menuItem.classList.contains("expanded");
+
+        // 關閉所有其他一級選單
+        document.querySelectorAll(".menu-item").forEach((item) => {
+          if (item !== menuItem) {
+            item.classList.remove("expanded");
+            const otherSubmenu = item.querySelector(".submenu");
+            if (otherSubmenu) {
+              otherSubmenu.classList.remove("show");
+            }
+          }
+        });
+
+        // 切換當前選單（可以展開也可以收合）
+        if (isExpanded) {
+          menuItem.classList.remove("expanded");
+          submenu.classList.remove("show");
+        } else {
+          menuItem.classList.add("expanded");
+          submenu.classList.add("show");
+        }
+      }
+
+      // 優先級選擇
+      document.querySelectorAll(".priority-option").forEach((option) => {
+        option.addEventListener("click", function () {
+          document
+            .querySelectorAll(".priority-option")
+            .forEach((opt) => opt.classList.remove("selected"));
+          this.classList.add("selected");
+          this.querySelector('input[type="radio"]').checked = true;
+        });
+      });
+
+      // 檔案上傳處理
+      const fileUpload = document.getElementById("fileUpload");
+      const fileInput = document.getElementById("fileInput");
+      const fileList = document.getElementById("fileList");
+      let uploadedFiles = [];
+
+      fileUpload.addEventListener("click", () => fileInput.click());
+
+      fileUpload.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        fileUpload.classList.add("dragover");
+      });
+
+      fileUpload.addEventListener("dragleave", () => {
+        fileUpload.classList.remove("dragover");
+      });
+
+      fileUpload.addEventListener("drop", (e) => {
+        e.preventDefault();
+        fileUpload.classList.remove("dragover");
+        handleFiles(e.dataTransfer.files);
+      });
+
+      fileInput.addEventListener("change", (e) => {
+        handleFiles(e.target.files);
+      });
+
+      function handleFiles(files) {
+        Array.from(files).forEach((file) => {
+          if (file.size <= 10 * 1024 * 1024) {
+            // 10MB限制
+            uploadedFiles.push(file);
+            addFileToList(file);
+          } else {
+            alert(`檔案 ${file.name} 超過 10MB 限制`);
+          }
+        });
+      }
+
+      function addFileToList(file) {
+        const fileItem = document.createElement("div");
+        fileItem.className = "file-item";
+        fileItem.innerHTML = `
         <div class="file-info">
           <i class="fas fa-file"></i>
           <span>${file.name} (${formatFileSize(file.size)})</span>
         </div>
-        <i class="fas fa-times remove-file" onclick="removeFile('${file.name}', this)"></i>
+        <i class="fas fa-times remove-file" onclick="removeFile('${
+          file.name
+        }', this)"></i>
       `;
-      fileList.appendChild(fileItem);
-    }
-
-    function removeFile(fileName, element) {
-      uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
-      element.parentElement.remove();
-    }
-
-    function formatFileSize(bytes) {
-      if (bytes === 0) return '0 Bytes';
-      const k = 1024;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
-
-    // 預覽功能
-    function previewAnnouncement() {
-      const title = document.getElementById('title').value;
-      const content = document.getElementById('content').value;
-      const category = document.getElementById('category').value;
-      const priority = document.querySelector('input[name="priority"]:checked').value;
-
-      if (!title || !content) {
-        alert('請填寫標題和內容');
-        return;
+        fileList.appendChild(fileItem);
       }
 
-      const categoryText = {
-        'general': '一般公告',
-        'urgent': '緊急通知',
-        'activity': '活動公告',
-        'meeting': '會議通知',
-        'competition': '競賽資訊',
-        'academic': '學術活動'
-      };
-
-      const priorityText = {
-        'high': '🔴 高優先級',
-        'medium': '🟡 中優先級',
-        'normal': '🟢 一般優先級'
-      };
-
-      document.getElementById('previewTitle').textContent = title;
-      document.getElementById('previewCategory').textContent = categoryText[category];
-      document.getElementById('previewDate').textContent = new Date().toLocaleDateString('zh-TW');
-      document.getElementById('previewPriority').textContent = priorityText[priority];
-      document.getElementById('previewContent').textContent = content;
-
-      document.getElementById('previewSection').style.display = 'block';
-      document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // 清空表單
-    function clearForm() {
-      if (confirm('確定要清空表單嗎？此操作無法復原。')) {
-        document.getElementById('announcementForm').reset();
-        uploadedFiles = [];
-        fileList.innerHTML = '';
-        document.getElementById('previewSection').style.display = 'none';
-
-        // 重置優先級選擇
-        document.querySelectorAll('.priority-option').forEach(opt => opt.classList.remove('selected'));
-        document.querySelector('.priority-normal').classList.add('selected');
+      function removeFile(fileName, element) {
+        uploadedFiles = uploadedFiles.filter((file) => file.name !== fileName);
+        element.parentElement.remove();
       }
-    }
 
-    // 儲存草稿
-    function saveAsDraft() {
-      const formData = {
-        title: document.getElementById('title').value,
-        content: document.getElementById('content').value,
-        category: document.getElementById('category').value,
-        priority: document.querySelector('input[name="priority"]:checked').value,
-        publishDate: document.getElementById('publishDate').value,
-        expireDate: document.getElementById('expireDate').value,
-        emailNotify: document.getElementById('emailNotify').checked,
-        pushNotify: document.getElementById('pushNotify').checked,
-        smsNotify: document.getElementById('smsNotify').checked,
-        files: uploadedFiles.map(file => file.name)
-      };
+      function formatFileSize(bytes) {
+        if (bytes === 0) return "0 Bytes";
+        const k = 1024;
+        const sizes = ["Bytes", "KB", "MB", "GB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+      }
 
-      // 儲存到記憶體變數（實際應用中應該發送到後端）
-      const draftKey = 'announcement_draft_' + new Date().getTime();
+      // 預覽功能
+      function previewAnnouncement() {
+        const title = document.getElementById("title").value;
+        const content = document.getElementById("content").value;
+        const category = document.getElementById("category").value;
+        const priority = document.querySelector(
+          'input[name="priority"]:checked'
+        ).value;
 
-      alert('草稿已儲存！');
-    }
+        if (!title || !content) {
+          alert("請填寫標題和內容");
+          return;
+        }
 
-    // 表單提交處理
-    document.getElementById('announcementForm').addEventListener('submit', function (e) {
-      e.preventDefault();
+        const categoryText = {
+          general: "一般公告",
+          urgent: "緊急通知",
+          activity: "活動公告",
+          meeting: "會議通知",
+          competition: "競賽資訊",
+          academic: "學術活動",
+        };
 
-      const formData = new FormData();
-      formData.append('title', document.getElementById('title').value);
-      formData.append('content', document.getElementById('content').value);
-      formData.append('category', document.getElementById('category').value);
-      formData.append('priority', document.querySelector('input[name="priority"]:checked').value);
-      formData.append('publishDate', document.getElementById('publishDate').value);
-      formData.append('expireDate', document.getElementById('expireDate').value);
-      formData.append('emailNotify', document.getElementById('emailNotify').checked);
-      formData.append('pushNotify', document.getElementById('pushNotify').checked);
-      formData.append('smsNotify', document.getElementById('smsNotify').checked);
+        const priorityText = {
+          high: "🔴 高優先級",
+          medium: "🟡 中優先級",
+          normal: "🟢 一般優先級",
+        };
 
-      uploadedFiles.forEach(file => {
-        formData.append('files[]', file);
+        document.getElementById("previewTitle").textContent = title;
+        document.getElementById("previewCategory").textContent =
+          categoryText[category];
+        document.getElementById("previewDate").textContent =
+          new Date().toLocaleDateString("zh-TW");
+        document.getElementById("previewPriority").textContent =
+          priorityText[priority];
+        document.getElementById("previewContent").textContent = content;
+
+        document.getElementById("previewSection").style.display = "block";
+        document
+          .getElementById("previewSection")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+
+      // 清空表單
+      function clearForm() {
+        if (confirm("確定要清空表單嗎？此操作無法復原。")) {
+          document.getElementById("announcementForm").reset();
+          uploadedFiles = [];
+          fileList.innerHTML = "";
+          document.getElementById("previewSection").style.display = "none";
+
+          // 重置優先級選擇
+          document
+            .querySelectorAll(".priority-option")
+            .forEach((opt) => opt.classList.remove("selected"));
+          document.querySelector(".priority-normal").classList.add("selected");
+        }
+      }
+
+      // 儲存草稿
+      function saveAsDraft() {
+        const formData = {
+          title: document.getElementById("title").value,
+          content: document.getElementById("content").value,
+          category: document.getElementById("category").value,
+          priority: document.querySelector('input[name="priority"]:checked')
+            .value,
+          publishDate: document.getElementById("publishDate").value,
+          expireDate: document.getElementById("expireDate").value,
+          emailNotify: document.getElementById("emailNotify").checked,
+          pushNotify: document.getElementById("pushNotify").checked,
+          smsNotify: document.getElementById("smsNotify").checked,
+          files: uploadedFiles.map((file) => file.name),
+        };
+
+        // 儲存到記憶體變數（實際應用中應該發送到後端）
+        const draftKey = "announcement_draft_" + new Date().getTime();
+
+        alert("草稿已儲存！");
+      }
+
+      // 表單提交處理
+      document
+        .getElementById("announcementForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const formData = new FormData();
+          formData.append("title", document.getElementById("title").value);
+          formData.append("content", document.getElementById("content").value);
+          formData.append(
+            "category",
+            document.getElementById("category").value
+          );
+          formData.append(
+            "priority",
+            document.querySelector('input[name="priority"]:checked').value
+          );
+          formData.append(
+            "publishDate",
+            document.getElementById("publishDate").value
+          );
+          formData.append(
+            "expireDate",
+            document.getElementById("expireDate").value
+          );
+          formData.append(
+            "emailNotify",
+            document.getElementById("emailNotify").checked
+          );
+          formData.append(
+            "pushNotify",
+            document.getElementById("pushNotify").checked
+          );
+          formData.append(
+            "smsNotify",
+            document.getElementById("smsNotify").checked
+          );
+
+          uploadedFiles.forEach((file) => {
+            formData.append("files[]", file);
+          });
+
+          // 模擬提交（實際應用中應該發送到後端API）
+          setTimeout(() => {
+            document.getElementById("successMessage").style.display = "block";
+            document
+              .getElementById("successMessage")
+              .scrollIntoView({ behavior: "smooth" });
+
+            // 3秒後隱藏成功訊息
+            setTimeout(() => {
+              document.getElementById("successMessage").style.display = "none";
+            }, 3000);
+          }, 1000);
+        });
+
+      // 設定預設發布日期為當前時間
+      window.addEventListener("load", function () {
+        const now = new Date();
+        const localDateTime = new Date(
+          now.getTime() - now.getTimezoneOffset() * 60000
+        )
+          .toISOString()
+          .slice(0, 16);
+        document.getElementById("publishDate").value = localDateTime;
+
+        // 設定預設到期日期為30天後
+        const expireDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+        const localExpireDateTime = new Date(
+          expireDate.getTime() - expireDate.getTimezoneOffset() * 60000
+        )
+          .toISOString()
+          .slice(0, 16);
+        document.getElementById("expireDate").value = localExpireDateTime;
       });
 
-      // 模擬提交（實際應用中應該發送到後端API）
-      setTimeout(() => {
-        document.getElementById('successMessage').style.display = 'block';
-        document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+      // 實時更新字數統計
+      const contentTextarea = document.getElementById("content");
+      const titleInput = document.getElementById("title");
 
-        // 3秒後隱藏成功訊息
-        setTimeout(() => {
-          document.getElementById('successMessage').style.display = 'none';
-        }, 3000);
-      }, 1000);
-    });
+      function addCharacterCount() {
+        // 為內容添加字數統計
+        if (!document.getElementById("contentCount")) {
+          const contentCount = document.createElement("small");
+          contentCount.id = "contentCount";
+          contentCount.style.color = "#999";
+          contentCount.style.fontSize = "12px";
+          contentCount.textContent = "0 字";
+          contentTextarea.parentNode.appendChild(contentCount);
+        }
 
-    // 設定預設發布日期為當前時間
-    window.addEventListener('load', function () {
-      const now = new Date();
-      const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-      document.getElementById('publishDate').value = localDateTime;
-
-      // 設定預設到期日期為30天後
-      const expireDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-      const localExpireDateTime = new Date(expireDate.getTime() - expireDate.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-      document.getElementById('expireDate').value = localExpireDateTime;
-    });
-
-    // 實時更新字數統計
-    const contentTextarea = document.getElementById('content');
-    const titleInput = document.getElementById('title');
-
-    function addCharacterCount() {
-      // 為內容添加字數統計
-      if (!document.getElementById('contentCount')) {
-        const contentCount = document.createElement('small');
-        contentCount.id = 'contentCount';
-        contentCount.style.color = '#999';
-        contentCount.style.fontSize = '12px';
-        contentCount.textContent = '0 字';
-        contentTextarea.parentNode.appendChild(contentCount);
+        // 為標題添加字數統計
+        if (!document.getElementById("titleCount")) {
+          const titleCount = document.createElement("small");
+          titleCount.id = "titleCount";
+          titleCount.style.color = "#999";
+          titleCount.style.fontSize = "12px";
+          titleCount.textContent = "0 字";
+          titleInput.parentNode.appendChild(titleCount);
+        }
       }
 
-      // 為標題添加字數統計
-      if (!document.getElementById('titleCount')) {
-        const titleCount = document.createElement('small');
-        titleCount.id = 'titleCount';
-        titleCount.style.color = '#999';
-        titleCount.style.fontSize = '12px';
-        titleCount.textContent = '0 字';
-        titleInput.parentNode.appendChild(titleCount);
-      }
-    }
+      contentTextarea.addEventListener("input", function () {
+        const count = this.value.length;
+        document.getElementById("contentCount").textContent = count + " 字";
 
-    contentTextarea.addEventListener('input', function () {
-      const count = this.value.length;
-      document.getElementById('contentCount').textContent = count + ' 字';
+        if (count > 1000) {
+          document.getElementById("contentCount").style.color = "#ff4757";
+        } else {
+          document.getElementById("contentCount").style.color = "#999";
+        }
+      });
 
-      if (count > 1000) {
-        document.getElementById('contentCount').style.color = '#ff4757';
-      } else {
-        document.getElementById('contentCount').style.color = '#999';
-      }
-    });
+      titleInput.addEventListener("input", function () {
+        const count = this.value.length;
+        document.getElementById("titleCount").textContent = count + " 字";
 
-    titleInput.addEventListener('input', function () {
-      const count = this.value.length;
-      document.getElementById('titleCount').textContent = count + ' 字';
+        if (count > 50) {
+          document.getElementById("titleCount").style.color = "#ff4757";
+        } else {
+          document.getElementById("titleCount").style.color = "#999";
+        }
+      });
 
-      if (count > 50) {
-        document.getElementById('titleCount').style.color = '#ff4757';
-      } else {
-        document.getElementById('titleCount').style.color = '#999';
-      }
-    });
+      // 頁面載入完成後初始化
+      window.addEventListener("load", function () {
+        addCharacterCount();
+      });
 
-    // 頁面載入完成後初始化
-    window.addEventListener('load', function () {
-      addCharacterCount();
-    });
-
-    // 點擊其他地方關閉所有選單
-    document.addEventListener('click', function (e) {
-      if (!e.target.closest('.menu')) {
-        document.querySelectorAll('.menu-item').forEach(item => {
-          item.classList.remove('expanded');
-          const submenu = item.querySelector('.submenu');
-          if (submenu) {
-            submenu.classList.remove('show');
-          }
-          item.querySelectorAll('.submenu-item').forEach(subItem => {
-            subItem.classList.remove('expanded');
-            const subSubmenu = subItem.querySelector('.sub-submenu');
-            if (subSubmenu) {
-              subSubmenu.classList.remove('show');
+      // 點擊其他地方關閉所有選單
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest(".menu")) {
+          document.querySelectorAll(".menu-item").forEach((item) => {
+            item.classList.remove("expanded");
+            const submenu = item.querySelector(".submenu");
+            if (submenu) {
+              submenu.classList.remove("show");
             }
+            item.querySelectorAll(".submenu-item").forEach((subItem) => {
+              subItem.classList.remove("expanded");
+              const subSubmenu = subItem.querySelector(".sub-submenu");
+              if (subSubmenu) {
+                subSubmenu.classList.remove("show");
+              }
+            });
           });
-        });
-      }
-    });
-  </script>
-</body>
-
+        }
+      });
+    </script>
+  </body>
 </html>

@@ -1,0 +1,149 @@
+🔐 登入系統
+功能MethodURL必要參數登入POSTapi.php?action=loginaccount, password, role登出POSTapi.php?action=logout-檢查登入狀態GETapi.php?action=check_session-
+測試範例：
+POST api.php?action=login
+Body (form-data):
+  account: admin
+  password: admin123
+  role: admin
+
+📅 1. 行事曆系統
+功能MethodURL必要參數取得活動列表GETapi.php?action=get_calendar_events-新增活動POSTapi.php?action=add_calendar_eventtitle, event_date更新活動POSTapi.php?action=update_calendar_eventevent_id, title, event_date刪除活動POSTapi.php?action=delete_calendar_eventevent_id
+新增活動範例：
+POST api.php?action=add_calendar_event
+Body (form-data):
+  title: 科學週活動
+  description: 年度科學週
+  event_date: 2025-11-15
+  start_time: 09:00
+  end_time: 17:00
+  event_type: activity
+  location: 活動中心
+  is_public: 1
+
+📸 2. 活動相簿
+功能MethodURL必要參數取得相簿列表GETapi.php?action=get_albums-新增相簿POSTapi.php?action=add_albumalbum_name取得相簿內容GETapi.php?action=get_album_media&album_id=1album_id上傳照片POSTapi.php?action=upload_mediaalbum_id, media_file刪除相簿POSTapi.php?action=delete_albumalbum_id刪除照片POSTapi.php?action=delete_mediamedia_id
+上傳照片範例：
+POST api.php?action=upload_media
+Body (form-data):
+  album_id: 1
+  description: 活動照片
+  media_file: [選擇檔案]
+
+📢 3. 公告系統
+功能MethodURL必要參數取得公告列表GETapi.php?action=get_announcements&limit=20-新增公告POSTapi.php?action=add_announcementtitle, content取得公告詳情GETapi.php?action=get_announcement_detail&id=1id更新公告POSTapi.php?action=update_announcementannouncement_id, title, content刪除公告POSTapi.php?action=delete_announcementannouncement_id
+新增公告範例：
+POST api.php?action=add_announcement
+Body (form-data):
+  title: 重要公告
+  content: 科學週報名開始
+  announcement_type: urgent
+  is_important: 1
+
+🎉 4. 活動發布
+功能MethodURL必要參數取得活動列表GETapi.php?action=get_activities-發布活動POSTapi.php?action=add_activityactivity_name, start_date, end_date取得活動詳情GETapi.php?action=get_activity_detail&activity_id=1activity_id更新活動POSTapi.php?action=update_activityactivity_id刪除活動POSTapi.php?action=delete_activityactivity_id
+發布活動範例：
+POST api.php?action=add_activity
+Body (form-data):
+  activity_name: 化學實驗競賽
+  activity_type: competition
+  description: 年度化學大賽
+  start_date: 2025-12-01
+  end_date: 2025-12-01
+  registration_start: 2025-11-01 00:00:00
+  registration_end: 2025-11-25 23:59:59
+  max_participants: 50
+  location: 化學實驗室
+
+👥 6. 報名管理
+功能MethodURL必要參數學生報名POSTapi.php?action=register_activityactivity_id, student_number, student_name取得報名名單GETapi.php?action=get_registrations&activity_id=1activity_id取消報名POSTapi.php?action=cancel_registrationregistration_id匯出名單(CSV)GETapi.php?action=export_registrations&activity_id=1activity_id我的報名記錄GETapi.php?action=get_my_registrations-
+學生報名範例：
+POST api.php?action=register_activity
+Body (form-data):
+  activity_id: 1
+  student_number: A10912345
+  student_name: 王小明
+  student_class: 資訊一甲
+
+📝 5. 反饋表單
+功能MethodURL必要參數取得表單列表GETapi.php?action=get_feedback_forms-建立表單POSTapi.php?action=add_feedback_formform_name提交反饋POSTapi.php?action=submit_feedbackform_id, student_number, student_name取得反饋結果GETapi.php?action=get_feedback_responses&form_id=1form_id
+提交反饋範例：
+POST api.php?action=submit_feedback
+Body (form-data):
+  form_id: 1
+  student_number: A10912345
+  student_name: 王小明
+  student_class: 資訊一甲
+  satisfaction_score: 5
+  feedback_text: 活動很棒！
+
+🏆 7. 比賽成績
+功能MethodURL必要參數新增成績POSTapi.php?action=add_competition_resultactivity_id, student_number, student_name取得成績列表GETapi.php?action=get_competition_results&activity_id=1activity_id更新成績POSTapi.php?action=update_competition_resultresult_id刪除成績POSTapi.php?action=delete_competition_resultresult_id
+新增成績範例：
+POST api.php?action=add_competition_result
+Body (form-data):
+  activity_id: 1
+  student_number: A10912345
+  student_name: 王小明
+  student_class: 資訊一甲
+  score: 98
+  rank: 1
+  award: 金牌
+
+📁 8. 檔案上傳
+功能MethodURL必要參數建立上傳區POSTapi.php?action=create_upload_zonezone_name取得上傳區列表GETapi.php?action=get_upload_zones-上傳檔案POSTapi.php?action=upload_filezone_id, student_number, file取得已上傳檔案GETapi.php?action=get_uploaded_files&zone_id=1zone_id
+上傳檔案範例：
+POST api.php?action=upload_file
+Body (form-data):
+  zone_id: 1
+  student_number: A10912345
+  student_name: 王小明
+  title: 我的作品
+  upload_type: 作品
+  file: [選擇檔案]
+
+✅ 9. 簽到系統
+功能MethodURL必要參數建立簽到場次POSTapi.php?action=create_attendance_sessionsession_name, session_date取得場次列表GETapi.php?action=get_attendance_sessions-簽到POSTapi.php?action=check_insession_id, member_name, member_number取得簽到記錄GETapi.php?action=get_attendance_records&session_id=1session_id
+簽到範例：
+POST api.php?action=check_in
+Body (form-data):
+  session_id: 1
+  member_name: 王小明
+  member_number: A10912345
+
+📋 10. 請假申請
+功能MethodURL必要參數提交請假POSTapi.php?action=submit_leave_requestapplicant_name, applicant_number, leave_date, reason取得請假列表GETapi.php?action=get_leave_requests&status=all-審核請假POSTapi.php?action=review_leave_requestrequest_id, status, review_comment
+提交請假範例：
+POST api.php?action=submit_leave_request
+Body (form-data):
+  applicant_name: 王小明
+  applicant_number: A10912345
+  leave_type: sick
+  leave_date: 2025-10-20
+  start_time: 09:00
+  end_time: 12:00
+  reason: 感冒發燒
+審核請假範例：
+POST api.php?action=review_leave_request
+Body (form-data):
+  request_id: 1
+  status: approved  (或 rejected)
+  review_comment: 核准，請好好休息
+
+📝 11. 開會紀錄
+功能MethodURL必要參數取得會議列表GETapi.php?action=get_meeting_records-新增會議紀錄POSTapi.php?action=add_meeting_recordmeeting_title, meeting_date更新會議紀錄POSTapi.php?action=update_meeting_recordmeeting_id刪除會議紀錄POSTapi.php?action=delete_meeting_recordmeeting_id
+新增會議紀錄範例：
+POST api.php?action=add_meeting_record
+Body (form-data):
+  meeting_title: 10月例會
+  meeting_date: 2025-10-15
+  start_time: 14:00
+  end_time: 16:00
+  location: 會議室A
+  attendees: 會長、副會長
+  agenda: 1. 科學週籌備
+  content: 會議內容...
+  decisions: 決議事項...
+
+🔔 12. 通知系統
+功能MethodURL必要參數取得通知列表GETapi.php?action=get_notifications-標記已讀POSTapi.php?action=mark_notification_readnotification_id取得未讀數量GETapi.php?action=get_unread_count-

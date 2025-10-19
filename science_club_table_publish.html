@@ -1929,17 +1929,15 @@
               <div class="announcement-meta">發布時間：${f.publishDate}</div>
             </div>
             <div class="announcement-actions" style="display:flex; gap:8px;">
-              <button class="btn btn-xs btn-delete" onclick="deletePublished(${idx})"><i class=\"fas fa-trash\"></i> 刪除</button>
+              <button class="btn btn-xs btn-edit" style="background:#f0f0f0; border:1px solid #ddd; color:#555; padding:6px 10px; font-size:12px; border-radius:8px; cursor:pointer; transition:all 0.3s;" onclick="editPublished(${idx})" onmouseover="this.style.background='#e9e9e9'" onmouseout="this.style.background='#f0f0f0'">
+                <i class="fas fa-edit"></i> 編輯
+              </button>
+              <button class="btn btn-xs btn-delete" style="background:#ffefef; border:1px solid #f3b2b2; color:#e74c3c; padding:6px 10px; font-size:12px; border-radius:8px; cursor:pointer; transition:all 0.3s;" onclick="deletePublished(${idx})" onmouseover="this.style.background='#ffe3e3'" onmouseout="this.style.background='#ffefef'">
+                <i class="fas fa-trash"></i> 刪除
+              </button>
             </div>`;
           list.appendChild(card);
         });
-      }
-      function deletePublished(i) {
-        const f = publishedForms[i];
-        if (!confirm(`確定刪除表單「${f.title || '未命名表單'}」嗎？`)) return;
-        publishedForms.splice(i, 1);
-        renderPublished();
-        alert('✅ 已刪除');
       }
 
       function publishDraft(id) {

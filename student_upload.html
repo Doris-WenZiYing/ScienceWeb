@@ -28,7 +28,6 @@
     .upload-container h2 { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:10px; color:#333; }
     .upload-container .subtitle { text-align:center; color:#666; font-size:14px; margin-bottom:25px; }
     
-    /* 拖曳上傳區域 */
     .drop-zone { border:2px dashed #667eea; border-radius:12px; padding:40px 20px; text-align:center; background:rgba(102,126,234,0.05); cursor:pointer; transition:all 0.3s ease; margin-bottom:20px; }
     .drop-zone:hover, .drop-zone.dragover { background:rgba(102,126,234,0.1); border-color:#5a6ddd; }
     .drop-zone i { font-size:48px; color:#667eea; margin-bottom:15px; }
@@ -36,7 +35,6 @@
     .drop-zone .hint { font-size:12px; color:#888; margin-top:10px; }
     #fileInput { display:none; }
 
-    /* 檔案預覽列表 */
     .file-preview-list { margin:20px 0; max-height:300px; overflow-y:auto; }
     .file-preview-item { display:flex; align-items:center; justify-content:space-between; padding:12px 15px; background:white; border:1px solid #e0e0e0; border-radius:8px; margin-bottom:10px; transition:all 0.3s ease; }
     .file-preview-item:hover { border-color:#667eea; box-shadow:0 2px 8px rgba(102,126,234,0.15); }
@@ -54,7 +52,6 @@
     .remove-file-btn { background:#f44336; color:white; border:none; border-radius:5px; padding:5px 12px; cursor:pointer; font-size:12px; transition:all 0.3s ease; }
     .remove-file-btn:hover { background:#d32f2f; }
 
-    /* 統計資訊 */
     .upload-stats { display:flex; justify-content:space-around; padding:15px; background:#f8f9fa; border-radius:10px; margin-bottom:20px; }
     .stat-item { text-align:center; }
     .stat-value { font-size:24px; font-weight:bold; color:#667eea; }
@@ -137,6 +134,8 @@
   </div>
 
   <script>
+    const UPLOAD_API = 'student_api.php';
+
     const fileInput = document.getElementById('fileInput');
     const dropZone = document.getElementById('dropZone');
     const filePreviewList = document.getElementById('filePreviewList');
@@ -151,12 +150,10 @@
     let selectedFiles = [];
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-    // 檔案選擇
     fileInput.addEventListener('change', (e) => {
       handleFiles(e.target.files);
     });
 
-    // 拖曳功能
     dropZone.addEventListener('dragover', (e) => {
       e.preventDefault();
       dropZone.classList.add('dragover');
@@ -259,7 +256,7 @@
       return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
     }
 
-    function uploadFiles() {
+    async function uploadFiles() {
       if (selectedFiles.length === 0) {
         alert('請先選擇檔案！');
         return;
@@ -275,46 +272,72 @@
       uploadBtn.disabled = true;
       uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上傳中...';
       progressBar.style.display = 'block';
-      uploadStatus.textContent = '正在處理檔案...';
+      uploadStatus.textContent = '正在上傳檔案到伺服器...';
 
-      const existingFiles = JSON.parse(localStorage.getItem('uploadedFiles') || '[]');
       let uploaded = 0;
+      let failed = 0;
 
-      selectedFiles.forEach((file, i) => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const fileData = {
-            id: Date.now() + i,
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            url: e.target.result,
-            uploadDate: new Date().toISOString()
-          };
-          existingFiles.push(fileData);
-          uploaded++;
+      // 逐個上傳檔案
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        
+        try {
+          // 建立 FormData
+          const formData = new FormData();
+          formData.append('action', 'upload_file');
+          formData.append('file', file);
+          formData.append('title', file.name);
+          formData.append('upload_type', '證照');
+
+          // 發送 API 請求
+          const response = await fetch(UPLOAD_API, {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = await response.json();
           
-          const percentage = (uploaded / selectedFiles.length * 100);
-          progress.style.width = percentage + '%';
-          uploadStatus.textContent = `已上傳 ${uploaded} / ${selectedFiles.length} 個檔案`;
-
-          if (uploaded === selectedFiles.length) {
-            localStorage.setItem('uploadedFiles', JSON.stringify(existingFiles));
-            setTimeout(() => {
-              uploadStatus.innerHTML = '<i class="fas fa-check-circle" style="color:#4caf50;"></i> 上傳完成！';
-              uploadStatus.style.color = '#4caf50';
-              setTimeout(() => {
-                if (confirm('上傳成功！是否前往「查看上傳檔案」頁面？')) {
-                  location.href = 'student_files.html';
-                } else {
-                  resetUpload();
-                }
-              }, 1000);
-            }, 500);
+          if (result.success) {
+            uploaded++;
+          } else {
+            failed++;
+            console.error(`上傳失敗: ${file.name} - ${result.message}`);
           }
-        };
-        reader.readAsDataURL(file);
-      });
+
+        } catch (error) {
+          failed++;
+          console.error(`上傳錯誤: ${file.name}`, error);
+        }
+
+        // 更新進度
+        const percentage = ((i + 1) / selectedFiles.length * 100);
+        progress.style.width = percentage + '%';
+        uploadStatus.textContent = `已處理 ${i + 1} / ${selectedFiles.length} 個檔案`;
+      }
+
+      // 上傳完成
+      setTimeout(() => {
+        if (failed === 0) {
+          uploadStatus.innerHTML = '<i class="fas fa-check-circle" style="color:#4caf50;"></i> 全部上傳成功！';
+          uploadStatus.style.color = '#4caf50';
+        } else {
+          uploadStatus.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#ff9800;"></i> 成功 ${uploaded} 個，失敗 ${failed} 個`;
+          uploadStatus.style.color = '#ff9800';
+        }
+
+        setTimeout(() => {
+          if (uploaded > 0) {
+            if (confirm(`成功上傳 ${uploaded} 個檔案！是否前往「查看上傳檔案」頁面？`)) {
+              location.href = 'student_files.html';
+            } else {
+              resetUpload();
+            }
+          } else {
+            alert('所有檔案上傳失敗，請稍後再試。');
+            resetUpload();
+          }
+        }, 1500);
+      }, 500);
     }
 
     function resetUpload() {
@@ -333,7 +356,11 @@
       menu.style.display=(menu.style.display==='flex')?'none':'flex';
     }
 
-    function logout(){ location.href='login_student.html'; }
+    function logout(){ 
+      if (confirm('確定要登出嗎？')) {
+        location.href='login_student.html'; 
+      }
+    }
 
     document.addEventListener('click',(e)=>{
       const avatar=document.querySelector('.avatar');

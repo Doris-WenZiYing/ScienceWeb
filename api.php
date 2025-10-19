@@ -6,11 +6,51 @@
 
 include("pdo.php");
 
+// ==========================================
+// 調試功能（測試完成後可刪除）
+// ==========================================
+if (isset($_GET['debug']) && $_GET['debug'] == '1') {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode([
+        'session_status' => session_status() === PHP_SESSION_ACTIVE ? 'active' : 'inactive',
+        'session_id' => session_id(),
+        'session_data' => $_SESSION,
+        'is_logged_in' => isset($_SESSION['user_id']),
+        'user_id' => $_SESSION['user_id'] ?? null,
+        'account' => $_SESSION['account'] ?? null,
+        'role' => $_SESSION['role'] ?? null,
+        'get_params' => $_GET,
+        'post_params' => array_keys($_POST)
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 // 取得 action 參數
 $action = $_GET['action'] ?? '';
 
 // 根據 action 執行對應功能
 switch ($action) {
+
+    // admin
+    case 'get_users':
+    getUsers();
+    break;
+    
+    case 'add_user':
+        addUser();
+        break;
+        
+    case 'update_user':
+        updateUser();
+        break;
+        
+    case 'delete_user':
+        deleteUser();
+        break;
+
+    case 'get_user_stats':
+        getUserStats();
+        break;
     
     // ==========================================
     // 登入/登出系統
@@ -285,6 +325,241 @@ switch ($action) {
 }
 
 // ==========================================
+// 用戶管理功能
+// ==========================================
+
+function getUsers() {
+    global $pdo;
+    
+    error_log("getUsers called - Session: " . json_encode($_SESSION));
+    
+    // 檢查登入狀態
+    if (!isLoggedIn()) {
+        error_log("getUsers - Not logged in");
+        jsonResponse(false, '請先登入系統', [
+            'session_id' => session_id(),
+            'session_data' => $_SESSION
+        ]);
+        return;
+    }
+    
+    // 檢查權限
+    if ($_SESSION['role'] !== 'admin') {
+        error_log("getUsers - Insufficient permissions, role: " . $_SESSION['role']);
+        jsonResponse(false, '權限不足，需要管理員權限');
+        return;
+    }
+    
+    try {
+        $stmt = $pdo->query("
+            SELECT id, account, role, email, is_active, created_at 
+            FROM `user` 
+            ORDER BY created_at DESC
+        ");
+        
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        error_log("getUsers - Success, found " . count($users) . " users");
+        jsonResponse(true, '取得成功', $users);
+        
+    } catch (Exception $e) {
+        error_log("getUsers - Error: " . $e->getMessage());
+        jsonResponse(false, '取得失敗: ' . $e->getMessage());
+    }
+}
+
+function addUser() {
+    global $pdo;
+    
+    if (!isLoggedIn()) {
+        jsonResponse(false, '請先登入');
+        return;
+    }
+    
+    if ($_SESSION['role'] !== 'admin') {
+        jsonResponse(false, '權限不足');
+        return;
+    }
+    
+    $account = trim($_POST['account'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+    $role = trim($_POST['role'] ?? 'student');
+    $email = trim($_POST['email'] ?? '');
+    
+    if (empty($account) || empty($password)) {
+        jsonResponse(false, '帳號和密碼不能為空');
+        return;
+    }
+    
+    $stmt = $pdo->prepare("SELECT id FROM `user` WHERE `account` = ?");
+    $stmt->execute([$account]);
+    
+    if ($stmt->fetch()) {
+        jsonResponse(false, '此帳號已存在');
+        return;
+    }
+    
+    try {
+        $stmt = $pdo->prepare("
+            INSERT INTO `user` (`account`, `password`, `role`, `email`, `is_active`)
+            VALUES (?, ?, ?, ?, 1)
+        ");
+        
+        $result = $stmt->execute([$account, $password, $role, $email]);
+        
+        if ($result) {
+            jsonResponse(true, '新增成功', [
+                'id' => $pdo->lastInsertId(),
+                'account' => $account,
+                'role' => $role,
+                'email' => $email
+            ]);
+        } else {
+            jsonResponse(false, '新增失敗');
+        }
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '新增失敗: ' . $e->getMessage());
+    }
+}
+
+function updateUser() {
+    global $pdo;
+    
+    if (!isLoggedIn()) {
+        jsonResponse(false, '請先登入');
+        return;
+    }
+    
+    if ($_SESSION['role'] !== 'admin') {
+        jsonResponse(false, '權限不足');
+        return;
+    }
+    
+    $id = $_POST['id'] ?? 0;
+    $account = trim($_POST['account'] ?? '');
+    $role = trim($_POST['role'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+    
+    if (empty($account) || empty($role)) {
+        jsonResponse(false, '帳號和角色不能為空');
+        return;
+    }
+    
+    $stmt = $pdo->prepare("SELECT id FROM `user` WHERE `account` = ? AND id != ?");
+    $stmt->execute([$account, $id]);
+    
+    if ($stmt->fetch()) {
+        jsonResponse(false, '此帳號已被使用');
+        return;
+    }
+    
+    try {
+        if (!empty($password)) {
+            $stmt = $pdo->prepare("
+                UPDATE `user` 
+                SET `account` = ?, `password` = ?, `role` = ?, `email` = ?
+                WHERE `id` = ?
+            ");
+            $result = $stmt->execute([$account, $password, $role, $email, $id]);
+        } else {
+            $stmt = $pdo->prepare("
+                UPDATE `user` 
+                SET `account` = ?, `role` = ?, `email` = ?
+                WHERE `id` = ?
+            ");
+            $result = $stmt->execute([$account, $role, $email, $id]);
+        }
+        
+        jsonResponse($result, $result ? '更新成功' : '更新失敗');
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '更新失敗: ' . $e->getMessage());
+    }
+}
+
+function deleteUser() {
+    global $pdo;
+    
+    if (!isLoggedIn()) {
+        jsonResponse(false, '請先登入');
+        return;
+    }
+    
+    if ($_SESSION['role'] !== 'admin') {
+        jsonResponse(false, '權限不足');
+        return;
+    }
+    
+    $id = $_POST['id'] ?? 0;
+    
+    if ($id <= 0) {
+        jsonResponse(false, '無效的用戶ID');
+        return;
+    }
+    
+    if ($id == $_SESSION['user_id']) {
+        jsonResponse(false, '不能刪除自己的帳號');
+        return;
+    }
+    
+    try {
+        $stmt = $pdo->prepare("DELETE FROM `user` WHERE `id` = ?");
+        $result = $stmt->execute([$id]);
+        
+        jsonResponse($result, $result ? '刪除成功' : '刪除失敗');
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '刪除失敗: ' . $e->getMessage());
+    }
+}
+
+function getUserStats() {
+    global $pdo;
+    
+    if (!isLoggedIn()) {
+        jsonResponse(false, '請先登入');
+        return;
+    }
+    
+    if ($_SESSION['role'] !== 'admin') {
+        jsonResponse(false, '權限不足');
+        return;
+    }
+    
+    try {
+        $stmt = $pdo->query("
+            SELECT 
+                role,
+                COUNT(*) as count
+            FROM `user`
+            WHERE `is_active` = 1
+            GROUP BY role
+        ");
+        
+        $stats = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $result = [
+            'admin' => 0,
+            'teacher' => 0,
+            'student' => 0,
+            'science_club' => 0
+        ];
+        
+        foreach ($stats as $stat) {
+            $result[$stat['role']] = (int)$stat['count'];
+        }
+        
+        jsonResponse(true, '取得成功', $result);
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '取得失敗: ' . $e->getMessage());
+    }
+}
+
+
+// ==========================================
 // 登入/登出功能實作
 // ==========================================
 
@@ -294,6 +569,9 @@ function handleLogin() {
     $account = trim($_POST['account'] ?? '');
     $password = trim($_POST['password'] ?? '');
     $role = trim($_POST['role'] ?? '');
+    
+    // 記錄登入嘗試
+    error_log("Login attempt - Account: $account, Role: $role");
     
     if (empty($account) || empty($password) || empty($role)) {
         ?>
@@ -305,39 +583,64 @@ function handleLogin() {
         exit;
     }
     
-    $stmt = $pdo->prepare("
-        SELECT * FROM `user` 
-        WHERE `account` = ? AND `password` = ? AND `role` = ? AND `is_active` = 1
-    ");
-    $stmt->execute([$account, $password, $role]);
-    $user = $stmt->fetch();
-    
-    if ($user) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['account'] = $user['account'];
-        $_SESSION['role'] = $user['role'];
-        $_SESSION['login_time'] = time();
+    try {
+        $stmt = $pdo->prepare("
+            SELECT * FROM `user` 
+            WHERE `account` = ? AND `password` = ? AND `role` = ? AND `is_active` = 1
+        ");
+        $stmt->execute([$account, $password, $role]);
+        $user = $stmt->fetch();
         
-        $redirect_map = [
-            'admin' => 'science_club_event_album.html',
-            'science_club' => 'science_club_activity_calendar.html',
-            'teacher' => 'teacher_dashboard.html',
-            'student' => 'student_index.html'
-        ];
-        
-        $redirect = $redirect_map[$role] ?? 'index.html';
-        
+        if ($user) {
+            // 重新生成 Session ID
+            session_regenerate_id(true);
+            
+            // 設置 Session
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['account'] = $user['account'];
+            $_SESSION['role'] = $user['role'];
+            $_SESSION['login_time'] = time();
+            
+            // ⭐ 關鍵修正：強制寫入 Session 數據
+            session_write_close();
+            
+            // 記錄成功登入
+            error_log("Login successful - User ID: {$user['id']}, Account: {$user['account']}, Role: {$user['role']}");
+            error_log("Session data saved: " . json_encode($_SESSION));
+            
+            // 重新啟動 Session（因為我們調用了 write_close）
+            session_start();
+            
+            $redirect_map = [
+                'admin' => 'admin_index.html',
+                'science_club' => 'science_club_activity_calendar.html',
+                'teacher' => 'teacher_dashboard.html',
+                'student' => 'student_index.html'
+            ];
+            
+            $redirect = $redirect_map[$role] ?? 'index.html';
+            
+            ?>
+            <script>
+                alert("✅ 登入成功！歡迎使用科學會管理系統");
+                location.href = "<?php echo $redirect; ?>";
+            </script>
+            <?php
+            
+        } else {
+            error_log("Login failed - Invalid credentials");
+            ?>
+            <script>
+                alert("❌ 帳號、密碼或身分錯誤，請重新輸入");
+                history.back();
+            </script>
+            <?php
+        }
+    } catch (Exception $e) {
+        error_log("Login error: " . $e->getMessage());
         ?>
         <script>
-            alert("✅ 登入成功！歡迎使用科學會管理系統");
-            location.href = "<?php echo $redirect; ?>";
-        </script>
-        <?php
-        
-    } else {
-        ?>
-        <script>
-            alert("❌ 帳號、密碼或身分錯誤，請重新輸入");
+            alert("❌ 登入發生錯誤，請聯絡管理員");
             history.back();
         </script>
         <?php
@@ -355,10 +658,13 @@ function handleLogout() {
 }
 
 function checkSession() {
+    error_log("Checking session - " . json_encode($_SESSION));
+    
     if (isLoggedIn()) {
         jsonResponse(true, '已登入', [
             'account' => $_SESSION['account'],
-            'role' => $_SESSION['role']
+            'role' => $_SESSION['role'],
+            'user_id' => $_SESSION['user_id']
         ]);
     } else {
         jsonResponse(false, '未登入');
@@ -1358,5 +1664,34 @@ function getUnreadCount() {
     $result = $stmt->fetch();
     
     jsonResponse(true, '取得成功', ['count' => $result['count']]);
+}
+
+function jsonResponse($success, $message, $data = null) {
+    header('Content-Type: application/json; charset=utf-8');
+    
+    $response = [
+        'success' => $success,
+        'message' => $message
+    ];
+    
+    if ($data !== null) {
+        $response['data'] = $data;
+    }
+    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+function isLoggedIn() {
+    $loggedIn = isset($_SESSION['user_id']) && 
+                isset($_SESSION['role']) && 
+                isset($_SESSION['account']);
+    
+    // 記錄檢查結果
+    if (!$loggedIn) {
+        error_log("isLoggedIn: FALSE - Session: " . json_encode($_SESSION));
+    }
+    
+    return $loggedIn;
 }
 ?>

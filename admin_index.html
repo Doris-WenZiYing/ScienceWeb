@@ -14,7 +14,6 @@
       height: 100%;
     }
 
-    /* 頂部欄 */
     .header {
       height: 70px;
       background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -42,7 +41,6 @@
       cursor: pointer;
     }
 
-    /* 下拉選單 */
     .dropdown-menu {
       position: absolute;
       top: 70px;
@@ -69,10 +67,8 @@
       color: #ff4d4d;
     }
 
-    /* 主區塊 */
     .main { display: flex; height: calc(100% - 70px); }
 
-    /* 側邊欄 */
     .sidebar {
       width: 250px; 
       background: rgba(255,255,255,0.95); 
@@ -104,7 +100,6 @@
       font-size: 18px;
     }
 
-    /* 內容區 */
     .content {
       flex: 1; 
       padding: 40px; 
@@ -113,7 +108,6 @@
       overflow-y: auto;
     }
 
-    /* 標題 */
     .content h2 { 
       color: #fff; 
       margin-bottom: 30px;
@@ -127,7 +121,6 @@
       font-size: 36px;
     }
 
-    /* 統計卡片 */
     .stats-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -169,7 +162,6 @@
       color: #333;
     }
 
-    /* 表單卡片 */
     .user-form {
       background: rgba(255,255,255,0.95);
       padding: 30px;
@@ -209,6 +201,7 @@
       border: 2px solid #e0e0e0;
       font-size: 14px;
       background: white;
+      box-sizing: border-box;
     }
     .user-form input:focus, .user-form select:focus {
       outline: none;
@@ -232,7 +225,6 @@
       opacity: 0.9;
     }
 
-    /* 表格容器 */
     .table-container {
       background: rgba(255,255,255,0.95);
       padding: 25px;
@@ -276,7 +268,6 @@
       color: #999;
     }
 
-    /* 使用者表格 */
     .table-wrapper {
       overflow-x: auto;
       border-radius: 10px;
@@ -306,7 +297,6 @@
       border-bottom: none;
     }
 
-    /* 角色標籤 */
     .role-badge {
       display: inline-flex;
       align-items: center;
@@ -328,8 +318,11 @@
       background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
       color: white;
     }
+    .role-badge.science_club {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      color: white;
+    }
 
-    /* 按鈕 */
     .btn {
       padding: 8px 16px;
       border: none;
@@ -352,7 +345,6 @@
       background: linear-gradient(135deg, #c70039, #e63946);
     }
 
-    /* 空狀態 */
     .empty-state {
       text-align: center;
       padding: 60px 20px;
@@ -367,10 +359,79 @@
       font-size: 18px;
       margin: 0;
     }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    /* Modal 樣式 */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      animation: slideDown 0.3s;
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      color: #ff4d4d;
+      margin: 0;
+    }
+
+    .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close:hover {
+      color: #ff4d4d;
+    }
   </style>
 </head>
 <body>
-  <!-- 頂部欄 -->
   <div class="header">
     <img src="image/logo1.gif" alt="Logo" class="logo" onclick="location.href='admin_index.html'">
     <div class="header-right">
@@ -383,7 +444,6 @@
   </div>
 
   <div class="main">
-    <!-- 側邊欄 -->
     <div class="sidebar">
       <div class="menu">
         <a href="admin_index.html" class="active">
@@ -392,14 +452,12 @@
       </div>
     </div>
 
-    <!-- 內容區 -->
     <div class="content">
       <h2>
         <i class="fas fa-users-cog"></i>
         使用者管理
       </h2>
 
-      <!-- 統計卡片 -->
       <div class="stats-container">
         <div class="stat-card">
           <div class="stat-icon admin">
@@ -430,7 +488,6 @@
         </div>
       </div>
 
-      <!-- 新增使用者表單 -->
       <div class="user-form">
         <h3>
           <i class="fas fa-user-plus"></i>
@@ -439,9 +496,23 @@
         <div class="form-row">
           <div class="form-group">
             <label for="username">
-              <i class="fas fa-user"></i> 使用者名稱
+              <i class="fas fa-user"></i> 帳號
             </label>
-            <input type="text" id="username" placeholder="請輸入使用者名稱">
+            <input type="text" id="username" placeholder="請輸入帳號">
+          </div>
+          <div class="form-group">
+            <label for="password">
+              <i class="fas fa-lock"></i> 密碼
+            </label>
+            <input type="password" id="password" placeholder="請輸入密碼">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">
+              <i class="fas fa-envelope"></i> Email
+            </label>
+            <input type="email" id="email" placeholder="請輸入Email (選填)">
           </div>
           <div class="form-group">
             <label for="role">
@@ -451,6 +522,7 @@
               <option value="admin">管理者</option>
               <option value="teacher">教師</option>
               <option value="student" selected>學生</option>
+              <option value="science_club">科學會</option>
             </select>
           </div>
         </div>
@@ -460,7 +532,6 @@
         </button>
       </div>
 
-      <!-- 使用者列表 -->
       <div class="table-container">
         <div class="table-header">
           <h3>
@@ -477,13 +548,20 @@
             <thead>
               <tr>
                 <th><i class="fas fa-hashtag"></i> 編號</th>
-                <th><i class="fas fa-user"></i> 使用者名稱</th>
+                <th><i class="fas fa-user"></i> 帳號</th>
+                <th><i class="fas fa-envelope"></i> Email</th>
                 <th><i class="fas fa-id-badge"></i> 身分角色</th>
                 <th><i class="fas fa-cogs"></i> 操作</th>
               </tr>
             </thead>
             <tbody>
-              <!-- 資料由 JS 填充 -->
+              <tr>
+                <td colspan="5">
+                  <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> 載入中...
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -491,45 +569,107 @@
     </div>
   </div>
 
+  <!-- 編輯 Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-edit"></i> 編輯使用者</h3>
+        <span class="close" onclick="closeEditModal()">&times;</span>
+      </div>
+      <input type="hidden" id="editUserId">
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label><i class="fas fa-user"></i> 帳號</label>
+        <input type="text" id="editUsername" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; box-sizing: border-box;">
+      </div>
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label><i class="fas fa-lock"></i> 新密碼 (留空表示不修改)</label>
+        <input type="password" id="editPassword" placeholder="留空表示不修改密碼" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; box-sizing: border-box;">
+      </div>
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label><i class="fas fa-envelope"></i> Email</label>
+        <input type="email" id="editEmail" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; box-sizing: border-box;">
+      </div>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label><i class="fas fa-id-badge"></i> 角色</label>
+        <select id="editRole" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; box-sizing: border-box;">
+          <option value="admin">管理者</option>
+          <option value="teacher">教師</option>
+          <option value="student">學生</option>
+          <option value="science_club">科學會</option>
+        </select>
+      </div>
+      <button onclick="saveEdit()" style="background: linear-gradient(135deg, #ff6b6b 0%, #c70039 100%); color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold;">
+        <i class="fas fa-save"></i> 儲存修改
+      </button>
+    </div>
+  </div>
+
   <script>
+    const API_URL = 'api.php'; // 你的 API 文件路徑
     const userTable = document.getElementById('userTable').querySelector('tbody');
-    let users = [
-      { username: 'Alice', role: 'admin' },
-      { username: 'Bob', role: 'student' },
-      { username: 'Charlie', role: 'teacher' },
-      { username: 'Diana', role: 'teacher' },
-      { username: 'Eva', role: 'student' }
-    ];
+    let allUsers = [];
 
     const roleNames = {
       admin: '管理者',
       teacher: '教師',
-      student: '學生'
+      student: '學生',
+      science_club: '科學會'
     };
 
     const roleIcons = {
       admin: 'fa-user-shield',
       teacher: 'fa-chalkboard-teacher',
-      student: 'fa-user-graduate'
+      student: 'fa-user-graduate',
+      science_club: 'fa-flask'
     };
 
-    function updateStats() {
-      const adminCount = users.filter(u => u.role === 'admin').length;
-      const teacherCount = users.filter(u => u.role === 'teacher').length;
-      const studentCount = users.filter(u => u.role === 'student').length;
-      
-      document.getElementById('adminCount').textContent = adminCount;
-      document.getElementById('teacherCount').textContent = teacherCount;
-      document.getElementById('studentCount').textContent = studentCount;
+    // 頁面載入時取得所有使用者
+    document.addEventListener('DOMContentLoaded', function() {
+      loadUsers();
+      loadStats();
+    });
+
+    // 載入所有使用者
+    async function loadUsers() {
+      try {
+        const response = await fetch(`${API_URL}?action=get_users`);
+        const result = await response.json();
+        
+        if (result.success) {
+          allUsers = result.data;
+          renderUsers(allUsers);
+        } else {
+          showError(result.message);
+        }
+      } catch (error) {
+        showError('載入失敗：' + error.message);
+      }
     }
 
-    function renderUsers(filteredUsers = users) {
+    // 載入統計數據
+    async function loadStats() {
+      try {
+        const response = await fetch(`${API_URL}?action=get_user_stats`);
+        const result = await response.json();
+        
+        if (result.success) {
+          document.getElementById('adminCount').textContent = result.data.admin || 0;
+          document.getElementById('teacherCount').textContent = result.data.teacher || 0;
+          document.getElementById('studentCount').textContent = result.data.student || 0;
+        }
+      } catch (error) {
+        console.error('載入統計失敗：', error);
+      }
+    }
+
+    // 渲染使用者列表
+    function renderUsers(users) {
       userTable.innerHTML = '';
       
-      if (filteredUsers.length === 0) {
+      if (users.length === 0) {
         userTable.innerHTML = `
           <tr>
-            <td colspan="4">
+            <td colspan="5">
               <div class="empty-state">
                 <i class="fas fa-users-slash"></i>
                 <p>目前沒有符合的使用者</p>
@@ -540,15 +680,15 @@
         return;
       }
       
-      filteredUsers.forEach((user, index) => {
-        const actualIndex = users.indexOf(user);
+      users.forEach((user, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td><strong>#${actualIndex + 1}</strong></td>
+          <td><strong>#${user.id}</strong></td>
           <td>
             <i class="fas ${roleIcons[user.role]}" style="margin-right: 8px; color: #ff4d4d;"></i>
-            ${user.username}
+            ${user.account}
           </td>
+          <td>${user.email || '-'}</td>
           <td>
             <span class="role-badge ${user.role}">
               <i class="fas ${roleIcons[user.role]}"></i>
@@ -556,10 +696,10 @@
             </span>
           </td>
           <td>
-            <button class="btn btn-edit" onclick="editUser(${actualIndex})">
+            <button class="btn btn-edit" onclick="editUser(${user.id})">
               <i class="fas fa-edit"></i> 編輯
             </button>
-            <button class="btn btn-delete" onclick="deleteUser(${actualIndex})">
+            <button class="btn btn-delete" onclick="deleteUser(${user.id}, '${user.account}')">
               <i class="fas fa-trash-alt"></i> 刪除
             </button>
           </td>
@@ -568,64 +708,156 @@
       });
     }
 
-    function addUser() {
-      const username = document.getElementById('username').value.trim();
+    // 新增使用者
+    async function addUser() {
+      const account = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const email = document.getElementById('email').value.trim();
       const role = document.getElementById('role').value;
       
-      if(!username) { 
-        alert('請輸入使用者名稱'); 
-        return; 
-      }
-      
-      if(users.some(u => u.username === username)) {
-        alert('此使用者名稱已存在');
+      if (!account || !password) {
+        alert('請輸入帳號和密碼');
         return;
       }
       
-      users.push({ username, role });
-      document.getElementById('username').value = '';
-      document.getElementById('role').value = 'student';
-      renderUsers();
-      updateStats();
-    }
-
-    function editUser(index) {
-      const user = users[index];
-      const newUsername = prompt('修改使用者名稱', user.username);
-      
-      if(newUsername !== null && newUsername.trim() !== '') {
-        if(users.some((u, i) => i !== index && u.username === newUsername.trim())) {
-          alert('此使用者名稱已存在');
-          return;
+      try {
+        const formData = new FormData();
+        formData.append('account', account);
+        formData.append('password', password);
+        formData.append('email', email);
+        formData.append('role', role);
+        
+        const response = await fetch(`${API_URL}?action=add_user`, {
+          method: 'POST',
+          body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('✅ ' + result.message);
+          document.getElementById('username').value = '';
+          document.getElementById('password').value = '';
+          document.getElementById('email').value = '';
+          document.getElementById('role').value = 'student';
+          loadUsers();
+          loadStats();
+        } else {
+          alert('❌ ' + result.message);
         }
-        user.username = newUsername.trim();
-      }
-      
-      const newRole = prompt('修改身分角色 (admin/teacher/student)', user.role);
-      
-      if(newRole !== null && ['admin','teacher','student'].includes(newRole)) {
-        user.role = newRole;
-      }
-      
-      renderUsers();
-      updateStats();
-    }
-
-    function deleteUser(index) {
-      if(confirm(`確定要刪除使用者 ${users[index].username}？`)) {
-        users.splice(index, 1);
-        renderUsers();
-        updateStats();
+      } catch (error) {
+        alert('❌ 新增失敗：' + error.message);
       }
     }
 
+    // 編輯使用者
+    function editUser(userId) {
+      const user = allUsers.find(u => u.id == userId);
+      if (!user) return;
+      
+      document.getElementById('editUserId').value = user.id;
+      document.getElementById('editUsername').value = user.account;
+      document.getElementById('editEmail').value = user.email || '';
+      document.getElementById('editRole').value = user.role;
+      document.getElementById('editPassword').value = '';
+      
+      document.getElementById('editModal').style.display = 'block';
+    }
+
+    // 儲存編輯
+    async function saveEdit() {
+      const id = document.getElementById('editUserId').value;
+      const account = document.getElementById('editUsername').value.trim();
+      const password = document.getElementById('editPassword').value.trim();
+      const email = document.getElementById('editEmail').value.trim();
+      const role = document.getElementById('editRole').value;
+      
+      if (!account) {
+        alert('帳號不能為空');
+        return;
+      }
+      
+      try {
+        const formData = new FormData();
+        formData.append('id', id);
+        formData.append('account', account);
+        formData.append('email', email);
+        formData.append('role', role);
+        if (password) {
+          formData.append('password', password);
+        }
+        
+        const response = await fetch(`${API_URL}?action=update_user`, {
+          method: 'POST',
+          body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('✅ ' + result.message);
+          closeEditModal();
+          loadUsers();
+          loadStats();
+        } else {
+          alert('❌ ' + result.message);
+        }
+      } catch (error) {
+        alert('❌ 更新失敗：' + error.message);
+      }
+    }
+
+    // 刪除使用者
+    async function deleteUser(userId, account) {
+      if (!confirm(`確定要刪除使用者 ${account}？`)) {
+        return;
+      }
+      
+      try {
+        const formData = new FormData();
+        formData.append('id', userId);
+        
+        const response = await fetch(`${API_URL}?action=delete_user`, {
+          method: 'POST',
+          body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('✅ ' + result.message);
+          loadUsers();
+          loadStats();
+        } else {
+          alert('❌ ' + result.message);
+        }
+      } catch (error) {
+        alert('❌ 刪除失敗：' + error.message);
+      }
+    }
+
+    // 搜尋使用者
     function searchUsers() {
       const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = users.filter(user => 
-        user.username.toLowerCase().includes(searchTerm) ||
+      const filtered = allUsers.filter(user => 
+        user.account.toLowerCase().includes(searchTerm) ||
+        (user.email && user.email.toLowerCase().includes(searchTerm)) ||
         roleNames[user.role].includes(searchTerm)
       );
       renderUsers(filtered);
+    }
+
+    // 關閉編輯 Modal
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    // 點擊 Modal 外部關閉
+    window.onclick = function(event) {
+      const modal = document.getElementById('editModal');
+      if (event.target == modal) {
+        closeEditModal();
+      }
     }
 
     function toggleMenu() {
@@ -634,19 +866,31 @@
     }
 
     function logout() {
-      location.href = "login_admin.html";
+      if (confirm('確定要登出嗎？')) {
+        location.href = `${API_URL}?action=logout`;
+      }
+    }
+
+    function showError(message) {
+      userTable.innerHTML = `
+        <tr>
+          <td colspan="5">
+            <div class="empty-state">
+              <i class="fas fa-exclamation-triangle"></i>
+              <p>${message}</p>
+            </div>
+          </td>
+        </tr>
+      `;
     }
 
     document.addEventListener("click", (e) => {
       const avatar = document.querySelector(".avatar");
       const menu = document.getElementById("userMenu");
-      if (!avatar.contains(e.target) && !menu.contains(e.target)) {
+      if (avatar && menu && !avatar.contains(e.target) && !menu.contains(e.target)) {
         menu.style.display = "none";
       }
     });
-
-    renderUsers();
-    updateStats();
   </script>
 </body>
 </html>

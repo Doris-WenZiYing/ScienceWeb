@@ -14,7 +14,6 @@
       height: 100%;
     }
 
-    /* 頂部欄 */
     .header {
       height: 70px;
       background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -42,7 +41,6 @@
       cursor: pointer;
     }
 
-    /* 下拉選單 */
     .dropdown-menu {
       position: absolute;
       top: 70px;
@@ -67,13 +65,11 @@
       color: #667eea;
     }
 
-    /* 主區塊 */
     .main {
       display: flex;
       height: calc(100% - 70px);
     }
 
-    /* 側邊欄 */
     .sidebar {
       width: 250px; 
       background: rgba(255,255,255,0.95); 
@@ -106,7 +102,6 @@
     }
     .menu a i { margin-right: 15px; }
 
-    /* 內容區 */
     .content {
       flex: 1;
       padding: 40px;
@@ -115,7 +110,6 @@
       overflow-y: auto;
     }
 
-    /* 公告區 */
     .announcement {
       background: rgba(255,255,255,0.95);
       border-radius: 20px;
@@ -131,11 +125,29 @@
       border-left: 5px solid #667eea;
       padding-left: 10px;
     }
-    .announcement-item { padding: 10px 0; border-bottom: 1px solid #ddd; color: #444; }
+    .announcement-item { 
+      padding: 10px 0; 
+      border-bottom: 1px solid #ddd; 
+      color: #444;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .announcement-item:hover {
+      background: rgba(102, 126, 234, 0.05);
+      padding-left: 10px;
+    }
     .announcement-item:last-child { border-bottom: none; }
     .announcement-date { font-size: 12px; color: #888; margin-left: 10px; }
+    .announcement-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      margin-right: 8px;
+    }
+    .badge-important { background: #ff5252; color: white; }
+    .badge-normal { background: #e0e0e0; color: #666; }
 
-    /* 快速入口 */
     .quick-links {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -155,7 +167,6 @@
     .quick-card i { font-size: 30px; margin-bottom: 10px; color: #667eea; }
     .quick-card h3 { margin: 0; font-size: 18px; color: #333; }
 
-    /* 日曆 */
     .calendar-container {
       background: rgba(255,255,255,0.95);
       border-radius: 20px;
@@ -215,7 +226,6 @@
   </style>
 </head>
 <body>
-  <!-- 頂部欄 -->
   <div class="header">
     <img src="image/logo1.gif" alt="Logo" class="logo" onclick="location.href='student_index.html'">
     <div class="header-right">
@@ -228,7 +238,6 @@
   </div>
 
   <div class="main">
-    <!-- 側邊欄 -->
     <div class="sidebar">
       <div class="menu">
         <a href="student_index.html" class="active"><i class="fas fa-home"></i>學生首頁</a>
@@ -243,7 +252,6 @@
       </div>
     </div>
 
-    <!-- 內容區 -->
     <div class="content">
       <!-- 公告欄 -->
       <div class="announcement">
@@ -281,9 +289,79 @@
   </div>
 
   <script>
-    const EVENTS_API = "/api/events";
+    const EVENTS_API = "student_api.php?action=get_events";
+    const ANNOUNCEMENTS_API = "student_api.php?action=get_announcements";
+    
     let currentDate = new Date();
+    let allEvents = [];
 
+    // 載入公告
+    async function loadAnnouncements() {
+      const announcementList = document.getElementById('announcementList');
+      
+      try {
+        console.log('🔍 開始載入公告...');
+        const res = await fetch(ANNOUNCEMENTS_API);
+        
+        if (!res.ok) {
+          throw new Error('HTTP錯誤: ' + res.status);
+        }
+        
+        const result = await res.json();
+        console.log('📦 公告 API 回應:', result);
+
+        // 處理回應格式
+        let announcements;
+        if (Array.isArray(result)) {
+          announcements = result;
+        } else if (result.success && result.data) {
+          announcements = result.data;
+        } else if (result.success && Array.isArray(result)) {
+          announcements = result;
+        } else {
+          announcements = [];
+        }
+
+        console.log('✅ 公告數量:', announcements.length);
+
+        if (announcements.length === 0) {
+          announcementList.innerHTML = '<p style="color:#888;">目前沒有公告</p>';
+          return;
+        }
+
+        // 顯示最新 5 則公告
+        announcementList.innerHTML = '';
+        announcements.slice(0, 5).forEach(ann => {
+          const item = document.createElement('div');
+          item.className = 'announcement-item';
+          
+          const badge = ann.is_important ? 
+            '<span class="announcement-badge badge-important">重要</span>' : 
+            '<span class="announcement-badge badge-normal">一般</span>';
+          
+          const date = new Date(ann.publish_date || ann.created_at);
+          const dateStr = `${date.getMonth()+1}/${date.getDate()}`;
+          
+          item.innerHTML = `
+            ${badge}
+            <strong>${ann.title}</strong>
+            <span class="announcement-date">${dateStr}</span>
+          `;
+          
+          item.onclick = () => {
+            alert(`${ann.title}\n\n${ann.content || '無內容'}`);
+          };
+          
+          announcementList.appendChild(item);
+        });
+
+      } catch (err) {
+        console.error('❌ 載入公告失敗:', err);
+        announcementList.innerHTML = '<p style="color:#f44336;">載入公告失敗，請重新整理頁面</p>';
+      }
+    }
+
+    // 載入行事曆
     async function loadCalendar() {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
@@ -297,24 +375,56 @@
       const grid = document.getElementById("calendarGrid");
       grid.innerHTML = "";
 
+      // 填充空白天數
       for (let i = 0; i < firstWeekday; i++) {
         grid.appendChild(document.createElement("div"));
       }
 
-      let events = [];
-      try {
-        const res = await fetch(EVENTS_API);
-        if (res.ok) events = await res.json();
-      } catch (err) {
-        console.error("載入活動失敗", err);
+      // 載入事件（只在第一次或月份改變時載入）
+      if (allEvents.length === 0) {
+        try {
+          console.log('🔍 開始載入行事曆事件...');
+          const res = await fetch(EVENTS_API);
+          
+          if (!res.ok) {
+            throw new Error('HTTP錯誤: ' + res.status);
+          }
+          
+          const result = await res.json();
+          console.log('📦 行事曆 API 回應:', result);
+
+          // 處理回應格式
+          if (Array.isArray(result)) {
+            allEvents = result;
+          } else if (result.success && result.data) {
+            allEvents = result.data;
+          } else if (result.data && Array.isArray(result.data)) {
+            allEvents = result.data;
+          } else {
+            allEvents = [];
+          }
+
+          console.log('✅ 事件數量:', allEvents.length);
+          
+        } catch (err) {
+          console.error("❌ 載入活動失敗:", err);
+          allEvents = [];
+        }
       }
 
+      // 建立事件映射
       const eventMap = {};
-      events.forEach(e => {
-        if (!eventMap[e.date]) eventMap[e.date] = [];
-        eventMap[e.date].push(e.title);
+      allEvents.forEach(e => {
+        const eventDate = e.date || e.event_date;
+        if (eventDate) {
+          if (!eventMap[eventDate]) eventMap[eventDate] = [];
+          eventMap[eventDate].push(e.title);
+        }
       });
 
+      console.log('📅 事件映射:', eventMap);
+
+      // 渲染日曆天數
       for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
         const cell = document.createElement("div");
@@ -325,7 +435,9 @@
         dateDiv.textContent = day;
         cell.appendChild(dateDiv);
 
+        // 添加事件
         if (eventMap[dateStr]) {
+          console.log(`📌 ${dateStr} 有 ${eventMap[dateStr].length} 個事件`);
           eventMap[dateStr].forEach(title => {
             const ev = document.createElement("span");
             ev.className = "event";
@@ -349,9 +461,11 @@
     }
 
     function logout() {
-      localStorage.removeItem("loginUser");
-      sessionStorage.clear();
-      location.href = "login_student.html";
+      if (confirm('確定要登出嗎?')) {
+        localStorage.removeItem("loginUser");
+        sessionStorage.clear();
+        location.href = "login_student.html";
+      }
     }
 
     document.addEventListener("click", (e) => {
@@ -362,7 +476,12 @@
       }
     });
 
-    loadCalendar();
+    // 頁面載入時執行
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log('🚀 頁面載入完成，開始初始化...');
+      loadAnnouncements();
+      loadCalendar();
+    });
   </script>
 </body>
 </html>

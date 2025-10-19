@@ -188,8 +188,8 @@
     const statusMsg = document.getElementById('statusMsg');
     const form = document.getElementById('registrationForm');
 
-    const EVENTS_API_URL = '/api/events';
-    const REGISTER_API_URL = '/api/register';
+    const EVENTS_API_URL = 'student_api.php?action=get_activities';
+    const REGISTER_API_URL = 'student_api.php?action=register_activity';
 
     async function fetchEvents() {
       try {

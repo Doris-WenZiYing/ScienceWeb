@@ -113,48 +113,151 @@ function toggleMenu() {
   const menu = document.getElementById("userMenu");
   menu.style.display = (menu.style.display==="flex") ? "none" : "flex";
 }
-function logout() { location.href = "login_student.html"; }
+
+function logout() { 
+  location.href = "login_student.html"; 
+}
+
 document.addEventListener("click",(e)=>{
   const avatar = document.querySelector(".avatar");
   const menu = document.getElementById("userMenu");
-  if(!avatar.contains(e.target) && !menu.contains(e.target)){ menu.style.display="none"; }
+  if(!avatar.contains(e.target) && !menu.contains(e.target)){ 
+    menu.style.display="none"; 
+  }
 });
 
-// 模擬活動清單
+// === 活動回饋表單功能 ===
 const activitySelect = document.getElementById('activity');
-const activities = [
-  {id:1, name:'科學營2025'},
-  {id:2, name:'物理實驗工作坊'},
-  {id:3, name:'校園科技展'}
-];
-activities.forEach(a=>{
-  const opt = document.createElement('option');
-  opt.value=a.id;
-  opt.textContent=a.name;
-  activitySelect.appendChild(opt);
-});
-
-// localStorage 存取
 const feedbackForm = document.getElementById('feedbackForm');
 const successMsg = document.getElementById('successMsg');
-function getFeedbacks(){ return JSON.parse(localStorage.getItem('feedbacks')||'[]'); }
-function saveFeedbacks(arr){ localStorage.setItem('feedbacks', JSON.stringify(arr)); }
 
-feedbackForm.addEventListener('submit', function(e){
+// 載入活動選項
+async function loadActivities() {
+  try {
+    console.log('🔍 開始載入活動選項...');
+    const response = await fetch('student_api.php?action=get_feedback_forms');
+    
+    if (!response.ok) {
+      throw new Error('HTTP錯誤: ' + response.status);
+    }
+    
+    const result = await response.json();
+    console.log('📦 API 回應:', result);
+    
+    // 清空現有選項（保留預設的"請選擇活動"）
+    activitySelect.innerHTML = '<option value="">請選擇活動</option>';
+    
+    if (result.success && result.data && result.data.length > 0) {
+      result.data.forEach(form => {
+        const opt = document.createElement('option');
+        opt.value = form.id;
+        opt.textContent = form.name;
+        activitySelect.appendChild(opt);
+      });
+      console.log(`✅ 已載入 ${result.data.length} 個活動`);
+    } else {
+      // 如果 API 沒有資料，使用模擬資料
+      console.warn('⚠️ API 沒有回傳活動資料，使用模擬資料');
+      const mockActivities = [
+        {id:1, name:'科學營2025'},
+        {id:2, name:'物理實驗工作坊'},
+        {id:3, name:'校園科技展'}
+      ];
+      mockActivities.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a.id;
+        opt.textContent = a.name;
+        activitySelect.appendChild(opt);
+      });
+    }
+  } catch (error) {
+    console.error('❌ 載入活動失敗:', error);
+    alert('載入活動列表失敗，請重新整理頁面');
+  }
+}
+
+// 表單提交處理（只保留這一個）
+feedbackForm.addEventListener('submit', async function(e) {
   e.preventDefault();
-  const feedback = {
-    activityId: activitySelect.value,
-    studentName: document.getElementById('studentName').value,
-    satisfaction: document.getElementById('satisfaction').value,
-    comment: document.getElementById('comment').value,
-    time: new Date().toLocaleString()
-  };
-  const feedbacks = getFeedbacks();
-  feedbacks.push(feedback);
-  saveFeedbacks(feedbacks);
-  feedbackForm.reset();
-  successMsg.style.display='block';
-  setTimeout(()=>{successMsg.style.display='none';},3000);
+  
+  // 獲取表單資料
+  const activityId = activitySelect.value;
+  const studentName = document.getElementById('studentName').value.trim();
+  const satisfaction = document.getElementById('satisfaction').value;
+  const comment = document.getElementById('comment').value.trim();
+  
+  // 前端驗證
+  if (!activityId) {
+    alert('❌ 請選擇活動');
+    activitySelect.focus();
+    return;
+  }
+  
+  if (!studentName) {
+    alert('❌ 請填寫姓名');
+    document.getElementById('studentName').focus();
+    return;
+  }
+  
+  if (studentName.length < 2) {
+    alert('❌ 姓名至少需要2個字');
+    document.getElementById('studentName').focus();
+    return;
+  }
+  
+  console.log('📤 準備提交回饋:', {
+    activityId, studentName, satisfaction, comment
+  });
+  
+  try {
+    // 建立表單資料
+    const formData = new FormData();
+    formData.append('action', 'submit_feedback');
+    formData.append('activityId', activityId);
+    formData.append('studentName', studentName);
+    formData.append('satisfaction', satisfaction);
+    formData.append('comment', comment);
+    
+    // 發送 API 請求
+    const response = await fetch('student_api.php', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (!response.ok) {
+      throw new Error('HTTP錯誤: ' + response.status);
+    }
+    
+    const result = await response.json();
+    console.log('📦 提交結果:', result);
+    
+    if (result.success) {
+      // 成功提示
+      successMsg.style.display = 'block';
+      successMsg.textContent = '✅ ' + (result.message || '感謝您的反饋！');
+      
+      // 重置表單
+      feedbackForm.reset();
+      
+      // 3秒後隱藏成功訊息
+      setTimeout(() => {
+        successMsg.style.display = 'none';
+      }, 3000);
+    } else {
+      // 失敗提示
+      alert('❌ ' + (result.message || '提交失敗，請稍後再試'));
+    }
+    
+  } catch (error) {
+    console.error('❌ 提交錯誤:', error);
+    alert('❌ 提交時發生錯誤: ' + error.message);
+  }
+});
+
+// 頁面載入時執行
+window.addEventListener('DOMContentLoaded', () => {
+  console.log('🚀 頁面載入完成');
+  loadActivities();
 });
 </script>
 

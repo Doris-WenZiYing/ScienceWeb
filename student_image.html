@@ -165,6 +165,26 @@
 
   renderGallery();
 
+  // 修改相簿加載
+  async function loadAlbums() {
+    const response = await fetch('student_api.php?action=get_albums');
+    const result = await response.json();
+    
+    if (result.success) {
+      renderGallery(result.data);
+    }
+  }
+
+  // 載入相簿照片
+  async function loadAlbumPhotos(albumId) {
+    const response = await fetch(`student_api.php?action=get_album_photos&album_id=${albumId}`);
+    const result = await response.json();
+    
+    if (result.success) {
+      renderPhotos(result.data);
+    }
+  }
+
   // 下拉選單功能
   function toggleMenu() {
     const menu = document.getElementById("userMenu");

@@ -191,8 +191,9 @@
   </div>
 
   <script>
-    const EVENTS_API = "/api/events";
+    const EVENTS_API = "student_api.php?action=get_events";
     let currentDate = new Date();
+    let allEvents = []; // 新增：快取事件資料
 
     async function loadCalendar() {
       const year = currentDate.getFullYear();
@@ -213,20 +214,60 @@
         }
       }
 
-      let events = [];
-      try {
-        const res = await fetch(EVENTS_API);
-        if(res.ok) events = await res.json();
-      } catch(err){
-        console.error("載入活動失敗", err);
+      // 🔧 改進：只在第一次或需要時載入事件
+      if (allEvents.length === 0) {
+        try {
+          console.log('🔍 開始載入活動...');
+          const res = await fetch(EVENTS_API);
+          
+          if (!res.ok) {
+            throw new Error('HTTP錯誤: ' + res.status);
+          }
+          
+          const result = await res.json();
+          console.log('📦 API 回應:', result);
+
+          // 🔧 處理不同的回應格式
+          if (Array.isArray(result)) {
+            allEvents = result;
+          } else if (result.success && result.data) {
+            allEvents = result.data;
+          } else if (result.data && Array.isArray(result.data)) {
+            allEvents = result.data;
+          } else {
+            allEvents = [];
+          }
+
+          console.log('✅ 活動數量:', allEvents.length);
+          console.log('📋 活動列表:', allEvents);
+          
+        } catch(err) {
+          console.error("❌ 載入活動失敗:", err);
+          allEvents = [];
+          
+          // 顯示錯誤提示
+          const errorDiv = document.createElement("div");
+          errorDiv.style.cssText = "grid-column: 1/-1; text-align:center; padding:20px; color:#f44336;";
+          errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> 載入活動失敗: ${err.message}`;
+          grid.appendChild(errorDiv);
+          return;
+        }
       }
 
+      // 🔧 建立事件映射（處理不同的日期欄位名稱）
       const eventMap = {};
-      events.forEach(e=>{
-        if(!eventMap[e.date]) eventMap[e.date]=[];
-        eventMap[e.date].push(e.title);
+      allEvents.forEach(e => {
+        const eventDate = e.date || e.event_date; // 兼容兩種欄位名稱
+        if (eventDate) {
+          if(!eventMap[eventDate]) eventMap[eventDate] = [];
+          eventMap[eventDate].push(e.title);
+          console.log(`📌 ${eventDate} 有活動: ${e.title}`);
+        }
       });
 
+      console.log('🗓️ 事件映射:', eventMap);
+
+      // 渲染日曆天數
       for(let day=1; day<=daysInMonth; day++){
         const dateStr = `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
         const cell = document.createElement("div");
@@ -237,7 +278,9 @@
         dateDiv.textContent = day;
         cell.appendChild(dateDiv);
 
+        // 🔧 添加事件
         if(eventMap[dateStr]){
+          console.log(`✨ 渲染 ${dateStr} 的 ${eventMap[dateStr].length} 個活動`);
           eventMap[dateStr].forEach(title=>{
             const ev = document.createElement("span");
             ev.className="event";
@@ -247,6 +290,11 @@
         }
 
         grid.appendChild(cell);
+      }
+      
+      // 如果沒有任何活動，顯示提示
+      if (allEvents.length === 0) {
+        console.warn('⚠️ 沒有找到任何活動');
       }
     }
 

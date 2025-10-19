@@ -189,8 +189,8 @@
     const statusMsg = document.getElementById('statusMsg');
     const form = document.getElementById('modifyForm');
 
-    const MY_REGISTRATIONS_API = '/api/my-registrations'; 
-    const UPDATE_REGISTRATION_API = '/api/register/';    
+    const MY_REGISTRATIONS_API = 'student_api.php?action=get_my_registrations'; 
+    const UPDATE_REGISTRATION_API = 'student_api.php?action=update_registration';    
 
     async function fetchRegistrations() {
       try {

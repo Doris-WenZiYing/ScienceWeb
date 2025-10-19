@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -14,7 +13,6 @@
       height: 100%;
     }
 
-    /* 頂部欄 */
     .header {
       height: 70px; background: linear-gradient(135deg,#ffffff 0%,#f8f9fa 100%);
       display: flex; align-items: center; justify-content: space-between;
@@ -34,7 +32,6 @@
       cursor:pointer;
     }
 
-    /* 下拉選單 */
     .dropdown-menu {
       position: absolute;
       top: 70px;
@@ -59,7 +56,6 @@
       color: #667eea;
     }
 
-    /* 側邊欄 */
     .sidebar {
       width: 250px; 
       background: rgba(255,255,255,0.95); 
@@ -84,10 +80,8 @@
     }
     .menu a i { margin-right: 15px; }
 
-    /* 主體 */
     .main { display:flex; height:calc(100% - 70px); }
 
-    /* 內容 */
     .content {
       flex:1; padding:40px;
       background:rgba(255,255,255,0.1); backdrop-filter:blur(10px);
@@ -120,6 +114,7 @@
     tr:hover { background:rgba(102,126,234,0.1); }
 
     .no-records { text-align:center; font-size:18px; color:#666; margin-top:30px; }
+    .loading { text-align:center; font-size:16px; color:#667eea; margin-top:30px; }
 
     @media (max-width: 768px) {
       .main { flex-direction:column; }
@@ -189,10 +184,12 @@
               <th>名次/成績</th>
               <th>姓名</th>
               <th>報名日期</th>
+              <th>狀態</th>
             </tr>
           </thead>
           <tbody id="recordsBody"></tbody>
         </table>
+        <p id="loadingMsg" class="loading">載入中...</p>
         <p id="noRecordsMsg" class="no-records" style="display:none;">目前沒有報名任何活動。</p>
       </div>
     </div>
@@ -203,18 +200,44 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <script>
-    const MY_REGISTRATIONS_API = '/api/my-registrations';
+    const MY_REGISTRATIONS_API = 'student_api.php?action=get_my_records';
     let registrationsData = [];
 
     async function fetchRecords() {
       const table = document.getElementById('recordsTable');
       const body = document.getElementById('recordsBody');
       const noRecordsMsg = document.getElementById('noRecordsMsg');
+      const loadingMsg = document.getElementById('loadingMsg');
 
       try {
+        console.log('🔍 開始獲取個人活動紀錄...');
         const res = await fetch(MY_REGISTRATIONS_API);
-        if (!res.ok) throw new Error('取得紀錄失敗');
-        const registrations = await res.json();
+        
+        if (!res.ok) {
+          throw new Error('HTTP錯誤: ' + res.status);
+        }
+        
+        const result = await res.json();
+        console.log('📦 API 回應:', result);
+
+        // 🔧 修正：處理包裝格式的回應
+        let registrations;
+        if (result.success !== undefined) {
+          // API 回傳包裝格式 {success, message, data}
+          if (!result.success) {
+            throw new Error(result.message || '獲取失敗');
+          }
+          registrations = result.data || [];
+        } else if (Array.isArray(result)) {
+          // API 直接回傳陣列
+          registrations = result;
+        } else {
+          throw new Error('未知的回應格式');
+        }
+
+        console.log('✅ 解析後的紀錄數量:', registrations.length);
+
+        loadingMsg.style.display = 'none';
 
         if (!Array.isArray(registrations) || registrations.length === 0) {
           table.style.display = 'none';
@@ -224,65 +247,116 @@
 
         registrationsData = registrations;
         body.innerHTML = "";
+        
         registrations.forEach(r => {
+          console.log('📝 處理紀錄:', r);
           const row = document.createElement('tr');
           row.innerHTML = `
-            <td data-label="活動名稱">${r.eventName}</td>
+            <td data-label="活動名稱">${r.eventName || '—'}</td>
             <td data-label="參賽項目">${r.competition || '—'}</td>
-            <td data-label="名次/成績">${r.rank || '—'}</td>
-            <td data-label="姓名">${r.name}</td>
-            <td data-label="報名日期">${r.date || '—'}</td>
+            <td data-label="名次/成績">${r.rank || r.score || '—'}</td>
+            <td data-label="姓名">${r.name || '—'}</td>
+            <td data-label="報名日期">${formatDate(r.date) || '—'}</td>
+            <td data-label="狀態">${getStatusBadge(r.status)}</td>
           `;
           body.appendChild(row);
         });
+        
         table.style.display = 'table';
+        noRecordsMsg.style.display = 'none';
+        
       } catch (err) {
-        console.error(err);
+        console.error('❌ 錯誤:', err);
+        loadingMsg.style.display = 'none';
         table.style.display = 'none';
-        noRecordsMsg.textContent = '取得資料時發生錯誤，請稍後再試。';
+        noRecordsMsg.textContent = '獲取資料時發生錯誤：' + err.message;
         noRecordsMsg.style.display = 'block';
       }
     }
 
+    function formatDate(dateString) {
+      if (!dateString) return '—';
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString;
+      
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}/${month}/${day}`;
+    }
+
+    function getStatusBadge(status) {
+      const statusMap = {
+        'registered': '<span style="color:#4caf50;">✓ 已報名</span>',
+        'attended': '<span style="color:#2196f3;">✓ 已參加</span>',
+        'cancelled': '<span style="color:#f44336;">✗ 已取消</span>',
+        'absent': '<span style="color:#ff9800;">⚠ 未出席</span>'
+      };
+      return statusMap[status] || status || '—';
+    }
+
     function exportPDF() {
-      if (registrationsData.length === 0) { alert("目前沒有資料可匯出"); return; }
+      if (registrationsData.length === 0) { 
+        alert("目前沒有資料可匯出"); 
+        return; 
+      }
+      
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       doc.text("個人活動紀錄", 14, 15);
       doc.autoTable({
         startY: 20,
-        head: [['活動名稱','參賽項目','名次/成績','姓名','報名日期']],
-        body: registrationsData.map(r=>[r.eventName,r.competition||'—',r.rank||'—',r.name,r.date||'—'])
+        head: [['活動名稱','參賽項目','名次/成績','姓名','報名日期','狀態']],
+        body: registrationsData.map(r => [
+          r.eventName || '—',
+          r.competition || '—',
+          r.rank || r.score || '—',
+          r.name || '—',
+          formatDate(r.date) || '—',
+          r.status || '—'
+        ])
       });
       doc.save("個人活動紀錄.pdf");
     }
 
     function exportExcel() {
-      if (registrationsData.length === 0) { alert("目前沒有資料可匯出"); return; }
-      const worksheet = XLSX.utils.json_to_sheet(registrationsData.map(r=>({
-        活動名稱: r.eventName,
-        參賽項目: r.competition||'—',
-        名次成績: r.rank||'—',
-        姓名: r.name,
-        報名日期: r.date||'—'
+      if (registrationsData.length === 0) { 
+        alert("目前沒有資料可匯出"); 
+        return; 
+      }
+      
+      const worksheet = XLSX.utils.json_to_sheet(registrationsData.map(r => ({
+        活動名稱: r.eventName || '—',
+        參賽項目: r.competition || '—',
+        名次成績: r.rank || r.score || '—',
+        姓名: r.name || '—',
+        報名日期: formatDate(r.date) || '—',
+        狀態: r.status || '—'
       })));
+      
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "活動紀錄");
       XLSX.writeFile(workbook, "個人活動紀錄.xlsx");
     }
 
-    // 下拉選單功能
     function toggleMenu() {
       const menu = document.getElementById("userMenu");
       menu.style.display = (menu.style.display==="flex") ? "none" : "flex";
     }
-    function logout() { location.href = "login_student.html"; }
+    
+    function logout() { 
+      location.href = "login_student.html"; 
+    }
+    
     document.addEventListener("click",(e)=>{
       const avatar = document.querySelector(".avatar");
       const menu = document.getElementById("userMenu");
-      if(!avatar.contains(e.target) && !menu.contains(e.target)){ menu.style.display="none"; }
+      if(!avatar.contains(e.target) && !menu.contains(e.target)){ 
+        menu.style.display="none"; 
+      }
     });
 
+    // 頁面載入時自動獲取紀錄
     fetchRecords();
   </script>
 </body>

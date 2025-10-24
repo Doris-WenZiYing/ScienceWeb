@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <title>科學會管理系統-發布活動反饋表單</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="notification-center.js" defer></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        font-family: "Microsoft JhengHei", "Arial", sans-serif;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        overflow: hidden;
+      }
+
+      .header {
+        height: 70px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 100;
+      }
+
+      .header::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .header-left:hover {
+        transform: scale(1.02);
+      }
+
+      .header img.logo {
+        height: 50px;
+        filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        position: relative;
+      }
+
+      .icon {
+        position: relative;
+        padding: 12px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        animation: pulse 2s infinite;
+      }
+
+      .icon:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 12px 35px rgba(131, 96, 195, 0.5);
+        background: linear-gradient(135deg, #9d7ce6 0%, #3dd5a3 100%);
+      }
+
+      .icon:active {
+        transform: translateY(-1px) scale(1.05);
+        transition: all 0.1s ease;
+      }
+
+      .icon i {
+        font-size: 20px;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        animation: bellShake 0.5s ease-in-out infinite alternate;
+      }
+
+      .icon::after {
+        content: "3";
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+        color: white;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+        border: 2px solid white;
+        animation: bounce 1s ease-in-out infinite;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-3px);
+        }
+        60% {
+          transform: translateY(-2px);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+        }
+        50% {
+          box-shadow: 0 4px 25px rgba(131, 96, 195, 0.6);
+        }
+        100% {
+          box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+        }
+      }
+
+      @keyframes bellShake {
+        0% {
+          transform: rotate(-5deg);
+        }
+        100% {
+          transform: rotate(5deg);
+        }
+      }
+
+      .notification-panel {
+        position: absolute;
+        top: 65px;
+        right: 80px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        display: none;
+        width: 380px;
+        max-height: 500px;
+        z-index: 1000;
+        animation: slideDown 0.3s ease;
+        overflow: hidden;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .notification-header {
+        padding: 20px;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 15px 15px 0 0;
+      }
+
+      .notification-header h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .notification-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .notification-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.3s ease;
+      }
+
+      .notification-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+
+      .notification-list {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .notification-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        display: flex;
+        gap: 12px;
+      }
+
+      .notification-item:hover {
+        background: rgba(131, 96, 195, 0.05);
+      }
+
+      .notification-item.unread {
+        background: rgba(131, 96, 195, 0.08);
+      }
+
+      .notification-item.unread::before {
+        content: "";
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        background: #e74c3c;
+        border-radius: 50%;
+      }
+
+      .notification-icon-type {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      .notification-icon-type.activity {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+      }
+
+      .notification-icon-type.deadline {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+      }
+
+      .notification-icon-type.announcement {
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        color: white;
+      }
+
+      .notification-content {
+        flex: 1;
+      }
+
+      .notification-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+      }
+
+      .notification-text {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 4px;
+      }
+
+      .notification-time {
+        font-size: 11px;
+        color: #999;
+      }
+
+      .notification-delete {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(231, 76, 60, 0.1);
+        color: #e74c3c;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+
+      .notification-item:hover .notification-delete {
+        opacity: 1;
+      }
+
+      .notification-delete:hover {
+        background: #e74c3c;
+        color: white;
+        transform: scale(1.1);
+      }
+
+      .notification-empty {
+        padding: 60px 20px;
+        text-align: center;
+        color: #999;
+      }
+
+      .notification-empty i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 15px;
+      }
+
+      .notification-list::-webkit-scrollbar {
+        width: 6px;
+      }
+      .notification-list::-webkit-scrollbar-track {
+        background: #f0f0f0;
+      }
+      .notification-list::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        border-radius: 3px;
+      }
+
+      .avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 3px solid #fff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .avatar:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
+      }
+
+      .avatar i {
+        font-size: 20px;
+        color: white;
+      }
+
+      .dropdown {
+        position: absolute;
+        top: 65px;
+        right: 0;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        display: none;
+        min-width: 120px;
+        z-index: 1000;
+        overflow: hidden;
+        animation: dropdownFade 0.3s ease;
+      }
+
+      @keyframes dropdownFade {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .dropdown a {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .dropdown a:hover {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+      }
+
+      .dropdown a i {
+        margin-right: 8px;
+        width: 16px;
+      }
+
+      .main {
+        display: flex;
+        height: calc(100vh - 70px);
+      }
+
+      .sidebar {
+        width: 280px;
+        min-width: 280px;
+        max-width: 280px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .sidebar::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, #8360c3 0%, #2ebf91 100%);
+      }
+
+      .menu {
+        height: 100%;
+        overflow-y: auto;
+        padding: 20px 0;
+      }
+
+      .menu::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .menu::-webkit-scrollbar-thumb {
+        background: rgba(131, 96, 195, 0.3);
+        border-radius: 3px;
+      }
+
+      .menu-item {
+        display: block;
+        position: relative;
+      }
+
+      .menu-link {
+        display: flex;
+        align-items: center;
+        padding: 15px 25px;
+        text-decoration: none;
+        color: #555;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .menu-link:hover,
+      .menu-link.active {
+        color: #8360c3;
+        background: rgba(131, 96, 195, 0.1);
+        border-left: 4px solid #8360c3;
+        transform: translateX(5px);
+      }
+
+      .menu-link i {
+        margin-right: 12px;
+        width: 20px;
+        font-size: 16px;
+      }
+
+      .menu-arrow {
+        margin-left: auto;
+        font-size: 12px;
+        transition: transform 0.3s ease;
+      }
+
+      .menu-item.expanded .menu-arrow {
+        transform: rotate(180deg);
+      }
+
+      .submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        background: rgba(131, 96, 195, 0.05);
+      }
+
+      .submenu.show {
+        max-height: 500px;
+      }
+
+      .submenu-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 25px 12px 45px;
+        text-decoration: none;
+        color: #666;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .submenu-link:hover,
+      .submenu-link.active {
+        color: #8360c3;
+        background: rgba(131, 96, 195, 0.1);
+        border-left: 4px solid #8360c3;
+        transform: translateX(5px);
+      }
+
+      .submenu-link i {
+        margin-right: 10px;
+        width: 16px;
+        font-size: 14px;
+      }
+
+      .content {
+        flex: 1;
+        padding: 30px;
+        overflow-y: auto;
+      }
+
+      .content::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .content::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        border-radius: 4px;
+      }
+
+      .page-header {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .page-header h1 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .page-header h1 i {
+        margin-right: 15px;
+        color: #8360c3;
+      }
+
+      .page-header p {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .form-section {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 25px;
+      }
+
+      .section-title {
+        font-size: 18px;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .section-title i {
+        margin-right: 10px;
+        color: #8360c3;
+      }
+
+      .form-group {
+        margin-bottom: 25px;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 14px;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+
+      .form-label .required {
+        color: #e74c3c;
+        margin-left: 4px;
+      }
+
+      .form-input,
+      .form-select,
+      .form-textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        outline: none;
+      }
+
+      .form-input:focus,
+      .form-select:focus,
+      .form-textarea:focus {
+        border-color: #8360c3;
+        box-shadow: 0 4px 15px rgba(131, 96, 195, 0.2);
+      }
+
+      .form-textarea {
+        resize: vertical;
+        min-height: 120px;
+        font-family: "Microsoft JhengHei", "Arial", sans-serif;
+      }
+
+      .question-builder {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border: 2px dashed #e0e0e0;
+      }
+
+      .question-item {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-left: 4px solid #8360c3;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .question-number {
+        font-weight: 600;
+        color: #8360c3;
+        font-size: 16px;
+      }
+
+      .question-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .action-btn {
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: none;
+        background: #e8e8e8;
+        color: #666;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 13px;
+      }
+
+      .action-btn:hover {
+        background: #8360c3;
+        color: white;
+      }
+
+      .add-question-btn {
+        width: 100%;
+        padding: 15px;
+        border: 2px dashed #8360c3;
+        background: transparent;
+        border-radius: 10px;
+        color: #8360c3;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .add-question-btn:hover {
+        background: rgba(131, 96, 195, 0.1);
+      }
+
+      .option-list {
+        margin-top: 10px;
+      }
+
+      .option-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+
+      .option-input {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 13px;
+      }
+
+      .remove-option {
+        padding: 6px 10px;
+        border: none;
+        background: #e8e8e8;
+        border-radius: 6px;
+        color: #666;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .remove-option:hover {
+        background: #e74c3c;
+        color: white;
+      }
+
+      .add-option-btn {
+        padding: 8px 15px;
+        border: 1px dashed #8360c3;
+        background: transparent;
+        border-radius: 8px;
+        color: #8360c3;
+        font-size: 13px;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+
+      .submit-section {
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+      }
+
+      .btn {
+        padding: 12px 30px;
+        border-radius: 25px;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(131, 96, 195, 0.3);
+      }
+
+      .btn-secondary {
+        background: #e8e8e8;
+        color: #666;
+      }
+
+      .btn-secondary:hover {
+        background: #d0d0d0;
+      }
+
+      /* 兩欄版面（與發佈比賽及活動頁一致） */
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+      .right-sticky {
+        position: sticky;
+        top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      @media (max-width: 768px) {
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+        .right-sticky {
+          position: static;
+        }
+      }
+
+      /* 預覽 Modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+      }
+      .modal {
+        width: min(900px, 92vw);
+        max-height: 86vh;
+        overflow: auto;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        padding: 24px;
+      }
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+      .modal-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .modal-title i {
+        color: #8360c3;
+      }
+      .modal-close {
+        border: none;
+        background: #f3f3f3;
+        color: #666;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .modal-section {
+        border: 1px solid #f0f0f0;
+        border-radius: 10px;
+        padding: 16px;
+        margin-top: 12px;
+        background: #fff;
+      }
+      .modal-section h4 {
+        margin: 0 0 10px;
+        font-size: 15px;
+        color: #555;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .q-preview {
+        border-left: 4px solid #8360c3;
+        padding-left: 10px;
+        margin-bottom: 12px;
+      }
+      .q-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 6px;
+      }
+      .q-meta {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 6px;
+      }
+      .q-options {
+        margin-left: 6px;
+        color: #555;
+      }
+
+      @media (max-width: 768px) {
+        .main {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+          max-width: none;
+        }
+        .content {
+          padding: 15px;
+        }
+        .submit-section {
+          flex-direction: column;
+        }
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body class="sci-page">
+    <div class="header">
+      <div
+        class="header-left"
+        onclick="location.href='science_club_activity_calendar.html';"
+      >
+        <img src="image/logo1.gif" alt="Logo" class="logo" />
+      </div>
+      <div class="header-right">
+        <div class="icon" id="notificationIcon">
+          <i class="fas fa-bell"></i>
+        </div>
+        <div class="notification-panel" id="notificationPanel">
+          <div class="notification-header">
+            <h3>通知</h3>
+            <div class="notification-actions">
+              <button class="notification-btn">全部已讀</button>
+              <button
+                class="notification-btn"
+                onclick="clearAllNotifications()"
+              >
+                清除全部
+              </button>
+            </div>
+          </div>
+          <div class="notification-list" id="notificationList"></div>
+        </div>
+        <div class="avatar" id="avatar">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <div class="dropdown" id="dropdown">
+          <a href="login_science_club.html">
+            <i class="fas fa-sign-out-alt"></i>
+            登出
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="sidebar">
+        <div class="menu">
+          <div class="menu-item">
+            <a href="science_club_activity_calendar.html" class="menu-link">
+              <i class="fas fa-calendar"></i>
+              行事曆
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_event_album.html" class="menu-link">
+              <i class="fas fa-home"></i>
+              活動相簿
+            </a>
+          </div>
+
+          <div class="menu-item expanded">
+            <div class="menu-link" onclick="toggleMenu(this); return false;">
+              <i class="fas fa-bullhorn"></i>
+              發佈公告/活動/表單
+              <i class="fas fa-chevron-down menu-arrow"></i>
+            </div>
+            <div class="submenu show">
+              <div class="submenu-item">
+                <a
+                  href="science_club_publish_announcement.html"
+                  class="submenu-link"
+                >
+                  <i class="fas fa-bullhorn"></i>
+                  發佈公告
+                </a>
+              </div>
+              <div class="submenu-item">
+                <a
+                  href="science_club_activity_publish.html"
+                  class="submenu-link"
+                >
+                  <i class="fas fa-plus-circle"></i>
+                  發佈比賽及活動
+                </a>
+              </div>
+              <div class="submenu-item">
+                <a
+                  href="science_club_table_publish.html"
+                  class="submenu-link active"
+                >
+                  <i class="fas fa-comment-alt"></i>
+                  發佈活動反饋表單
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_name_manage.html" class="menu-link">
+              <i class="fas fa-user-edit"></i>
+              報名人員名單管理
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_statistics.html" class="menu-link">
+              <i class="fas fa-trophy"></i>
+              統計比賽參次
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_upload_files.html" class="menu-link">
+              <i class="fas fa-upload"></i>
+              開放上傳檔案
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_request_review.html" class="menu-link">
+              <i class="fas fa-file-signature"></i>
+              請假申請
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_meeting_records.html" class="menu-link">
+              <i class="fas fa-clipboard"></i>
+              開會紀錄
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_image_recognition.html" class="menu-link">
+              <i class="fas fa-eye"></i>
+              圖片識別
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="page-header">
+          <h1><i class="fas fa-comment-alt"></i>發布活動反饋表單</h1>
+          <p>建立活動反饋問卷,收集參與者的意見和建議</p>
+        </div>
+
+        <div class="content-grid">
+          <div>
+            <form id="feedbackForm">
+              <div class="form-section">
+                <div class="section-title">
+                  <i class="fas fa-info-circle"></i>
+                  基本資訊
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label"
+                    >選擇活動<span class="required">*</span></label
+                  >
+                  <select class="form-select" required>
+                    <option value="">請選擇活動</option>
+                    <option value="1">科學週競賽</option>
+                    <option value="2">化學實驗競賽</option>
+                    <option value="3">物理闖關遊戲</option>
+                    <option value="4">生物知識競賽</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label"
+                    >表單標題<span class="required">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-input"
+                    placeholder="例如:科學週競賽活動滿意度調查"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">表單說明</label>
+                  <textarea
+                    class="form-textarea"
+                    placeholder="請輸入表單說明,讓參與者了解填寫目的..."
+                  ></textarea>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="section-title">
+                  <i class="fas fa-question-circle"></i>
+                  問卷題目設計
+                </div>
+
+                <div class="question-builder" id="questionBuilder">
+                  <div class="question-item">
+                    <div class="question-header">
+                      <span class="question-number">問題 1</span>
+                      <div class="question-actions">
+                        <button
+                          type="button"
+                          class="action-btn"
+                          onclick="moveQuestion(this, 'up')"
+                        >
+                          <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="action-btn"
+                          onclick="moveQuestion(this, 'down')"
+                        >
+                          <i class="fas fa-arrow-down"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="action-btn"
+                          onclick="deleteQuestion(this)"
+                        >
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label"
+                        >問題內容<span class="required">*</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-input"
+                        placeholder="請輸入問題內容"
+                        value="整體而言,您對本次活動的滿意度?"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">問題類型</label>
+                      <select
+                        class="form-select"
+                        onchange="changeQuestionType(this)"
+                      >
+                        <option value="rating">評分題(1-5分)</option>
+                        <option value="text">簡答題</option>
+                        <option value="textarea">問答題</option>
+                        <option value="choice">單選題</option>
+                        <option value="multiple">多選題</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="question-item">
+                    <div class="question-header">
+                      <span class="question-number">問題 2</span>
+                      <div class="question-actions">
+                        <button
+                          type="button"
+                          class="action-btn"
+                          onclick="moveQuestion(this, 'up')"
+                        >
+                          <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="action-btn"
+                          onclick="moveQuestion(this, 'down')"
+                        >
+                          <i class="fas fa-arrow-down"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="action-btn"
+                          onclick="deleteQuestion(this)"
+                        >
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label"
+                        >問題內容<span class="required">*</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-input"
+                        placeholder="請輸入問題內容"
+                        value="您覺得活動內容最吸引您的部分是?"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">問題類型</label>
+                      <select
+                        class="form-select"
+                        onchange="changeQuestionType(this)"
+                      >
+                        <option value="rating">評分題(1-5分)</option>
+                        <option value="text">簡答題</option>
+                        <option value="textarea" selected>問答題</option>
+                        <option value="choice">單選題</option>
+                        <option value="multiple">多選題</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="question-item">
+                    <div class="question-header">
+                      <span class="question-number">問題 3</span>
+                      <div class="question-actions">
+                        <button
+                          type="button"
+                          class="action-btn"
+                          onclick="moveQuestion(this, 'up')"
+                        >
+                          <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="action-btn"
+                          onclick="moveQuestion(this, 'down')"
+                        >
+                          <i class="fas fa-arrow-down"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="action-btn"
+                          onclick="deleteQuestion(this)"
+                        >
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label"
+                        >問題內容<span class="required">*</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-input"
+                        placeholder="請輸入問題內容"
+                        value="您是否願意推薦朋友參加未來的活動?"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">問題類型</label>
+                      <select
+                        class="form-select"
+                        onchange="changeQuestionType(this)"
+                      >
+                        <option value="rating">評分題(1-5分)</option>
+                        <option value="text">簡答題</option>
+                        <option value="textarea">問答題</option>
+                        <option value="choice" selected>單選題</option>
+                        <option value="multiple">多選題</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group option-group">
+                      <label class="form-label">選項設定</label>
+                      <div class="option-list">
+                        <div class="option-item">
+                          <input
+                            type="text"
+                            class="option-input"
+                            value="非常願意"
+                            placeholder="選項 1"
+                          />
+                          <button
+                            type="button"
+                            class="remove-option"
+                            onclick="removeOption(this)"
+                          >
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </div>
+                        <div class="option-item">
+                          <input
+                            type="text"
+                            class="option-input"
+                            value="願意"
+                            placeholder="選項 2"
+                          />
+                          <button
+                            type="button"
+                            class="remove-option"
+                            onclick="removeOption(this)"
+                          >
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </div>
+                        <div class="option-item">
+                          <input
+                            type="text"
+                            class="option-input"
+                            value="普通"
+                            placeholder="選項 3"
+                          />
+                          <button
+                            type="button"
+                            class="remove-option"
+                            onclick="removeOption(this)"
+                          >
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </div>
+                        <div class="option-item">
+                          <input
+                            type="text"
+                            class="option-input"
+                            value="不願意"
+                            placeholder="選項 4"
+                          />
+                          <button
+                            type="button"
+                            class="remove-option"
+                            onclick="removeOption(this)"
+                          >
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        class="add-option-btn"
+                        onclick="addOption(this)"
+                      >
+                        <i class="fas fa-plus"></i> 新增選項
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  class="add-question-btn"
+                  onclick="addQuestion()"
+                >
+                  <i class="fas fa-plus-circle"></i>
+                  新增問題
+                </button>
+              </div>
+
+              <div class="form-section">
+                <div class="section-title">
+                  <i class="fas fa-cog"></i>
+                  發布設定
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label"
+                    >填寫截止日期<span class="required">*</span></label
+                  >
+                  <input type="date" class="form-input" required />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">填寫對象</label>
+                  <select class="form-select">
+                    <option value="all">所有報名參與者</option>
+                    <option value="attended">實際出席者</option>
+                    <option value="custom">自訂名單</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">是否匿名填寫</label>
+                  <select class="form-select">
+                    <option value="no">記名填寫</option>
+                    <option value="yes">匿名填寫</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="submit-section">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="previewForm()"
+                >
+                  <i class="fas fa-eye"></i>
+                  預覽表單
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  id="saveDraftBtn"
+                >
+                  <i class="fas fa-save"></i>
+                  儲存草稿
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-paper-plane"></i>
+                  發布表單
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="right-sticky">
+            <div class="form-section">
+              <div class="section-title">
+                <i class="fas fa-box-archive"></i>草稿箱
+              </div>
+              <div id="draftList"></div>
+            </div>
+            <div class="form-section">
+              <div class="section-title">
+                <i class="fas fa-list"></i>已發佈表單
+              </div>
+              <div id="publishedList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 預覽 Modal -->
+    <div class="modal-overlay" id="previewModal">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title"><i class="fas fa-eye"></i>表單預覽</div>
+          <button class="modal-close" onclick="closePreview()">關閉</button>
+        </div>
+        <div id="previewBody"></div>
+      </div>
+    </div>
+
+    <script>
+      let questionCount = 3;
+
+      function toggleMenu(element) {
+        const menuItem = element.parentElement;
+        const submenu = menuItem.querySelector(".submenu");
+        const isExpanded = menuItem.classList.contains("expanded");
+
+        document.querySelectorAll(".menu-item").forEach((item) => {
+          if (item !== menuItem) {
+            item.classList.remove("expanded");
+            const otherSubmenu = item.querySelector(".submenu");
+            if (otherSubmenu) {
+              otherSubmenu.classList.remove("show");
+            }
+          }
+        });
+
+        if (isExpanded) {
+          menuItem.classList.remove("expanded");
+          submenu.classList.remove("show");
+        } else {
+          menuItem.classList.add("expanded");
+          submenu.classList.add("show");
+        }
+      }
+
+      function addQuestion() {
+        questionCount++;
+        const questionBuilder = document.getElementById("questionBuilder");
+        const newQuestion = document.createElement("div");
+        newQuestion.className = "question-item";
+        newQuestion.innerHTML = `
+        <div class="question-header">
+          <span class="question-number">問題 ${questionCount}</span>
+          <div class="question-actions">
+            <button type="button" class="action-btn" onclick="moveQuestion(this, 'up')">
+              <i class="fas fa-arrow-up"></i>
+            </button>
+            <button type="button" class="action-btn" onclick="moveQuestion(this, 'down')">
+              <i class="fas fa-arrow-down"></i>
+            </button>
+            <button type="button" class="action-btn" onclick="deleteQuestion(this)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">問題內容<span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="請輸入問題內容">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">問題類型</label>
+          <select class="form-select" onchange="changeQuestionType(this)">
+            <option value="rating">評分題(1-5分)</option>
+            <option value="text">簡答題</option>
+            <option value="textarea">問答題</option>
+            <option value="choice">單選題</option>
+            <option value="multiple">多選題</option>
+          </select>
+        </div>
+      `;
+        questionBuilder.appendChild(newQuestion);
+        updateQuestionNumbers();
+      }
+
+      function deleteQuestion(button) {
+        if (document.querySelectorAll(".question-item").length <= 1) {
+          alert("至少需要保留一個問題!");
+          return;
+        }
+        if (confirm("確定要刪除此問題嗎?")) {
+          button.closest(".question-item").remove();
+          updateQuestionNumbers();
+        }
+      }
+
+      function moveQuestion(button, direction) {
+        const questionItem = button.closest(".question-item");
+        if (direction === "up") {
+          const prevQuestion = questionItem.previousElementSibling;
+          if (
+            prevQuestion &&
+            prevQuestion.classList.contains("question-item")
+          ) {
+            questionItem.parentNode.insertBefore(questionItem, prevQuestion);
+          }
+        } else {
+          const nextQuestion = questionItem.nextElementSibling;
+          if (
+            nextQuestion &&
+            nextQuestion.classList.contains("question-item")
+          ) {
+            questionItem.parentNode.insertBefore(nextQuestion, questionItem);
+          }
+        }
+        updateQuestionNumbers();
+      }
+
+      function updateQuestionNumbers() {
+        const questions = document.querySelectorAll(".question-item");
+        questions.forEach((question, index) => {
+          question.querySelector(".question-number").textContent = `問題 ${
+            index + 1
+          }`;
+        });
+        questionCount = questions.length;
+      }
+
+      function changeQuestionType(select) {
+        const questionItem = select.closest(".question-item");
+        const existingOptions = questionItem.querySelector(".option-group");
+
+        if (existingOptions) {
+          existingOptions.remove();
+        }
+
+        if (select.value === "choice" || select.value === "multiple") {
+          const optionGroup = document.createElement("div");
+          optionGroup.className = "form-group option-group";
+          optionGroup.innerHTML = `
+          <label class="form-label">選項設定</label>
+          <div class="option-list">
+            <div class="option-item">
+              <input type="text" class="option-input" placeholder="選項 1">
+              <button type="button" class="remove-option" onclick="removeOption(this)">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="option-item">
+              <input type="text" class="option-input" placeholder="選項 2">
+              <button type="button" class="remove-option" onclick="removeOption(this)">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <button type="button" class="add-option-btn" onclick="addOption(this)">
+            <i class="fas fa-plus"></i> 新增選項
+          </button>
+        `;
+          questionItem.appendChild(optionGroup);
+        }
+      }
+
+      function addOption(button) {
+        const optionList = button.previousElementSibling;
+        const optionCount = optionList.children.length + 1;
+        const newOption = document.createElement("div");
+        newOption.className = "option-item";
+        newOption.innerHTML = `
+        <input type="text" class="option-input" placeholder="選項 ${optionCount}">
+        <button type="button" class="remove-option" onclick="removeOption(this)">
+          <i class="fas fa-times"></i>
+        </button>
+      `;
+        optionList.appendChild(newOption);
+      }
+
+      function removeOption(button) {
+        const optionList = button.closest(".option-list");
+        if (optionList.children.length <= 2) {
+          alert("至少需要保留兩個選項!");
+          return;
+        }
+        button.closest(".option-item").remove();
+      }
+
+      function getFormData() {
+        const form = document.getElementById("feedbackForm");
+        const activity = form.querySelector("select.form-select").value;
+        const title = form.querySelector("input.form-input").value.trim();
+        const desc = form.querySelector("textarea.form-textarea").value.trim();
+
+        // 收集題目
+        const questions = [];
+        document.querySelectorAll(".question-item").forEach((item, idx) => {
+          const qTitleEl = item.querySelector("input.form-input");
+          const qTitle = qTitleEl ? qTitleEl.value.trim() : "";
+          const qTypeEl = item.querySelector("select.form-select");
+          const qType = qTypeEl ? qTypeEl.value : "text";
+          const options = [];
+          item
+            .querySelectorAll(".option-list .option-item .option-input")
+            .forEach((opt) => {
+              const v = opt.value.trim();
+              if (v) options.push(v);
+            });
+          questions.push({
+            index: idx + 1,
+            type: qType,
+            title: qTitle,
+            options,
+          });
+        });
+
+        // 發布設定
+        const publishSection = Array.from(
+          form.querySelectorAll(".form-section")
+        ).slice(-1)[0];
+        const deadline =
+          publishSection.querySelector('input[type="date"]').value;
+        const selects = publishSection.querySelectorAll("select.form-select");
+        const audience = selects[0] ? selects[0].value : "all";
+        const anonymous = selects[1] ? selects[1].value : "no";
+
+        return {
+          activity,
+          title,
+          desc,
+          questions,
+          deadline,
+          audience,
+          anonymous,
+          savedAt: Date.now(),
+        };
+      }
+
+      function previewForm() {
+        const data = getFormData();
+        const body = document.getElementById("previewBody");
+        const formatAudience = (v) =>
+          ({
+            all: "所有報名參與者",
+            attended: "實際出席者",
+            custom: "自訂名單",
+          }[v] || v);
+        const formatAnon = (v) => (v === "yes" ? "匿名" : "記名");
+
+        const qHtml = data.questions
+          .map((q) => {
+            const typeMap = {
+              rating: "評分題(1-5分)",
+              text: "簡答題",
+              textarea: "問答題",
+              choice: "單選題",
+              multiple: "多選題",
+            };
+            const optionsHtml =
+              (q.type === "choice" || q.type === "multiple") && q.options.length
+                ? `<div class="q-options">選項：${q.options
+                    .map((o) => `<span>「${o}」</span>`)
+                    .join("、")}</div>`
+                : "";
+            return `
+            <div class="q-preview">
+              <div class="q-title">Q${q.index}. ${
+              q.title || "(未填寫題目)"
+            } </div>
+              <div class="q-meta">類型：${typeMap[q.type] || q.type}</div>
+              ${optionsHtml}
+            </div>`;
+          })
+          .join("");
+
+        body.innerHTML = `
+          <div class="modal-section">
+            <h4><i class="fas fa-info-circle"></i>基本資訊</h4>
+            <div>活動：${data.activity ? data.activity : "（未選擇）"}</div>
+            <div>表單標題：${data.title || "（未填寫）"}</div>
+            <div style="margin-top:6px; color:#666;">說明：${
+              data.desc || "（無）"
+            }</div>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-question-circle"></i>問卷題目</h4>
+            ${qHtml || '<div style="color:#999;">尚未新增任何題目</div>'}
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-cog"></i>發布設定</h4>
+            <div>截止日期：${data.deadline || "（未設定）"}</div>
+            <div>填寫對象：${formatAudience(data.audience)}</div>
+            <div>是否匿名：${formatAnon(data.anonymous)}</div>
+          </div>
+        `;
+        document.getElementById("previewModal").style.display = "flex";
+      }
+
+      function closePreview() {
+        document.getElementById("previewModal").style.display = "none";
+      }
+
+      // 草稿儲存
+      const DRAFTS_KEY = "sc_feedback_form_drafts";
+      function loadDrafts() {
+        try {
+          const raw = localStorage.getItem(DRAFTS_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+      function saveDrafts(list) {
+        localStorage.setItem(DRAFTS_KEY, JSON.stringify(list));
+      }
+      let draftEditingId = null; // 當前編輯中的草稿 id
+      function saveDraft() {
+        const data = getFormData();
+        const drafts = loadDrafts();
+        if (draftEditingId) {
+          const idx = drafts.findIndex((d) => d.id === draftEditingId);
+          if (idx > -1)
+            drafts[idx] = { ...drafts[idx], ...data, savedAt: Date.now() };
+          saveDrafts(drafts);
+          renderDrafts();
+          alert("草稿已更新！");
+        } else {
+          const id = Date.now();
+          drafts.unshift({ id, ...data });
+          saveDrafts(drafts);
+          renderDrafts();
+          alert("草稿已儲存！");
+        }
+      }
+      document
+        .getElementById("saveDraftBtn")
+        .addEventListener("click", saveDraft);
+
+      // 草稿箱渲染與操作
+      function renderDrafts() {
+        const container = document.getElementById("draftList");
+        if (!container) return;
+        const drafts = loadDrafts();
+        if (drafts.length === 0) {
+          container.innerHTML =
+            '<div style="color:#999; text-align:center; padding:12px;">目前沒有草稿</div>';
+          return;
+        }
+        container.innerHTML = "";
+        drafts.forEach((d) => {
+          const card = document.createElement("div");
+          card.className = "announcement-card";
+          card.style =
+            "display:flex; justify-content:space-between; align-items:flex-start; background:#fff; border:1px solid #e1e8ed; border-radius:12px; padding:16px 18px; box-shadow:0 2px 8px rgba(0,0,0,0.04); margin-bottom:12px;";
+          card.innerHTML = `
+            <div class="announcement-info">
+              <div class="announcement-title">${d.title || "未命名草稿"}</div>
+              <div class="announcement-meta">更新時間：${new Date(
+                d.savedAt || d.savedAt || d.savedAt
+              ).toLocaleString("zh-TW")}</div>
+            </div>
+            <div class="announcement-actions" style="display:flex; gap:8px;">
+              <button style="background:#2ebf91; color:#fff; border:none; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:6px; transition:all 0.3s;" onclick="publishDraft(${
+                d.id
+              })" onmouseover="this.style.background='#26a87e'" onmouseout="this.style.background='#2ebf91'"><i class="fas fa-paper-plane"></i> 發佈</button>
+              <button style="background:#f0f0f0; color:#666; border:none; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:6px; transition:all 0.3s;" onclick="editDraft(${
+                d.id
+              })" onmouseover="this.style.background='#e0e0e0'" onmouseout="this.style.background='#f0f0f0'"><i class="fas fa-edit"></i> 修改</button>
+              <button style="background:#ffe5e5; color:#e74c3c; border:none; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:6px; transition:all 0.3s;" onclick="deleteDraft(${
+                d.id
+              })" onmouseover="this.style.background='#ffd5d5'" onmouseout="this.style.background='#ffe5e5'"><i class="fas fa-trash"></i> 刪除</button>
+            </div>`;
+          container.appendChild(card);
+        });
+      }
+
+      function editDraft(id) {
+        const drafts = loadDrafts();
+        const d = drafts.find((x) => x.id === id);
+        if (!d) return;
+        draftEditingId = id;
+        const form = document.getElementById("feedbackForm");
+        // 基本資訊
+        form.querySelector("select.form-select").value = d.activity || "";
+        form.querySelector("input.form-input").value = d.title || "";
+        form.querySelector("textarea.form-textarea").value = d.desc || "";
+        // 清空現有題目，重新建立
+        const qb = document.getElementById("questionBuilder");
+        qb.innerHTML = "";
+        (d.questions || []).forEach((q, i) => {
+          const item = document.createElement("div");
+          item.className = "question-item";
+          item.innerHTML = `
+            <div class="question-header">
+              <span class="question-number">問題 ${i + 1}</span>
+              <div class="question-actions">
+                <button type="button" class="action-btn" onclick="moveQuestion(this, 'up')"><i class=\"fas fa-arrow-up\"></i></button>
+                <button type="button" class="action-btn" onclick="moveQuestion(this, 'down')"><i class=\"fas fa-arrow-down\"></i></button>
+                <button type="button" class="action-btn" onclick="deleteQuestion(this)"><i class=\"fas fa-trash\"></i></button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">問題內容<span class="required">*</span></label>
+              <input type="text" class="form-input" placeholder="請輸入問題內容" value="${
+                q.title || ""
+              }">
+            </div>
+            <div class="form-group">
+              <label class="form-label">問題類型</label>
+              <select class="form-select" onchange="changeQuestionType(this)">
+                <option value="rating" ${
+                  q.type === "rating" ? "selected" : ""
+                }>評分題(1-5分)</option>
+                <option value="text" ${
+                  q.type === "text" ? "selected" : ""
+                }>簡答題</option>
+                <option value="textarea" ${
+                  q.type === "textarea" ? "selected" : ""
+                }>問答題</option>
+                <option value="choice" ${
+                  q.type === "choice" ? "selected" : ""
+                }>單選題</option>
+                <option value="multiple" ${
+                  q.type === "multiple" ? "selected" : ""
+                }>多選題</option>
+              </select>
+            </div>`;
+          qb.appendChild(item);
+          if (
+            (q.type === "choice" || q.type === "multiple") &&
+            q.options &&
+            q.options.length
+          ) {
+            const select = item.querySelector("select.form-select");
+            changeQuestionType(select);
+            const list = item.querySelector(".option-list");
+            list.innerHTML = "";
+            q.options.forEach((opt, idx) => {
+              const op = document.createElement("div");
+              op.className = "option-item";
+              op.innerHTML = `
+                <input type="text" class="option-input" value="${opt}" placeholder="選項 ${
+                idx + 1
+              }">
+                <button type="button" class="remove-option" onclick="removeOption(this)"><i class=\"fas fa-times\"></i></button>`;
+              list.appendChild(op);
+            });
+          }
+        });
+        updateQuestionNumbers();
+        // 發布設定
+        const publishSection = Array.from(
+          form.querySelectorAll(".form-section")
+        ).slice(-1)[0];
+        publishSection.querySelector('input[type="date"]').value =
+          d.deadline || "";
+        const selects = publishSection.querySelectorAll("select.form-select");
+        if (selects[0]) selects[0].value = d.audience || "all";
+        if (selects[1]) selects[1].value = d.anonymous || "no";
+        form.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function deleteDraft(id) {
+        if (!confirm("確定刪除此草稿嗎？")) return;
+        const drafts = loadDrafts();
+        const filtered = drafts.filter((x) => x.id !== id);
+        saveDrafts(filtered);
+        if (draftEditingId === id) draftEditingId = null;
+        renderDrafts();
+        alert("草稿已刪除");
+      }
+
+      // 已發佈表單（前端暫存顯示）
+      let publishedForms = [];
+      function renderPublished() {
+        const list = document.getElementById("publishedList");
+        if (!list) return;
+        if (publishedForms.length === 0) {
+          list.innerHTML =
+            '<div style="color:#999; text-align:center; padding:12px;">目前沒有表單</div>';
+          return;
+        }
+        list.innerHTML = "";
+        publishedForms.forEach((f, idx) => {
+          const card = document.createElement("div");
+          card.className = "announcement-card";
+          card.style =
+            "display:flex; justify-content:space-between; align-items:flex-start; background:#fff; border:1px solid #e1e8ed; border-radius:12px; padding:16px 18px; box-shadow:0 2px 8px rgba(0,0,0,0.04); margin-bottom:12px;";
+          card.innerHTML = `
+            <div class="announcement-info">
+              <div class="announcement-title">${f.title || "未命名表單"}</div>
+              <div class="announcement-meta">發布時間：${f.publishDate}</div>
+            </div>
+            <div class="announcement-actions" style="display:flex; gap:8px;">
+              <button class="btn btn-xs btn-delete" onclick="deletePublished(${idx})"><i class=\"fas fa-trash\"></i> 刪除</button>
+            </div>`;
+          list.appendChild(card);
+        });
+      }
+      function deletePublished(i) {
+        const f = publishedForms[i];
+        if (!confirm(`確定刪除表單「${f.title || "未命名表單"}」嗎？`)) return;
+        publishedForms.splice(i, 1);
+        renderPublished();
+        alert("✅ 已刪除");
+      }
+
+      function publishDraft(id) {
+        const drafts = loadDrafts();
+        const d = drafts.find((x) => x.id === id);
+        if (!d) return;
+        publishedForms.unshift({
+          title: d.title,
+          publishDate: new Date().toLocaleString("zh-TW"),
+        });
+        const filtered = drafts.filter((x) => x.id !== id);
+        saveDrafts(filtered);
+        renderDrafts();
+        renderPublished();
+        alert("表單已發佈！");
+      }
+
+      // 初始化右側清單
+      window.addEventListener("load", function () {
+        renderDrafts();
+        renderPublished();
+      });
+
+      document
+        .getElementById("feedbackForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          if (confirm("確定要發布此反饋表單嗎?")) {
+            alert("表單發布成功!已通知所有參與者填寫。");
+          }
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <title>教師系統首頁</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="notification-center.js" defer></script>
+    <style>
+      /* 保持你原有的所有CSS不變 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        font-family: "Microsoft JhengHei", "Arial", sans-serif;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      }
+      .header {
+        height: 70px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 100;
+      }
+      .header::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+      }
+      .header img.logo {
+        height: 50px;
+        filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+        transition: transform 0.3s ease;
+      }
+      .header img.logo:hover {
+        transform: scale(1.05);
+      }
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        position: relative;
+      }
+      .icon-wrapper {
+        position: relative;
+      }
+      .icon {
+        position: relative;
+        padding: 10px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .icon:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(17, 153, 142, 0.5);
+      }
+      .icon i {
+        font-size: 18px;
+        color: white;
+      }
+      .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+        color: white;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid white;
+        box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        animation: badgePulse 2s infinite;
+      }
+      .notification-badge.active {
+        display: flex;
+      }
+      @keyframes badgePulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        }
+        50% {
+          transform: scale(1.2);
+          box-shadow: 0 6px 20px rgba(255, 71, 87, 0.8);
+        }
+      }
+      .notification-panel {
+        position: absolute;
+        top: 65px;
+        right: 0;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        display: none;
+        width: 400px;
+        max-height: 550px;
+        z-index: 1001;
+        overflow: hidden;
+        animation: panelFade 0.3s ease;
+        flex-direction: column;
+      }
+      @keyframes panelFade {
+        from {
+          opacity: 0;
+          transform: translateY(-15px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .notification-panel.active {
+        display: flex;
+      }
+      .notification-header {
+        padding: 20px 25px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      }
+      .notification-header h3 {
+        font-size: 17px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .notification-header i {
+        font-size: 20px;
+      }
+      .mark-all-read {
+        background: rgba(255, 255, 255, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 7px 14px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      .mark-all-read:hover {
+        background: rgba(255, 255, 255, 0.35);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+      }
+      .notification-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+      }
+      .notification-item {
+        padding: 16px;
+        margin-bottom: 8px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+        border-left: 4px solid transparent;
+        position: relative;
+      }
+      .notification-item:hover {
+        background: #f0f1f2;
+        transform: translateX(4px);
+      }
+      .notification-item.unread {
+        background: linear-gradient(135deg, #e8f9f8 0%, #f0fffe 100%);
+        border-left-color: #11998e;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.15);
+      }
+      .notification-item.unread::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 10px;
+        height: 10px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border-radius: 50%;
+        animation: unreadPulse 2s infinite;
+      }
+      @keyframes unreadPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.8;
+        }
+      }
+      .notification-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .notification-item-title {
+        font-weight: 700;
+        color: #333;
+        flex: 1;
+        margin-right: 10px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .notification-type-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: white;
+        flex-shrink: 0;
+      }
+      .notification-type-icon.info {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      }
+      .notification-type-icon.warning {
+        background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
+      }
+      .notification-item-time {
+        font-size: 12px;
+        color: #999;
+        white-space: nowrap;
+      }
+      .notification-item-message {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+      .notification-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .notification-btn {
+        font-size: 11px;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .notification-btn-read {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.2);
+      }
+      .notification-btn-read:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+      }
+      .notification-btn-clear {
+        background: #ffe8e8;
+        color: #d32f2f;
+        box-shadow: 0 2px 8px rgba(211, 47, 47, 0.1);
+      }
+      .notification-btn-clear:hover {
+        background: #ffcccb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+      }
+      .empty-notification {
+        padding: 50px 20px;
+        text-align: center;
+        color: #999;
+      }
+      .empty-notification i {
+        font-size: 45px;
+        margin-bottom: 15px;
+        opacity: 0.4;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .empty-notification p {
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 3px solid #fff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+      .avatar:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(17, 153, 142, 0.3);
+      }
+      .avatar i {
+        font-size: 20px;
+        color: white;
+      }
+      .dropdown {
+        position: absolute;
+        top: 65px;
+        right: 0;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        display: none;
+        min-width: 120px;
+        z-index: 1000;
+        overflow: hidden;
+        animation: dropdownFade 0.3s ease;
+      }
+      @keyframes dropdownFade {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .dropdown a {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      .dropdown a:hover {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+      }
+      .dropdown a i {
+        margin-right: 8px;
+        width: 16px;
+      }
+      .main {
+        display: flex;
+        height: calc(100% - 70px);
+        gap: 0;
+      }
+      .sidebar {
+        width: 250px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 30px 0;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+      .sidebar::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, #11998e 0%, #38ef7d 100%);
+      }
+      .menu a {
+        display: flex;
+        align-items: center;
+        padding: 18px 30px;
+        text-decoration: none;
+        color: #555;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+        position: relative;
+      }
+      .menu a:hover,
+      .menu a.active {
+        color: #11998e;
+        background: rgba(17, 153, 142, 0.1);
+        border-left: 4px solid #11998e;
+        transform: translateX(5px);
+      }
+      .menu a i {
+        margin-right: 15px;
+        width: 20px;
+        font-size: 18px;
+      }
+      .content {
+        flex: 1;
+        padding: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+      .welcome-section {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+      }
+      .welcome-section h1 {
+        font-size: 32px;
+        color: #333;
+        margin-bottom: 15px;
+        font-weight: 300;
+      }
+      .welcome-section p {
+        font-size: 18px;
+        color: #666;
+        line-height: 1.6;
+      }
+      .time-display {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-size: 16px;
+        margin-top: 20px;
+        display: inline-block;
+        font-weight: 500;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+      .stat-card {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      }
+      .stat-card i {
+        font-size: 40px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 15px;
+      }
+      .stat-card h3 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+      .stat-card p {
+        color: #666;
+        font-size: 14px;
+      }
+      .schedule-section {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      }
+      .schedule-section h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+      }
+      .schedule-section h2 i {
+        margin-right: 10px;
+        color: #11998e;
+      }
+      .schedule-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+        transition: all 0.3s ease;
+      }
+      .schedule-item:last-child {
+        border-bottom: none;
+      }
+      .schedule-item:hover {
+        background: rgba(17, 153, 142, 0.05);
+        border-radius: 10px;
+        padding-left: 15px;
+      }
+      .schedule-time {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        min-width: 100px;
+        text-align: center;
+      }
+      .schedule-info {
+        margin-left: 20px;
+        flex: 1;
+      }
+      .schedule-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      .schedule-location {
+        font-size: 14px;
+        color: #666;
+      }
+      .quick-actions {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 20px;
+        padding: 30px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      }
+      .quick-actions h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+      }
+      .quick-actions h2 i {
+        margin-right: 10px;
+        color: #11998e;
+      }
+      .action-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+      }
+      .action-btn {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+      }
+      .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+      }
+      .action-btn i {
+        font-size: 24px;
+        margin-right: 15px;
+      }
+      .action-btn-text {
+        flex: 1;
+      }
+      .action-btn-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+      .action-btn-desc {
+        font-size: 12px;
+        opacity: 0.9;
+      }
+      .empty-schedule {
+        text-align: center;
+        padding: 40px 20px;
+        color: #999;
+      }
+      .empty-schedule i {
+        font-size: 40px;
+        margin-bottom: 15px;
+        opacity: 0.4;
+      }
+      @media (max-width: 768px) {
+        .main {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+          height: auto;
+        }
+        .menu {
+          display: flex;
+          overflow-x: auto;
+        }
+        .menu a {
+          white-space: nowrap;
+          padding: 15px 20px;
+        }
+        .content {
+          padding: 20px;
+        }
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+        .action-buttons {
+          grid-template-columns: 1fr;
+        }
+        .notification-panel {
+          width: 320px;
+        }
+      }
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+      }
+    </style>
+  </head>
+  <body class="teacher-page">
+    <div class="header">
+      <a href="teacher_dashboard.html">
+        <img src="image/logo1.gif" alt="Logo" class="logo" />
+      </a>
+      <div class="header-right">
+        <div class="icon-wrapper">
+          <div class="icon" id="notificationBell">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="notification-badge" id="notificationBadge">0</div>
+        </div>
+        <div class="notification-panel" id="notificationPanel">
+          <div class="notification-header">
+            <h3><i class="fas fa-bell"></i> 通知中心</h3>
+            <button class="mark-all-read">
+              <i class="fas fa-check-double"></i> 全部已讀
+            </button>
+          </div>
+          <div class="notification-list" id="notificationList">
+            <div class="empty-notification">
+              <i class="fas fa-inbox"></i>
+              <p>沒有通知</p>
+            </div>
+          </div>
+        </div>
+        <div class="avatar" id="avatar">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="dropdown" id="dropdown">
+          <a href="login_teacher.html">
+            <i class="fas fa-sign-out-alt"></i>
+            登出
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="sidebar">
+        <div class="menu">
+          <a href="teacher_dashboard.html" class="active"
+            ><i class="fas fa-home"></i>教師首頁</a
+          >
+          <a href="teacher_activity_status.html"
+            ><i class="fas fa-chart-bar"></i>查看活動情況</a
+          >
+          <a href="teacher_registration_statistics.html"
+            ><i class="fas fa-users"></i>報名數據統計</a
+          >
+          <a href="teacher_form_feedback.html"
+            ><i class="fas fa-comments"></i>學生表單反饋</a
+          >
+          <a href="teacher_schedules_classes.html"
+            ><i class="fas fa-calendar-alt"></i>線上排班</a
+          >
+          <a href="teacher_ask_for_leave.html"
+            ><i class="fas fa-clipboard-check"></i>請假審核</a
+          >
+          <a href="teacher_rollcall.html"
+            ><i class="fas fa-user-check"></i>點名系統</a
+          >
+          <a href="teacher_working_hours.html"
+            ><i class="fas fa-clock"></i>工作時數與出席記錄</a
+          >
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="welcome-section">
+          <h1>歡迎回來,<span id="userName">老師</span>!</h1>
+          <p>今天又是充滿活力的一天,讓我們一起為學生們創造美好的學習體驗</p>
+          <div class="time-display" id="currentTime"></div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <i class="fas fa-calendar-check"></i>
+            <h3 id="activeActivities">-</h3>
+            <p>進行中的活動</p>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-user-graduate"></i>
+            <h3 id="totalStudents">-</h3>
+            <p>總報名人數</p>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-star"></i>
+            <h3 id="averageRating">-</h3>
+            <p>平均評分</p>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-clipboard-check"></i>
+            <h3 id="pendingReviews">-</h3>
+            <p>待審核表單</p>
+          </div>
+        </div>
+
+        <div class="schedule-section">
+          <h2><i class="fas fa-calendar-day"></i>今日課程安排</h2>
+          <div id="scheduleContainer">
+            <div class="empty-schedule">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>載入中...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <h2><i class="fas fa-bolt"></i>快捷操作</h2>
+          <div class="action-buttons">
+            <a href="teacher_activity_status.html" class="action-btn"
+              ><i class="fas fa-chart-line"></i>
+              <div class="action-btn-text">
+                <div class="action-btn-title">活動監控</div>
+                <div class="action-btn-desc">查看所有活動進度</div>
+              </div></a
+            >
+            <a href="teacher_registration_statistics.html" class="action-btn"
+              ><i class="fas fa-chart-bar"></i>
+              <div class="action-btn-text">
+                <div class="action-btn-title">數據分析</div>
+                <div class="action-btn-desc">分析報名趨勢</div>
+              </div></a
+            >
+            <a href="teacher_form_feedback.html" class="action-btn"
+              ><i class="fas fa-comment-dots"></i>
+              <div class="action-btn-text">
+                <div class="action-btn-title">學生反饋</div>
+                <div class="action-btn-desc">查看最新意見</div>
+              </div></a
+            >
+            <a href="teacher_ask_for_leave.html" class="action-btn"
+              ><i class="fas fa-clipboard-check"></i>
+              <div class="action-btn-text">
+                <div class="action-btn-title">請假審核</div>
+                <div class="action-btn-desc">審核請假申請</div>
+              </div></a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE_URL = "teacher_api.php";
+
+      async function loadDashboardStats() {
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}?action=get_dashboard_stats`
+          );
+          const result = await response.json();
+          if (result.success && result.data) {
+            const data = result.data;
+            animateNumber("activeActivities", data.activeActivities || 0);
+            animateNumber("totalStudents", data.totalStudents || 0);
+            animateNumber("averageRating", data.avgRating || 0, true);
+            animateNumber("pendingReviews", data.pendingReviews || 0);
+            renderTodaySchedule(data.todaySchedule || []);
+          } else {
+            renderEmptySchedule();
+          }
+        } catch (error) {
+          console.error("載入首頁數據失敗:", error);
+          renderEmptySchedule();
+        }
+      }
+
+      function renderTodaySchedule(schedules) {
+        const container = document.getElementById("scheduleContainer");
+        if (!schedules || schedules.length === 0) {
+          container.innerHTML =
+            '<div class="empty-schedule"><i class="fas fa-calendar-times"></i><p>今日暫無課程安排</p></div>';
+          return;
+        }
+        container.innerHTML = schedules
+          .map(
+            (s) => `
+          <div class="schedule-item">
+            <div class="schedule-time">${s.start_time || ""} - ${
+              s.end_time || ""
+            }</div>
+            <div class="schedule-info">
+              <div class="schedule-title">${s.title || "未命名課程"}</div>
+              <div class="schedule-location">${s.location || "地點待定"}</div>
+            </div>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      function renderEmptySchedule() {
+        document.getElementById("scheduleContainer").innerHTML =
+          '<div class="empty-schedule"><i class="fas fa-calendar-times"></i><p>無法載入課程數據</p></div>';
+      }
+
+      function animateNumber(elementId, targetValue, isFloat = false) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+        const startValue = 0,
+          duration = 1500,
+          stepTime = 50;
+        const steps = duration / stepTime,
+          increment = (targetValue - startValue) / steps;
+        let currentValue = startValue,
+          currentStep = 0;
+        const timer = setInterval(() => {
+          currentStep++;
+          currentValue += increment;
+          if (currentStep >= steps) {
+            element.textContent = isFloat
+              ? targetValue.toFixed(1)
+              : targetValue;
+            clearInterval(timer);
+          } else {
+            element.textContent = isFloat
+              ? currentValue.toFixed(1)
+              : Math.floor(currentValue);
+          }
+        }, stepTime);
+      }
+
+      function formatTimeAgo(dateString) {
+        if (!dateString) return "剛剛";
+        const date = new Date(dateString),
+          now = new Date(),
+          diff = now - date;
+        const minutes = Math.floor(diff / 60000),
+          hours = Math.floor(diff / 3600000),
+          days = Math.floor(diff / 86400000);
+        if (minutes < 1) return "剛剛";
+        if (minutes < 60) return `${minutes}分鐘前`;
+        if (hours < 24) return `${hours}小時前`;
+        if (days < 7) return `${days}天前`;
+        return date.toLocaleDateString("zh-TW");
+      }
+
+      function updateTime() {
+        const now = new Date();
+        const options = {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          weekday: "long",
+        };
+        document.getElementById("currentTime").textContent =
+          now.toLocaleDateString("zh-TW", options);
+      }
+
+      function showNotification(message, type = "info") {
+        const notification = document.createElement("div");
+        notification.style.cssText = `position:fixed;top:20px;right:20px;background:${
+          type === "success"
+            ? "linear-gradient(135deg,#28a745 0%,#20c997 100%)"
+            : type === "error"
+            ? "linear-gradient(135deg,#dc3545 0%,#e83e8c 100%)"
+            : "linear-gradient(135deg,#17a2b8 0%,#6f42c1 100%)"
+        };color:white;padding:15px 25px;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,0.2);z-index:10000;font-weight:500;animation:slideIn 0.3s ease;cursor:pointer;`;
+        notification.textContent = message;
+        notification.addEventListener("click", () => {
+          notification.style.animation = "slideOut 0.3s ease";
+          setTimeout(() => notification.remove(), 300);
+        });
+        document.body.appendChild(notification);
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.style.animation = "slideOut 0.3s ease";
+            setTimeout(() => notification.remove(), 300);
+          }
+        }, 3000);
+      }
+
+      const style = document.createElement("style");
+      style.textContent = `@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } } @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }`;
+      document.head.appendChild(style);
+
+      async function loadUserInfo() {
+        try {
+          const response = await fetch("teacher_api.php?action=get_user_info");
+          const result = await response.json();
+
+          if (result.success) {
+            const displayName =
+              result.data.name || result.data.account || "老師";
+            document.getElementById("userName").textContent = displayName;
+            console.log("使用者載入成功:", displayName);
+          }
+        } catch (error) {
+          console.error("載入失敗:", error);
+        }
+      }
+
+      window.addEventListener("load", () => {
+        loadDashboardStats();
+        loadUserInfo();
+        updateTime();
+        setInterval(updateTime, 1000);
+      });
+    </script>
+  </body>
+</html>

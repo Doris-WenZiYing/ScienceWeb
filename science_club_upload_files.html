@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>科學會管理系統-開放上傳檔案</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="notification-center.js" defer></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        font-family: "Microsoft JhengHei", "Arial", sans-serif;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        overflow: hidden;
+      }
+
+      .header {
+        height: 70px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 100;
+      }
+
+      .header::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .header-left:hover {
+        transform: scale(1.02);
+      }
+
+      .header img.logo {
+        height: 50px;
+        filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+        transition: transform 0.3s ease;
+        margin-right: 15px;
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        position: relative;
+      }
+
+      .icon {
+        position: relative;
+        padding: 12px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        animation: pulse 2s infinite;
+      }
+
+      .icon:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 12px 35px rgba(131, 96, 195, 0.5);
+        background: linear-gradient(135deg, #9d7ce6 0%, #3dd5a3 100%);
+      }
+
+      .icon i {
+        font-size: 20px;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        animation: bellShake 0.5s ease-in-out infinite alternate;
+      }
+
+      .icon::after {
+        content: "3";
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+        color: white;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+        border: 2px solid white;
+        animation: bounce 1s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+        }
+        50% {
+          box-shadow: 0 4px 25px rgba(131, 96, 195, 0.6);
+        }
+      }
+
+      @keyframes bellShake {
+        0% {
+          transform: rotate(-5deg);
+        }
+        100% {
+          transform: rotate(5deg);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-3px);
+        }
+        60% {
+          transform: translateY(-2px);
+        }
+      }
+
+      .avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 3px solid #fff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .avatar:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(131, 96, 195, 0.3);
+      }
+
+      .avatar i {
+        font-size: 20px;
+        color: white;
+      }
+
+      .dropdown {
+        position: absolute;
+        top: 65px;
+        right: 0;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        display: none;
+        min-width: 120px;
+        z-index: 1000;
+        overflow: hidden;
+        animation: dropdownFade 0.3s ease;
+      }
+
+      @keyframes dropdownFade {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .dropdown a {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .dropdown a:hover {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+      }
+
+      .dropdown a i {
+        margin-right: 8px;
+        width: 16px;
+      }
+
+      /* 通知面板樣式 */
+      .notification-panel {
+        position: absolute;
+        top: 65px;
+        right: 80px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        display: none;
+        width: 380px;
+        max-height: 500px;
+        z-index: 1000;
+        animation: dropdownFade 0.3s ease;
+        overflow: hidden;
+      }
+
+      .notification-header {
+        padding: 20px;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 15px 15px 0 0;
+      }
+
+      .notification-header h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .notification-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .notification-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.3s ease;
+      }
+
+      .notification-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+
+      .notification-list {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .notification-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        display: flex;
+        gap: 12px;
+      }
+
+      .notification-item:hover {
+        background: rgba(131, 96, 195, 0.05);
+      }
+
+      .notification-item.unread {
+        background: rgba(131, 96, 195, 0.08);
+      }
+
+      .notification-item.unread::before {
+        content: "";
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        background: #e74c3c;
+        border-radius: 50%;
+      }
+
+      .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      .notification-icon.activity {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+      }
+
+      .notification-icon.deadline {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+      }
+
+      .notification-icon.announcement {
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        color: white;
+      }
+
+      .notification-content {
+        flex: 1;
+      }
+
+      .notification-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+      }
+
+      .notification-text {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 4px;
+      }
+
+      .notification-time {
+        font-size: 11px;
+        color: #999;
+      }
+
+      .notification-delete {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(231, 76, 60, 0.1);
+        color: #e74c3c;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+
+      .notification-item:hover .notification-delete {
+        opacity: 1;
+      }
+
+      .notification-delete:hover {
+        background: #e74c3c;
+        color: white;
+        transform: scale(1.1);
+      }
+
+      .notification-empty {
+        padding: 60px 20px;
+        text-align: center;
+        color: #999;
+      }
+
+      .notification-empty i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 15px;
+      }
+
+      .notification-list::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .notification-list::-webkit-scrollbar-track {
+        background: #f0f0f0;
+      }
+
+      .notification-list::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        border-radius: 3px;
+      }
+
+      .main {
+        display: flex;
+        height: calc(100% - 70px);
+        width: 100%;
+        gap: 0;
+        overflow: hidden;
+      }
+
+      .sidebar {
+        width: 280px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .sidebar::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, #8360c3 0%, #2ebf91 100%);
+      }
+
+      .menu {
+        flex: 1;
+        margin-top: 0;
+        padding-top: 30px;
+      }
+
+      .menu-item {
+        display: block;
+        position: relative;
+      }
+
+      .menu-link {
+        display: flex;
+        align-items: center;
+        padding: 15px 25px;
+        text-decoration: none;
+        color: #555;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+        cursor: pointer;
+      }
+
+      .menu-link:hover,
+      .menu-link.active {
+        color: #8360c3;
+        background: rgba(131, 96, 195, 0.1);
+        border-left: 4px solid #8360c3;
+        transform: translateX(5px);
+      }
+
+      .menu-link i {
+        margin-right: 12px;
+        width: 20px;
+        font-size: 16px;
+      }
+
+      .menu-arrow {
+        margin-left: auto;
+        font-size: 12px;
+        transition: transform 0.3s ease;
+      }
+
+      .menu-item.expanded .menu-arrow {
+        transform: rotate(180deg);
+      }
+
+      .submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        background: rgba(131, 96, 195, 0.05);
+      }
+
+      .submenu.show {
+        max-height: 500px;
+      }
+
+      .submenu-item {
+        position: relative;
+      }
+
+      .submenu-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 25px 12px 45px;
+        text-decoration: none;
+        color: #666;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+        cursor: pointer;
+      }
+
+      .submenu-link:hover {
+        color: #8360c3;
+        background: rgba(131, 96, 195, 0.1);
+        border-left: 4px solid #8360c3;
+        transform: translateX(5px);
+      }
+
+      .submenu-link i {
+        margin-right: 10px;
+        width: 16px;
+        font-size: 14px;
+      }
+
+      .content {
+        flex: 1;
+        padding: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      /* 頁面標題 */
+      .page-header {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 20px 30px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .page-title-section h1 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 8px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+      }
+
+      .page-title-section h1 i {
+        margin-right: 12px;
+        color: #8360c3;
+      }
+
+      .page-title-section p {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .current-time {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
+      }
+
+      /* 建立上傳區表單 */
+      .create-zone-btn {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #2ed573 0%, #17a2b8 100%);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(46, 213, 115, 0.3);
+      }
+      .create-zone-btn:hover {
+        transform: translateY(-1px);
+      }
+      .create-zone-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 20px 24px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 16px;
+        display: none;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .form-row-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+      }
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .form-field label {
+        font-size: 13px;
+        color: #555;
+        font-weight: 600;
+      }
+      .form-field input[type="text"],
+      .form-field input[type="number"],
+      .form-field input[type="datetime-local"],
+      .form-field textarea {
+        padding: 10px 12px;
+        border: 1px solid #e1e8ed;
+        border-radius: 8px;
+        background: #fff;
+      }
+      .form-field textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+      .checkline {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .actions-line {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .btn-light {
+        background: #f8f9fa;
+        border: 1px solid #e1e8ed;
+        color: #555;
+        border-radius: 8px;
+        padding: 8px 14px;
+        cursor: pointer;
+      }
+      .btn-primary-solid {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 16px;
+        cursor: pointer;
+      }
+      .req::after {
+        content: " *";
+        color: #ff4757;
+        margin-left: 4px;
+      }
+      .helper {
+        font-size: 12px;
+        color: #999;
+      }
+
+      /* 查詢列 */
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin: 8px 0 12px 0;
+      }
+      .toolbar input[type="text"] {
+        padding: 8px 12px;
+        border: 1px solid #e1e8ed;
+        border-radius: 8px;
+        width: 260px;
+      }
+
+      /* 篩選籤片 */
+      .filter-chips {
+        display: flex;
+        gap: 10px;
+        margin: 10px 0 16px 0;
+      }
+      .chip {
+        padding: 8px 14px;
+        border-radius: 18px;
+        background: #f2f4f6;
+        color: #555;
+        cursor: pointer;
+        border: 1px solid #e1e8ed;
+      }
+      .chip.active {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: #fff;
+        border-color: transparent;
+      }
+
+      /* 上傳區卡片 */
+      .upload-zones-container {
+        display: grid;
+        gap: 20px;
+      }
+
+      .zone-card {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .zone-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .zone-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .zone-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .zone-meta {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 5px;
+      }
+
+      .meta-badge {
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .badge-category {
+        background: rgba(131, 96, 195, 0.15);
+        color: #8360c3;
+      }
+
+      .badge-deadline {
+        background: rgba(255, 71, 87, 0.15);
+        color: #ff4757;
+      }
+
+      .badge-active {
+        background: rgba(46, 213, 115, 0.15);
+        color: #2ed573;
+      }
+
+      .badge-closed {
+        background: rgba(153, 153, 153, 0.15);
+        color: #999;
+      }
+
+      .upload-status {
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .status-uploaded {
+        background: rgba(46, 213, 115, 0.15);
+        color: #2ed573;
+      }
+
+      .status-pending {
+        background: rgba(255, 165, 2, 0.15);
+        color: #ffa502;
+      }
+
+      .zone-description {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 3px solid #8360c3;
+      }
+      .zone-rules {
+        color: #666;
+        font-size: 13px;
+        line-height: 1.6;
+        padding: 12px;
+        background: #fff;
+        border: 1px dashed #e1e8ed;
+        border-radius: 8px;
+      }
+      .allowed-types {
+        font-size: 12px;
+        color: #555;
+        margin-top: 6px;
+      }
+
+      .zone-info {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+      }
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .info-label {
+        font-size: 12px;
+        color: #999;
+      }
+
+      .info-value {
+        font-size: 14px;
+        color: #333;
+        font-weight: 600;
+      }
+
+      /* 上傳區域 */
+      .upload-area {
+        border: 2px dashed #8360c3;
+        border-radius: 10px;
+        padding: 25px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(131, 96, 195, 0.03);
+        margin-bottom: 15px;
+      }
+
+      .upload-area:hover,
+      .upload-area.dragover {
+        border-color: #2ebf91;
+        background: rgba(131, 96, 195, 0.08);
+        transform: scale(1.01);
+      }
+
+      .upload-area i {
+        font-size: 40px;
+        color: #8360c3;
+        margin-bottom: 12px;
+      }
+
+      .upload-area p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 6px;
+      }
+
+      .upload-area small {
+        color: #999;
+        font-size: 12px;
+      }
+
+      /* 已上傳檔案 */
+      .uploaded-files {
+        margin-top: 15px;
+      }
+
+      .uploaded-files h4 {
+        font-size: 15px;
+        color: #333;
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+
+      .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        background: white;
+        border: 1px solid #e1e8ed;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .file-item:hover {
+        border-color: #8360c3;
+        box-shadow: 0 2px 8px rgba(131, 96, 195, 0.1);
+      }
+
+      .file-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+      }
+
+      .file-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+      }
+
+      .file-details {
+        flex: 1;
+      }
+
+      .file-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 3px;
+        font-size: 14px;
+      }
+
+      .file-meta {
+        font-size: 12px;
+        color: #999;
+      }
+
+      .file-actions {
+        display: flex;
+        gap: 6px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(131, 96, 195, 0.4);
+      }
+
+      .btn-secondary {
+        background: #f8f9fa;
+        color: #666;
+        border: 1px solid #e1e8ed;
+      }
+
+      .btn-secondary:hover {
+        background: #e9ecef;
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #ff4757 0%, #e74c3c 100%);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn:disabled:hover {
+        transform: none;
+        box-shadow: none;
+      }
+
+      /* 進度條 */
+      .upload-progress {
+        margin-top: 12px;
+        display: none;
+      }
+
+      .progress-bar {
+        height: 6px;
+        background: #e1e8ed;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 6px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+        transition: width 0.3s ease;
+        border-radius: 3px;
+      }
+
+      .progress-text {
+        font-size: 12px;
+        color: #666;
+        text-align: center;
+      }
+
+      .success-message {
+        background: rgba(46, 213, 115, 0.1);
+        border: 1px solid #2ed573;
+        color: #27ae60;
+        padding: 12px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: none;
+        align-items: center;
+      }
+
+      .success-message i {
+        margin-right: 10px;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: #999;
+      }
+
+      .empty-state i {
+        font-size: 56px;
+        color: #ddd;
+        margin-bottom: 15px;
+      }
+
+      .sidebar::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .sidebar::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+      }
+
+      .sidebar::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        border-radius: 4px;
+      }
+
+      .content::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .content::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+      }
+
+      .content::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        border-radius: 4px;
+      }
+
+      @media (max-width: 1024px) {
+        .zone-info {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .main {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          height: auto;
+        }
+
+        .content {
+          padding: 20px;
+        }
+
+        .page-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 15px;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="sci-page">
+    <div class="header">
+      <div
+        class="header-left"
+        onclick="location.href='science_club_activity_calendar.html';"
+      >
+        <img src="image/logo1.gif" alt="Logo" class="logo" />
+      </div>
+      <div class="header-right">
+        <div class="icon" id="notificationIcon">
+          <i class="fas fa-bell"></i>
+        </div>
+        <div class="notification-panel" id="notificationPanel">
+          <div class="notification-header">
+            <h3>通知</h3>
+            <div class="notification-actions">
+              <button class="notification-btn">全部已讀</button>
+              <button
+                class="notification-btn"
+                onclick="clearAllNotifications()"
+              >
+                清除全部
+              </button>
+            </div>
+          </div>
+          <div class="notification-list" id="notificationList"></div>
+        </div>
+        <div class="avatar" id="avatar">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <div class="dropdown" id="dropdown">
+          <a href="login_science_club.html">
+            <i class="fas fa-sign-out-alt"></i>
+            登出
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="sidebar">
+        <div class="menu">
+          <div class="menu-item">
+            <a href="science_club_activity_calendar.html" class="menu-link">
+              <i class="fas fa-calendar"></i>
+              行事曆
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_event_album.html" class="menu-link">
+              <i class="fas fa-image"></i>
+              活動相簿
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-link" onclick="toggleMenu(this); return false;">
+              <i class="fas fa-bullhorn"></i>
+              發佈公告/活動/表單
+              <i class="fas fa-chevron-down menu-arrow"></i>
+            </div>
+            <div class="submenu">
+              <div class="submenu-item">
+                <a
+                  href="science_club_publish_announcement.html"
+                  class="submenu-link"
+                >
+                  <i class="fas fa-bullhorn"></i>
+                  發佈公告
+                </a>
+              </div>
+              <div class="submenu-item">
+                <a
+                  href="science_club_activity_publish.html"
+                  class="submenu-link"
+                >
+                  <i class="fas fa-plus-circle"></i>
+                  發佈比賽及活動
+                </a>
+              </div>
+              <div class="submenu-item">
+                <a href="science_club_table_publish.html" class="submenu-link">
+                  <i class="fas fa-comment-alt"></i>
+                  發佈活動反饋表單
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_name_manage.html" class="menu-link">
+              <i class="fas fa-user-edit"></i>
+              報名人員名單管理
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_statistics.html" class="menu-link">
+              <i class="fas fa-trophy"></i>
+              統計比賽名次
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_upload_files.html" class="menu-link active">
+              <i class="fas fa-upload"></i>
+              開放上傳檔案
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_request_review.html" class="menu-link">
+              <i class="fas fa-file-signature"></i>
+              請假申請
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_meeting_records.html" class="menu-link">
+              <i class="fas fa-clipboard"></i>
+              開會紀錄
+            </a>
+          </div>
+
+          <div class="menu-item">
+            <a href="science_club_image_recognition.html" class="menu-link">
+              <i class="fas fa-eye"></i>
+              圖片識別
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="page-header">
+          <div class="page-title-section">
+            <h1><i class="fas fa-cloud-upload-alt"></i>開放上傳檔案</h1>
+          </div>
+          <div class="header-actions">
+            <button class="create-zone-btn" onclick="toggleCreateZone()">
+              <i class="fas fa-plus"></i> 建立上傳區
+            </button>
+            <div class="current-time">
+              <i class="fas fa-clock"></i>
+              <span id="timeDisplay">2025年10月08日 星期三 下午01:35:14</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="success-message" id="successMessage">
+          <i class="fas fa-check-circle"></i>
+          <span id="successMessageText">操作成功!</span>
+        </div>
+
+        <div class="create-zone-card" id="createZoneCard">
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="cz_name" class="req">標題</label>
+              <input
+                type="text"
+                id="cz_name"
+                placeholder="例如：網丙證照上傳"
+                maxlength="15"
+              />
+              <span class="helper">上限 15 字</span>
+            </div>
+          </div>
+          <div class="form-field" style="margin-top: 12px">
+            <label for="cz_description" class="req">內容 / 說明</label>
+            <textarea
+              id="cz_description"
+              placeholder="請輸入說明，包含繳交規定、檔名格式等"
+            ></textarea>
+          </div>
+          <div class="form-row-3" style="margin-top: 12px">
+            <div class="form-field">
+              <label for="cz_deadline" class="req">截止時間</label>
+              <input type="datetime-local" id="cz_deadline" />
+            </div>
+            <div class="form-field">
+              <label for="cz_maxSize" class="req">單檔大小上限(MB)</label>
+              <input type="number" id="cz_maxSize" min="1" value="10" />
+            </div>
+            <div class="form-field">
+              <label for="cz_maxFiles" class="req">每人最多檔數</label>
+              <input type="number" id="cz_maxFiles" min="1" value="3" />
+            </div>
+          </div>
+          <div class="checkline" style="margin-top: 8px">
+            <label style="font-weight: 600; color: #555" class="req"
+              >允許副檔名：</label
+            >
+            <select
+              id="cz_types"
+              multiple
+              style="
+                flex: 1;
+                padding: 8px 10px;
+                border: 1px solid #e1e8ed;
+                border-radius: 8px;
+                min-height: 40px;
+              "
+            >
+              <option value="pdf">pdf</option>
+              <option value="jpg">jpg</option>
+              <option value="png">png</option>
+              <option value="jpeg">jpeg</option>
+              <option value="doc">doc</option>
+              <option value="docx">docx</option>
+              <option value="ppt">ppt</option>
+              <option value="pptx">pptx</option>
+              <option value="zip">zip</option>
+            </select>
+            <span class="helper">可多選</span>
+          </div>
+          <div class="actions-line">
+            <button class="btn-light" onclick="toggleCreateZone()">取消</button>
+            <button class="btn-primary-solid" onclick="createZone()">
+              <i class="fas fa-save"></i> 建立
+            </button>
+          </div>
+        </div>
+
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+          "
+        >
+          <div class="filter-chips" style="margin: 0">
+            <div
+              class="chip active"
+              id="chip_all"
+              onclick="setStatusFilter('all')"
+            >
+              全部
+            </div>
+            <div
+              class="chip"
+              id="chip_active"
+              onclick="setStatusFilter('active')"
+            >
+              開放中
+            </div>
+            <div
+              class="chip"
+              id="chip_closed"
+              onclick="setStatusFilter('closed')"
+            >
+              已截止
+            </div>
+          </div>
+
+          <div class="toolbar" style="margin: 0">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="搜尋上傳區（標題/類別/描述）"
+              oninput="renderUploadZones()"
+            />
+            <button class="btn-light" onclick="clearSearch()">
+              <i class="fas fa-times"></i> 清除
+            </button>
+          </div>
+        </div>
+
+        <div class="upload-zones-container" id="uploadZones">
+          <!-- 上傳區將由 JavaScript 動態生成 -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const UPLOAD_ZONES_KEY = "sc_upload_zones";
+      function loadZones() {
+        try {
+          const raw = localStorage.getItem(UPLOAD_ZONES_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+      function saveZones(list) {
+        localStorage.setItem(UPLOAD_ZONES_KEY, JSON.stringify(list));
+      }
+
+      let uploadZones = loadZones();
+      if (uploadZones.length === 0)
+        uploadZones = [
+          {
+            id: 1,
+            name: "期末專題報告",
+            category: "報告上傳",
+            description:
+              "請上傳期末專題報告PDF檔案,檔名格式:學號_姓名_報告.pdf",
+            deadline: "2025-01-15T23:59",
+            maxFileSize: 10,
+            maxFiles: 3,
+            allowedTypes: "pdf",
+            uploadCount: 28,
+            totalStudents: 30,
+            status: "active",
+            files: [
+              {
+                id: 1,
+                name: "110001_王小明_報告.pdf",
+                size: 2.5,
+                uploadTime: "2025-01-10 14:30",
+                uploader: "王小明",
+              },
+              {
+                id: 2,
+                name: "110002_李小華_報告.pdf",
+                size: 3.2,
+                uploadTime: "2025-01-10 15:20",
+                uploader: "李小華",
+              },
+            ],
+          },
+          {
+            id: 2,
+            name: "科學營活動照片",
+            category: "活動照片",
+            description: "上傳科學營活動照片,支援JPG、PNG格式",
+            deadline: "2025-01-20T18:00",
+            maxFileSize: 5,
+            maxFiles: 10,
+            allowedTypes: "jpg,png",
+            uploadCount: 45,
+            totalStudents: 50,
+            status: "active",
+            files: [],
+          },
+          {
+            id: 3,
+            name: "實驗報告繳交",
+            category: "作業繳交",
+            description: "請上傳實驗報告,需包含實驗過程與結果分析",
+            deadline: "2024-12-20T23:59",
+            maxFileSize: 15,
+            maxFiles: 5,
+            allowedTypes: "pdf,doc,docx",
+            uploadCount: 30,
+            totalStudents: 30,
+            status: "closed",
+            files: [],
+          },
+        ];
+      saveZones(uploadZones);
+
+      // 更新時間
+      function updateTime() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const date = String(now.getDate()).padStart(2, "0");
+        const hours = String(now.getHours()).padStart(2, "0");
+        const minutes = String(now.getMinutes()).padStart(2, "0");
+        const seconds = String(now.getSeconds()).padStart(2, "0");
+
+        const weekdays = [
+          "星期日",
+          "星期一",
+          "星期二",
+          "星期三",
+          "星期四",
+          "星期五",
+          "星期六",
+        ];
+        const weekday = weekdays[now.getDay()];
+        const period = now.getHours() >= 12 ? "下午" : "上午";
+
+        const timeString = `${year}年${month}月${date}日 ${weekday} ${period}${hours}:${minutes}:${seconds}`;
+        document.getElementById("timeDisplay").textContent = timeString;
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        updateTime();
+        setInterval(updateTime, 1000);
+        renderUploadZones();
+      });
+
+      function toggleMenu(element) {
+        const menuItem = element.parentElement;
+        const submenu = menuItem.querySelector(".submenu");
+        const isExpanded = menuItem.classList.contains("expanded");
+
+        document.querySelectorAll(".menu-item").forEach((item) => {
+          if (item !== menuItem) {
+            item.classList.remove("expanded");
+            const otherSubmenu = item.querySelector(".submenu");
+            if (otherSubmenu) {
+              otherSubmenu.classList.remove("show");
+            }
+          }
+        });
+
+        if (isExpanded) {
+          menuItem.classList.remove("expanded");
+          submenu.classList.remove("show");
+        } else {
+          menuItem.classList.add("expanded");
+          submenu.classList.add("show");
+        }
+      }
+
+      // 渲染上傳區列表
+      let statusFilter = "all";
+      function setStatusFilter(val) {
+        statusFilter = val;
+        ["all", "active", "closed"].forEach((k) =>
+          document.getElementById("chip_" + k).classList.remove("active")
+        );
+        document.getElementById("chip_" + val).classList.add("active");
+        renderUploadZones();
+      }
+
+      function renderUploadZones() {
+        const container = document.getElementById("uploadZones");
+        const q = (document.getElementById("searchInput")?.value || "")
+          .trim()
+          .toLowerCase();
+
+        if (uploadZones.length === 0) {
+          container.innerHTML = `
+                  <div class="empty-state">
+                      <i class="fas fa-folder-open"></i>
+                      <p>尚未建立任何上傳區</p>
+                  </div>
+              `;
+          return;
+        }
+
+        let filtered = q
+          ? uploadZones.filter(
+              (z) =>
+                (z.name || "").toLowerCase().includes(q) ||
+                (z.category || "").toLowerCase().includes(q) ||
+                (z.description || "").toLowerCase().includes(q)
+            )
+          : uploadZones;
+
+        if (statusFilter !== "all") {
+          filtered = filtered.filter((z) => z.status === statusFilter);
+        }
+
+        if (filtered.length === 0) {
+          container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p>找不到符合的上傳區</p></div>`;
+          return;
+        }
+
+        container.innerHTML = filtered
+          .map((zone) => {
+            const deadline = new Date(zone.deadline);
+            const uploadProgress = (
+              (zone.uploadCount / zone.totalStudents) *
+              100
+            ).toFixed(0);
+
+            return `
+                  <div class="zone-card">
+                      <div class="zone-header">
+                          <div>
+                              <div class="zone-title">
+                                  <i class="fas fa-folder"></i>${zone.name}
+                              </div>
+                              <div class="zone-meta">
+                                  <span class="meta-badge badge-category">${
+                                    zone.category
+                                  }</span>
+                                  <span class="meta-badge badge-deadline">
+                                      <i class="fas fa-clock"></i>${formatDateTime(
+                                        zone.deadline
+                                      )} 截止
+                                  </span>
+                                  <span class="meta-badge ${
+                                    zone.status === "active"
+                                      ? "badge-active"
+                                      : "badge-closed"
+                                  }">
+                                      ${
+                                        zone.status === "active"
+                                          ? "開放中"
+                                          : "已截止"
+                                      }
+                                  </span>
+                              </div>
+                          </div>
+                          <div class="upload-status ${
+                            zone.uploadCount >= zone.totalStudents
+                              ? "status-uploaded"
+                              : "status-pending"
+                          }">
+                              <i class="fas fa-${
+                                zone.uploadCount >= zone.totalStudents
+                                  ? "check-circle"
+                                  : "clock"
+                              }"></i>
+                              ${zone.uploadCount}/${zone.totalStudents}
+                          </div>
+                      </div>
+
+                      <div class="zone-description">${zone.description}</div>
+                      <div class="zone-rules">
+                          檔案規定：單檔 ≤ ${zone.maxFileSize}MB；每人最多 ${
+              zone.maxFiles
+            } 個。
+                          <div class="allowed-types">允許副檔名：${
+                            zone.allowedTypes || "未指定"
+                          }</div>
+                      </div>
+
+                      <div class="zone-info">
+                          <div class="info-item">
+                              <span class="info-label">大小限制</span>
+                              <span class="info-value">${
+                                zone.maxFileSize
+                              }MB</span>
+                          </div>
+                          <div class="info-item">
+                              <span class="info-label">數量限制</span>
+                              <span class="info-value">${zone.maxFiles}個</span>
+                          </div>
+                          <div class="info-item">
+                              <span class="info-label">上傳進度</span>
+                              <span class="info-value">${uploadProgress}%</span>
+                          </div>
+                      </div>
+
+                      ${
+                        zone.files.length > 0
+                          ? `
+                          <div class="uploaded-files">
+                              <h4><i class="fas fa-file-alt"></i> 已上傳檔案 (${
+                                zone.files.length
+                              })</h4>
+                              ${zone.files
+                                .map(
+                                  (file) => `
+                                  <div class="file-item">
+                                      <div class="file-info">
+                                          <div class="file-icon">
+                                              <i class="fas fa-file-pdf"></i>
+                                          </div>
+                                          <div class="file-details">
+                                              <div class="file-name">${file.name}</div>
+                                              <div class="file-meta">${file.uploader} • ${file.size}MB • ${file.uploadTime}</div>
+                                          </div>
+                                      </div>
+                                      <div class="file-actions">
+                                          <button class="btn btn-secondary btn-sm" onclick="downloadFile(${file.id})">
+                                              <i class="fas fa-download"></i>下載
+                                          </button>
+                                          <button class="btn btn-danger btn-sm" onclick="deleteFile(${zone.id}, ${file.id})">
+                                              <i class="fas fa-trash"></i>刪除
+                                          </button>
+                                      </div>
+                                  </div>
+                              `
+                                )
+                                .join("")}
+                          </div>
+                      `
+                          : ""
+                      }
+
+                      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 15px;">
+                          <button class="btn btn-secondary btn-sm" onclick="viewFiles(${
+                            zone.id
+                          })">
+                              <i class="fas fa-folder-open"></i>檢視檔案
+                          </button>
+                          <button class="btn btn-secondary btn-sm" onclick="editZone(${
+                            zone.id
+                          })">
+                              <i class="fas fa-edit"></i>編輯
+                          </button>
+                          <button class="btn btn-secondary btn-sm" onclick="toggleZoneStatus(${
+                            zone.id
+                          })">
+                              <i class="fas fa-${
+                                zone.status === "active" ? "pause" : "play"
+                              }"></i>
+                              ${zone.status === "active" ? "關閉" : "開啟"}
+                          </button>
+                          <button class="btn btn-danger btn-sm" onclick="deleteZone(${
+                            zone.id
+                          })">
+                              <i class="fas fa-trash"></i>刪除
+                          </button>
+                      </div>
+                  </div>
+              `;
+          })
+          .join("");
+      }
+
+      function clearSearch() {
+        const input = document.getElementById("searchInput");
+        if (input) {
+          input.value = "";
+        }
+        renderUploadZones();
+      }
+
+      // 建立上傳區
+      function toggleCreateZone() {
+        const card = document.getElementById("createZoneCard");
+        card.style.display = card.style.display === "block" ? "none" : "block";
+      }
+      function createZone() {
+        const name = document.getElementById("cz_name").value.trim();
+        const description = document
+          .getElementById("cz_description")
+          .value.trim();
+        const deadline = document.getElementById("cz_deadline").value;
+        const maxFileSize = parseInt(
+          document.getElementById("cz_maxSize").value,
+          10
+        );
+        const maxFiles = parseInt(
+          document.getElementById("cz_maxFiles").value,
+          10
+        );
+        const typesSelect = document.getElementById("cz_types");
+        const types = Array.from(typesSelect.selectedOptions)
+          .map((o) => o.value)
+          .join(",");
+
+        if (!name || !description) {
+          alert("請填寫標題與內容");
+          return;
+        }
+        if (!deadline) {
+          alert("請設定截止時間");
+          return;
+        }
+        if (isNaN(maxFileSize) || maxFileSize <= 0) {
+          alert("請輸入有效的大小上限");
+          return;
+        }
+        if (isNaN(maxFiles) || maxFiles <= 0) {
+          alert("請輸入有效的檔數上限");
+          return;
+        }
+
+        const id = uploadZones.length
+          ? Math.max(...uploadZones.map((z) => z.id)) + 1
+          : 1;
+        uploadZones.unshift({
+          id,
+          name,
+          category: "一般上傳",
+          description,
+          deadline,
+          maxFileSize,
+          maxFiles,
+          allowedTypes: types,
+          uploadCount: 0,
+          totalStudents: 0,
+          status: "active",
+          files: [],
+        });
+        saveZones(uploadZones);
+        renderUploadZones();
+        toggleCreateZone();
+        showSuccessMessage("上傳區已建立！");
+        // 清空表單
+        ["cz_name", "cz_description", "cz_deadline"].forEach(
+          (id) => (document.getElementById(id).value = "")
+        );
+        Array.from(document.getElementById("cz_types").options).forEach(
+          (o) => (o.selected = false)
+        );
+        document.getElementById("cz_maxSize").value = 10;
+        document.getElementById("cz_maxFiles").value = 3;
+      }
+
+      // 格式化日期時間
+      function formatDateTime(dateTimeStr) {
+        const date = new Date(dateTimeStr);
+        return date.toLocaleString("zh-TW", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      // 檢視檔案
+      function viewFiles(zoneId) {
+        const zone = uploadZones.find((z) => z.id === zoneId);
+        if (zone) {
+          alert(
+            `檢視 ${zone.name} 的所有檔案\n(實際應用中會開啟檔案列表對話框)`
+          );
+        }
+      }
+
+      // 編輯上傳區
+      function editZone(zoneId) {
+        const zone = uploadZones.find((z) => z.id === zoneId);
+        if (!zone) return;
+        if (document.getElementById("createZoneCard").style.display !== "block")
+          toggleCreateZone();
+        document.getElementById("cz_name").value = zone.name || "";
+        document.getElementById("cz_description").value =
+          zone.description || "";
+        document.getElementById("cz_deadline").value = zone.deadline || "";
+        document.getElementById("cz_maxSize").value = zone.maxFileSize || 10;
+        document.getElementById("cz_maxFiles").value = zone.maxFiles || 3;
+        const typesSet = (zone.allowedTypes || "").split(",");
+        Array.from(document.getElementById("cz_types").options).forEach(
+          (o) => (o.selected = typesSet.includes(o.value))
+        );
+        // 將建立按鈕轉為保存修改
+        const btn = document.querySelector(
+          "#createZoneCard .btn-primary-solid"
+        );
+        btn.innerHTML = '<i class="fas fa-save"></i> 保存修改';
+        btn.onclick = function () {
+          saveZoneEdits(zoneId);
+        };
+      }
+
+      function saveZoneEdits(zoneId) {
+        const zone = uploadZones.find((z) => z.id === zoneId);
+        if (!zone) return;
+        const name = document.getElementById("cz_name").value.trim();
+        const description = document
+          .getElementById("cz_description")
+          .value.trim();
+        const deadline = document.getElementById("cz_deadline").value;
+        const maxFileSize = parseInt(
+          document.getElementById("cz_maxSize").value,
+          10
+        );
+        const maxFiles = parseInt(
+          document.getElementById("cz_maxFiles").value,
+          10
+        );
+        const typesSelect = document.getElementById("cz_types");
+        const types = Array.from(typesSelect.selectedOptions)
+          .map((o) => o.value)
+          .join(",");
+        if (!name || !description) {
+          alert("請填寫標題與內容");
+          return;
+        }
+        if (!deadline) {
+          alert("請設定截止時間");
+          return;
+        }
+        if (isNaN(maxFileSize) || maxFileSize <= 0) {
+          alert("請輸入有效的大小上限");
+          return;
+        }
+        if (isNaN(maxFiles) || maxFiles <= 0) {
+          alert("請輸入有效的檔數上限");
+          return;
+        }
+        zone.name = name;
+        zone.description = description;
+        zone.deadline = deadline;
+        zone.maxFileSize = maxFileSize;
+        zone.maxFiles = maxFiles;
+        zone.allowedTypes = types;
+        saveZones(uploadZones);
+        renderUploadZones();
+        showSuccessMessage("上傳區已更新！");
+        // 還原建立卡片
+        const btn = document.querySelector(
+          "#createZoneCard .btn-primary-solid"
+        );
+        btn.innerHTML = '<i class="fas fa-save"></i> 建立';
+        btn.onclick = function () {
+          createZone();
+        };
+        toggleCreateZone();
+        // 清空表單
+        ["cz_name", "cz_description", "cz_deadline"].forEach(
+          (id) => (document.getElementById(id).value = "")
+        );
+        Array.from(document.getElementById("cz_types").options).forEach(
+          (o) => (o.selected = false)
+        );
+        document.getElementById("cz_maxSize").value = 10;
+        document.getElementById("cz_maxFiles").value = 3;
+      }
+
+      // 切換上傳區狀態
+      function toggleZoneStatus(zoneId) {
+        const zone = uploadZones.find((z) => z.id === zoneId);
+        if (zone) {
+          zone.status = zone.status === "active" ? "closed" : "active";
+          saveZones(uploadZones);
+          renderUploadZones();
+          showSuccessMessage(
+            `上傳區已${zone.status === "active" ? "開啟" : "關閉"}!`
+          );
+        }
+      }
+
+      // 刪除上傳區
+      function deleteZone(zoneId) {
+        const zone = uploadZones.find((z) => z.id === zoneId);
+        if (!zone) return;
+
+        if (
+          confirm(
+            `確定要刪除「${zone.name}」嗎?\n此操作將同時刪除所有已上傳的檔案,且無法復原。`
+          )
+        ) {
+          uploadZones = uploadZones.filter((z) => z.id !== zoneId);
+          saveZones(uploadZones);
+          renderUploadZones();
+          showSuccessMessage("上傳區已刪除!");
+        }
+      }
+
+      // 下載檔案
+      function downloadFile(fileId) {
+        alert("下載檔案功能 (實際應用中會下載檔案)");
+      }
+
+      // 刪除檔案
+      function deleteFile(zoneId, fileId) {
+        if (confirm("確定要刪除此檔案嗎?")) {
+          const zone = uploadZones.find((z) => z.id === zoneId);
+          if (zone) {
+            zone.files = zone.files.filter((f) => f.id !== fileId);
+            zone.uploadCount--;
+            renderUploadZones();
+            showSuccessMessage("檔案已刪除!");
+          }
+        }
+      }
+
+      // 顯示成功訊息
+      function showSuccessMessage(message) {
+        const successMessage = document.getElementById("successMessage");
+        document.getElementById("successMessageText").textContent = message;
+        successMessage.style.display = "flex";
+
+        setTimeout(() => {
+          successMessage.style.display = "none";
+        }, 3000);
+
+        successMessage.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest(".menu")) {
+          document.querySelectorAll(".menu-item").forEach((item) => {
+            if (!item.querySelector(".menu-link.active")) {
+              item.classList.remove("expanded");
+              const submenu = item.querySelector(".submenu");
+              if (submenu) {
+                submenu.classList.remove("show");
+              }
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

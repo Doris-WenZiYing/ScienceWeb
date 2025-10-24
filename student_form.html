@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <title>科學會 - 活動回饋表單</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap"
+      rel="stylesheet"
+    />
+    <script src="notification-center.js" defer></script>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .header {
+        height: 70px;
+        background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 100;
+      }
+      .header::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      }
+      .header img.logo {
+        height: 50px;
+        cursor: pointer;
+      }
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        position: relative;
+      }
+      .icon,
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+      .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+        color: white;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid white;
+        box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        animation: badgePulse 2s infinite;
+      }
+
+      .notification-badge.active {
+        display: flex;
+      }
+
+      @keyframes badgePulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        }
+        50% {
+          transform: scale(1.2);
+          box-shadow: 0 6px 20px rgba(255, 71, 87, 0.8);
+        }
+      }
+
+      .notification-panel {
+        position: absolute;
+        top: 65px;
+        right: 0;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        display: none;
+        width: 400px;
+        max-height: 550px;
+        z-index: 1001;
+        overflow: hidden;
+        animation: panelFade 0.3s ease;
+        flex-direction: column;
+      }
+
+      @keyframes panelFade {
+        from {
+          opacity: 0;
+          transform: translateY(-15px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .notification-panel.active {
+        display: flex;
+      }
+
+      .notification-header {
+        padding: 20px 25px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .notification-header h3 {
+        font-size: 17px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .notification-header i {
+        font-size: 20px;
+      }
+
+      .mark-all-read {
+        background: rgba(255, 255, 255, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 7px 14px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .mark-all-read:hover {
+        background: rgba(255, 255, 255, 0.35);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+      }
+
+      .notification-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+      }
+
+      .notification-item {
+        padding: 16px;
+        margin-bottom: 8px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+        border-left: 4px solid transparent;
+        position: relative;
+      }
+
+      .notification-item:hover {
+        background: #f0f1f2;
+        transform: translateX(4px);
+      }
+
+      .notification-item.unread {
+        background: linear-gradient(135deg, #e8f9f8 0%, #f0fffe 100%);
+        border-left-color: #11998e;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.15);
+      }
+
+      .notification-item.unread::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 10px;
+        height: 10px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border-radius: 50%;
+        animation: unreadPulse 2s infinite;
+      }
+
+      @keyframes unreadPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.8;
+        }
+      }
+
+      .notification-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+
+      .notification-item-title {
+        font-weight: 700;
+        color: #333;
+        flex: 1;
+        margin-right: 10px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .notification-type-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: white;
+        flex-shrink: 0;
+      }
+
+      .notification-type-icon.info {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      }
+
+      .notification-type-icon.warning {
+        background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
+      }
+
+      .notification-item-time {
+        font-size: 12px;
+        color: #999;
+        white-space: nowrap;
+      }
+
+      .notification-item-message {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+
+      .notification-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .notification-btn {
+        font-size: 11px;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .notification-btn-read {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.2);
+      }
+
+      .notification-btn-read:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+      }
+
+      .notification-btn-clear {
+        background: #ffe8e8;
+        color: #d32f2f;
+        box-shadow: 0 2px 8px rgba(211, 47, 47, 0.1);
+      }
+
+      .notification-btn-clear:hover {
+        background: #ffcccb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+      }
+
+      .empty-notification {
+        padding: 50px 20px;
+        text-align: center;
+        color: #999;
+      }
+      .icon-wrapper {
+        position: relative;
+      }
+      .empty-notification i {
+        font-size: 45px;
+        margin-bottom: 15px;
+        opacity: 0.4;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .empty-notification p {
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .dropdown-menu {
+        position: absolute;
+        top: 70px;
+        right: 0;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        display: none;
+        flex-direction: column;
+        min-width: 140px;
+        z-index: 200;
+      }
+      .dropdown-menu a {
+        padding: 10px 15px;
+        text-decoration: none;
+        color: #333;
+        display: block;
+        font-size: 14px;
+      }
+      .dropdown-menu a:hover {
+        background: #f5f5f5;
+        color: #667eea;
+      }
+
+      .main {
+        display: flex;
+        height: calc(100% - 70px);
+      }
+
+      .sidebar {
+        width: 250px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        padding-top: 30px;
+        overflow-y: auto;
+        flex-shrink: 0;
+        min-height: 0;
+        scrollbar-width: thin;
+        scrollbar-color: #667eea rgba(0, 0, 0, 0.1);
+      }
+      .sidebar::-webkit-scrollbar {
+        width: 8px;
+      }
+      .sidebar::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+      }
+      .sidebar::-webkit-scrollbar-thumb {
+        background-color: #667eea;
+        border-radius: 4px;
+      }
+
+      .menu a {
+        display: flex;
+        align-items: center;
+        padding: 15px 30px;
+        text-decoration: none;
+        color: #555;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+      }
+      .menu a:hover,
+      .menu a.active {
+        color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+        border-left: 4px solid #667eea;
+      }
+      .menu a i {
+        margin-right: 15px;
+      }
+
+      .content {
+        flex: 1;
+        padding: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        overflow-y: auto;
+      }
+
+      .form-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 600px;
+        margin: 0 auto;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      }
+      .form-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+        color: #444;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #667eea;
+        color: white;
+      }
+      button:hover {
+        background: #5a6ddd;
+      }
+      .success-msg {
+        display: none;
+        text-align: center;
+        color: #28a745;
+        margin-top: 15px;
+      }
+
+      @media (max-width: 768px) {
+        .main {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+          order: 2;
+        }
+        .content {
+          order: 1;
+          padding: 20px;
+        }
+      }
+      @media (max-width: 480px) {
+        .header img.logo {
+          height: 40px;
+        }
+        .header-right {
+          gap: 10px;
+        }
+        .icon,
+        .avatar {
+          width: 32px;
+          height: 32px;
+          font-size: 14px;
+        }
+        .form-container {
+          padding: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body class="student-page">
+    <div class="header">
+      <img
+        src="image/logo1.gif"
+        alt="Logo"
+        class="logo"
+        onclick="location.href='student_index.html'"
+      />
+      <div class="header-right">
+        <div class="icon-wrapper">
+          <div class="icon" id="notificationBell">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="notification-badge" id="notificationBadge">0</div>
+        </div>
+        <div class="notification-panel" id="notificationPanel">
+          <div class="notification-header">
+            <h3><i class="fas fa-bell"></i> 通知中心</h3>
+            <button class="mark-all-read">
+              <i class="fas fa-check-double"></i> 全部已讀
+            </button>
+          </div>
+          <div class="notification-list" id="notificationList">
+            <div class="empty-notification">
+              <i class="fas fa-inbox"></i>
+              <p>沒有通知</p>
+            </div>
+          </div>
+        </div>
+        <div class="avatar" onclick="toggleMenu()">
+          <i class="fas fa-user"></i>
+        </div>
+        <div id="userMenu" class="dropdown-menu">
+          <a href="#" onclick="logout()"
+            ><i class="fas fa-sign-out-alt" style="margin-right: 8px"></i
+            >登出</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="sidebar">
+        <div class="menu">
+          <a href="student_index.html"><i class="fas fa-home"></i>學生首頁</a>
+          <a href="student_activities.html"
+            ><i class="fas fa-calendar-alt"></i>活動行事曆</a
+          >
+          <a href="student_registration.html"
+            ><i class="fas fa-user-plus"></i>線上報名</a
+          >
+          <a href="student_activities_modify.html"
+            ><i class="fas fa-edit"></i>活動報名修改</a
+          >
+          <a href="student_profile.html"
+            ><i class="fas fa-user-circle"></i>查看個人活動紀錄</a
+          >
+          <a href="student_upload.html"
+            ><i class="fas fa-cloud-upload-alt"></i>檔案上傳</a
+          >
+          <a href="student_files.html"
+            ><i class="fas fa-folder-open"></i>查看上傳檔案</a
+          >
+          <a href="student_form.html" class="active"
+            ><i class="fas fa-chart-pie"></i>填寫活動回饋</a
+          >
+          <a href="student_image.html"><i class="fas fa-image"></i>活動相簿</a>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="form-container">
+          <h2>活動回饋表單</h2>
+          <form id="feedbackForm">
+            <div class="form-group">
+              <label for="activity">活動名稱</label>
+              <select id="activity" required>
+                <option value="">請選擇活動</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="studentName">姓名</label>
+              <input type="text" id="studentName" required />
+            </div>
+            <div class="form-group">
+              <label for="satisfaction">滿意度 (1-5)</label>
+              <select id="satisfaction" required>
+                <option value="5">非常滿意</option>
+                <option value="4">滿意</option>
+                <option value="3">普通</option>
+                <option value="2">不滿意</option>
+                <option value="1">非常不滿意</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="comment">意見建議</label>
+              <textarea id="comment"></textarea>
+            </div>
+            <button type="submit">送出反饋</button>
+          </form>
+          <div class="success-msg" id="successMsg">✅ 感謝您的反饋！</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 下拉選單功能
+      function toggleMenu() {
+        const menu = document.getElementById("userMenu");
+        menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+      }
+
+      function logout() {
+        location.href = "login_student.html";
+      }
+
+      document.addEventListener("click", (e) => {
+        const avatar = document.querySelector(".avatar");
+        const menu = document.getElementById("userMenu");
+        if (!avatar.contains(e.target) && !menu.contains(e.target)) {
+          menu.style.display = "none";
+        }
+      });
+
+      // === 活動回饋表單功能 ===
+      const activitySelect = document.getElementById("activity");
+      const feedbackForm = document.getElementById("feedbackForm");
+      const successMsg = document.getElementById("successMsg");
+
+      // 載入活動選項
+      async function loadActivities() {
+        try {
+          console.log("🔍 開始載入活動選項...");
+          const response = await fetch(
+            "student_api.php?action=get_feedback_forms"
+          );
+
+          if (!response.ok) {
+            throw new Error("HTTP錯誤: " + response.status);
+          }
+
+          const result = await response.json();
+          console.log("📦 API 回應:", result);
+
+          // 清空現有選項（保留預設的"請選擇活動"）
+          activitySelect.innerHTML = '<option value="">請選擇活動</option>';
+
+          if (result.success && result.data && result.data.length > 0) {
+            result.data.forEach((form) => {
+              const opt = document.createElement("option");
+              opt.value = form.id;
+              opt.textContent = form.name;
+              activitySelect.appendChild(opt);
+            });
+            console.log(`✅ 已載入 ${result.data.length} 個活動`);
+          } else {
+            // 如果 API 沒有資料，使用模擬資料
+            console.warn("⚠️ API 沒有回傳活動資料，使用模擬資料");
+            const mockActivities = [
+              { id: 1, name: "科學營2025" },
+              { id: 2, name: "物理實驗工作坊" },
+              { id: 3, name: "校園科技展" },
+            ];
+            mockActivities.forEach((a) => {
+              const opt = document.createElement("option");
+              opt.value = a.id;
+              opt.textContent = a.name;
+              activitySelect.appendChild(opt);
+            });
+          }
+        } catch (error) {
+          console.error("❌ 載入活動失敗:", error);
+          alert("載入活動列表失敗，請重新整理頁面");
+        }
+      }
+
+      // 表單提交處理（只保留這一個）
+      feedbackForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        // 獲取表單資料
+        const activityId = activitySelect.value;
+        const studentName = document.getElementById("studentName").value.trim();
+        const satisfaction = document.getElementById("satisfaction").value;
+        const comment = document.getElementById("comment").value.trim();
+
+        // 前端驗證
+        if (!activityId) {
+          alert("❌ 請選擇活動");
+          activitySelect.focus();
+          return;
+        }
+
+        if (!studentName) {
+          alert("❌ 請填寫姓名");
+          document.getElementById("studentName").focus();
+          return;
+        }
+
+        if (studentName.length < 2) {
+          alert("❌ 姓名至少需要2個字");
+          document.getElementById("studentName").focus();
+          return;
+        }
+
+        console.log("📤 準備提交回饋:", {
+          activityId,
+          studentName,
+          satisfaction,
+          comment,
+        });
+
+        try {
+          // 建立表單資料
+          const formData = new FormData();
+          formData.append("action", "submit_feedback");
+          formData.append("activityId", activityId);
+          formData.append("studentName", studentName);
+          formData.append("satisfaction", satisfaction);
+          formData.append("comment", comment);
+
+          // 發送 API 請求
+          const response = await fetch("student_api.php", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error("HTTP錯誤: " + response.status);
+          }
+
+          const result = await response.json();
+          console.log("📦 提交結果:", result);
+
+          if (result.success) {
+            // 成功提示
+            successMsg.style.display = "block";
+            successMsg.textContent =
+              "✅ " + (result.message || "感謝您的反饋！");
+
+            // 重置表單
+            feedbackForm.reset();
+
+            // 3秒後隱藏成功訊息
+            setTimeout(() => {
+              successMsg.style.display = "none";
+            }, 3000);
+          } else {
+            // 失敗提示
+            alert("❌ " + (result.message || "提交失敗，請稍後再試"));
+          }
+        } catch (error) {
+          console.error("❌ 提交錯誤:", error);
+          alert("❌ 提交時發生錯誤: " + error.message);
+        }
+      });
+
+      // 頁面載入時執行
+      window.addEventListener("DOMContentLoaded", () => {
+        console.log("🚀 頁面載入完成");
+        loadActivities();
+      });
+    </script>
+  </body>
+</html>

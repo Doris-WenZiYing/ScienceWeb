@@ -25,6 +25,249 @@
         overflow: hidden;
       }
 
+      .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+        color: white;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid white;
+        box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        animation: badgePulse 2s infinite;
+      }
+      .notification-badge.active {
+        display: flex;
+      }
+      @keyframes badgePulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        }
+        50% {
+          transform: scale(1.2);
+          box-shadow: 0 6px 20px rgba(255, 71, 87, 0.8);
+        }
+      }
+      .notification-panel {
+        position: absolute;
+        top: 65px;
+        right: 0;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        display: none;
+        width: 400px;
+        max-height: 550px;
+        z-index: 1001;
+        overflow: hidden;
+        animation: panelFade 0.3s ease;
+        flex-direction: column;
+      }
+      @keyframes panelFade {
+        from {
+          opacity: 0;
+          transform: translateY(-15px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .notification-panel.active {
+        display: flex;
+      }
+      .notification-header {
+        padding: 20px 25px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      }
+      .notification-header h3 {
+        font-size: 17px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .notification-header i {
+        font-size: 20px;
+      }
+      .mark-all-read {
+        background: rgba(255, 255, 255, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 7px 14px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      .mark-all-read:hover {
+        background: rgba(255, 255, 255, 0.35);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+      }
+      .notification-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+      }
+      .notification-item {
+        padding: 16px;
+        margin-bottom: 8px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+        border-left: 4px solid transparent;
+        position: relative;
+      }
+      .notification-item:hover {
+        background: #f0f1f2;
+        transform: translateX(4px);
+      }
+      .notification-item.unread {
+        background: linear-gradient(135deg, #e8f9f8 0%, #f0fffe 100%);
+        border-left-color: #11998e;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.15);
+      }
+      .notification-item.unread::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 10px;
+        height: 10px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border-radius: 50%;
+        animation: unreadPulse 2s infinite;
+      }
+      @keyframes unreadPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.8;
+        }
+      }
+      .notification-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .notification-item-title {
+        font-weight: 700;
+        color: #333;
+        flex: 1;
+        margin-right: 10px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .notification-type-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: white;
+        flex-shrink: 0;
+      }
+      .notification-type-icon.info {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      }
+      .notification-type-icon.warning {
+        background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
+      }
+      .notification-item-time {
+        font-size: 12px;
+        color: #999;
+        white-space: nowrap;
+      }
+      .notification-item-message {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+      .notification-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .notification-btn {
+        font-size: 11px;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .notification-btn-read {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.2);
+      }
+      .notification-btn-read:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+      }
+      .notification-btn-clear {
+        background: #ffe8e8;
+        color: #d32f2f;
+        box-shadow: 0 2px 8px rgba(211, 47, 47, 0.1);
+      }
+      .notification-btn-clear:hover {
+        background: #ffcccb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+      }
+      .empty-notification {
+        padding: 50px 20px;
+        text-align: center;
+        color: #999;
+      }
+      .empty-notification i {
+        font-size: 45px;
+        margin-bottom: 15px;
+        opacity: 0.4;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .empty-notification p {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .icon-wrapper {
+        position: relative;
+      }
+
       .header {
         height: 70px;
         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -114,7 +357,6 @@
       }
 
       .icon::after {
-        content: "3";
         position: absolute;
         top: -5px;
         right: -5px;
@@ -238,195 +480,6 @@
       .dropdown a i {
         margin-right: 8px;
         width: 16px;
-      }
-
-      /* 通知面板樣式 */
-      .notification-panel {
-        position: absolute;
-        top: 65px;
-        right: 80px;
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        display: none;
-        width: 380px;
-        max-height: 500px;
-        z-index: 1000;
-        animation: dropdownFade 0.3s ease;
-        overflow: hidden;
-      }
-
-      .notification-header {
-        padding: 20px;
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-radius: 15px 15px 0 0;
-      }
-
-      .notification-header h3 {
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0;
-      }
-
-      .notification-actions {
-        display: flex;
-        gap: 10px;
-      }
-
-      .notification-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        padding: 5px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 12px;
-        transition: all 0.3s ease;
-      }
-
-      .notification-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.05);
-      }
-
-      .notification-list {
-        max-height: 400px;
-        overflow-y: auto;
-      }
-
-      .notification-item {
-        padding: 15px 20px;
-        border-bottom: 1px solid #f0f0f0;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        position: relative;
-        display: flex;
-        gap: 12px;
-      }
-
-      .notification-item:hover {
-        background: rgba(131, 96, 195, 0.05);
-      }
-
-      .notification-item.unread {
-        background: rgba(131, 96, 195, 0.08);
-      }
-
-      .notification-item.unread::before {
-        content: "";
-        position: absolute;
-        left: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 8px;
-        height: 8px;
-        background: #e74c3c;
-        border-radius: 50%;
-      }
-
-      .notification-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        flex-shrink: 0;
-      }
-
-      .notification-icon.activity {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        color: white;
-      }
-
-      .notification-icon.deadline {
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-        color: white;
-      }
-
-      .notification-icon.announcement {
-        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-        color: white;
-      }
-
-      .notification-content {
-        flex: 1;
-      }
-
-      .notification-title {
-        font-size: 14px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 4px;
-      }
-
-      .notification-text {
-        font-size: 13px;
-        color: #666;
-        margin-bottom: 4px;
-      }
-
-      .notification-time {
-        font-size: 11px;
-        color: #999;
-      }
-
-      .notification-delete {
-        position: absolute;
-        right: 15px;
-        top: 15px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: rgba(231, 76, 60, 0.1);
-        color: #e74c3c;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        opacity: 0;
-        transition: all 0.3s ease;
-        z-index: 5;
-      }
-
-      .notification-item:hover .notification-delete {
-        opacity: 1;
-      }
-
-      .notification-delete:hover {
-        background: #e74c3c;
-        color: white;
-        transform: scale(1.1);
-      }
-
-      .notification-empty {
-        padding: 60px 20px;
-        text-align: center;
-        color: #999;
-      }
-
-      .notification-empty i {
-        font-size: 48px;
-        color: #ddd;
-        margin-bottom: 15px;
-      }
-
-      .notification-list::-webkit-scrollbar {
-        width: 6px;
-      }
-      .notification-list::-webkit-scrollbar-track {
-        background: #f0f0f0;
-      }
-      .notification-list::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        border-radius: 3px;
       }
 
       .main {
@@ -1139,30 +1192,33 @@
         <img src="image/logo1.gif" alt="Logo" class="logo" />
       </div>
       <div class="header-right">
-        <div class="icon" id="notificationIcon">
-          <i class="fas fa-bell"></i>
+        <div class="icon-wrapper">
+          <div class="icon" id="notificationBell">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="notification-badge" id="notificationBadge">0</div>
         </div>
         <div class="notification-panel" id="notificationPanel">
           <div class="notification-header">
-            <h3>通知</h3>
-            <div class="notification-actions">
-              <button class="notification-btn">全部已讀</button>
-              <button
-                class="notification-btn"
-                onclick="clearAllNotifications()"
-              >
-                清除全部
-              </button>
+            <h3><i class="fas fa-bell"></i> 通知中心</h3>
+            <button class="mark-all-read">
+              <i class="fas fa-check-double"></i> 全部已讀
+            </button>
+          </div>
+          <div class="notification-list" id="notificationList">
+            <div class="empty-notification">
+              <i class="fas fa-inbox"></i>
+              <p>沒有通知</p>
             </div>
           </div>
-          <div class="notification-list" id="notificationList"></div>
         </div>
         <div class="avatar" id="avatar">
-          <i class="fas fa-user-shield"></i>
+          <i class="fas fa-user"></i>
         </div>
         <div class="dropdown" id="dropdown">
-          <a href="login_science_club.html">
-            <i class="fas fa-sign-out-alt"></i> 登出
+          <a href="login_teacher.html">
+            <i class="fas fa-sign-out-alt"></i>
+            登出
           </a>
         </div>
       </div>
@@ -1311,6 +1367,15 @@
               />
             </div>
             <div class="form-group">
+              <label for="albumActivity">活動名稱</label>
+              <input
+                type="text"
+                id="albumActivity"
+                placeholder="例如：新生迎新活動"
+                required
+              />
+            </div>
+            <div class="form-group">
               <label for="albumDate">活動日期</label>
               <input type="date" id="albumDate" required />
             </div>
@@ -1351,6 +1416,10 @@
             <div class="form-group">
               <label for="editAlbumTitle">相簿標題</label>
               <input type="text" id="editAlbumTitle" required />
+            </div>
+            <div class="form-group">
+              <label for="editAlbumActivity">活動名稱</label>
+              <input type="text" id="editAlbumActivity" required />
             </div>
             <div class="form-group">
               <label for="editAlbumDate">活動日期</label>
@@ -1421,50 +1490,93 @@
     </div>
 
     <script>
-      // 模擬數據庫：相簿列表
-      let albumData = [
-        {
-          id: 1,
-          title: "科學營大成功",
-          date: "2025-10-07",
-          desc: "為期三天的科學營圓滿落幕，收錄了所有精彩的瞬間！感謝所有參與的學生和志工！",
-          count: 3,
-        },
-        {
-          id: 2,
-          title: "新進志工培訓",
-          date: "2025-09-01",
-          desc: "新學年志工培訓活動紀錄，期待新血加入！",
-          count: 0,
-        },
-      ];
+      // ==========================================
+      // API 配置
+      // ==========================================
+      const API_URL = 'api.php';
+      
+      // 模擬數據庫：相簿列表（將從 API 載入）
+      let albumData = [];
 
-      // 模擬數據庫：媒體項目 (按相簿 ID 分組)
-      let mediaData = {
-        1: [
-          {
-            id: "m1",
-            type: "image",
-            url: "https://picsum.photos/600/600?random=1",
-          },
-          {
-            id: "m2",
-            type: "image",
-            url: "https://picsum.photos/600/600?random=2",
-          },
-          {
-            id: "m3",
-            type: "image",
-            url: "https://picsum.photos/600/600?random=3",
-          },
-        ],
-        2: [],
-      };
+      // 模擬數據庫：媒體項目 (按相簿 ID 分組)（將從 API 載入）
+      let mediaData = {};
 
       let currentAlbumId = null;
       // 預覽所需的狀態
       let previewList = [];
       let previewIndex = -1;
+
+      // ==========================================
+      // 初始化 - 從 API 載入數據
+      // ==========================================
+      document.addEventListener('DOMContentLoaded', async function() {
+        await loadAlbums();
+      });
+
+      // ==========================================
+      // API 函數：載入相簿列表
+      // ==========================================
+      async function loadAlbums() {
+        try {
+          const response = await fetch(`${API_URL}?action=get_albums`);
+          const result = await response.json();
+          
+          if (result.success) {
+            // 轉換 API 數據格式到前端格式
+            albumData = result.data.map(album => ({
+              id: album.album_id,
+              title: album.album_name,
+              activityName: album.activity_name,
+              date: album.created_at.split(' ')[0], // 只取日期部分
+              desc: album.description || '',
+              count: 0, // 將在載入媒體時更新
+              isPublic: album.is_public
+            }));
+            
+            // 為每個相簿初始化媒體數組
+            for (const album of albumData) {
+              mediaData[album.id] = [];
+              await loadAlbumMedia(album.id);
+            }
+            
+            renderAlbumList();
+          } else {
+            showNotification('載入相簿失敗: ' + result.message, 'error');
+          }
+        } catch (error) {
+          console.error('載入相簿失敗:', error);
+          showNotification('載入相簿失敗，請稍後再試', 'error');
+        }
+      }
+
+      // ==========================================
+      // API 函數：載入相簿媒體
+      // ==========================================
+      async function loadAlbumMedia(albumId) {
+        try {
+          const response = await fetch(`${API_URL}?action=get_album_media&album_id=${albumId}`);
+          const result = await response.json();
+          
+          if (result.success) {
+            // 轉換 API 數據格式到前端格式
+            mediaData[albumId] = result.data.map(media => ({
+              id: media.media_id,
+              type: media.media_type,
+              url: media.file_path,
+              fileName: media.file_name,
+              description: media.description
+            }));
+            
+            // 更新相簿的媒體計數
+            const album = albumData.find(a => a.id == albumId);
+            if (album) {
+              album.count = mediaData[albumId].length;
+            }
+          }
+        } catch (error) {
+          console.error('載入相簿媒體失敗:', error);
+        }
+      }
 
       // --- 視圖切換函數 ---
 
@@ -1536,6 +1648,7 @@
         document.getElementById("addAlbumModal").classList.add("show");
         // 清空表單
         document.getElementById("albumTitle").value = "";
+        document.getElementById("albumActivity").value = "";
         document.getElementById("albumDate").value = "";
         document.getElementById("albumDescription").value = "";
       }
@@ -1547,6 +1660,7 @@
         // 填充表單
         document.getElementById("editAlbumId").value = album.id;
         document.getElementById("editAlbumTitle").value = album.title;
+        document.getElementById("editAlbumActivity").value = album.activityName || '';
         document.getElementById("editAlbumDate").value = album.date;
         document.getElementById("editAlbumDescription").value = album.desc;
 
@@ -1611,147 +1725,218 @@
         }
       }
 
-      // --- CRUD 函數 (模擬) ---
+      // --- CRUD 函數 (串接 API) ---
 
-      function saveAlbum() {
-        const title = document.getElementById("albumTitle").value;
+      async function saveAlbum() {
+        const title = document.getElementById("albumTitle").value.trim();
+        const activityName = document.getElementById("albumActivity").value.trim();
         const date = document.getElementById("albumDate").value;
-        const desc = document.getElementById("albumDescription").value;
+        const desc = document.getElementById("albumDescription").value.trim();
 
-        if (!title || !date) {
-          alert("請填寫相簿標題和日期！");
+        if (!title || !activityName || !date) {
+          showNotification('請填寫相簿標題、活動名稱和日期！', 'error');
           return;
         }
 
-        // 模擬新增邏輯
-        const newAlbumId =
-          albumData.length > 0
-            ? Math.max(...albumData.map((a) => a.id)) + 1
-            : 1;
-        albumData.push({
-          id: newAlbumId,
-          title: title,
-          date: date,
-          desc: desc,
-          count: 0,
-        });
-        mediaData[newAlbumId] = []; // 初始化媒體列表
+        const formData = new FormData();
+        formData.append('action', 'add_album');
+        formData.append('album_name', title);
+        formData.append('activity_name', activityName);
+        formData.append('description', desc);
+        formData.append('is_public', 1);
 
-        renderAlbumList();
-        closeModal("addAlbumModal");
-        alert(`✅ 相簿「${title}」已成功新增！`);
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: formData
+          });
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            showNotification(`✅ 相簿「${title}」已成功新增！`, 'success');
+            closeModal("addAlbumModal");
+            await loadAlbums(); // 重新載入列表
+          } else {
+            showNotification('新增失敗: ' + result.message, 'error');
+          }
+        } catch (error) {
+          console.error('新增相簿失敗:', error);
+          showNotification('新增失敗，請稍後再試', 'error');
+        }
       }
 
-      function updateAlbum() {
+      async function updateAlbum() {
         const albumId = parseInt(document.getElementById("editAlbumId").value);
-        const title = document.getElementById("editAlbumTitle").value;
+        const title = document.getElementById("editAlbumTitle").value.trim();
+        const activityName = document.getElementById("editAlbumActivity").value.trim();
         const date = document.getElementById("editAlbumDate").value;
-        const desc = document.getElementById("editAlbumDescription").value;
+        const desc = document.getElementById("editAlbumDescription").value.trim();
 
-        if (!title || !date) {
-          alert("請填寫相簿標題和日期！");
+        if (!title || !activityName || !date) {
+          showNotification('請填寫相簿標題、活動名稱和日期！', 'error');
           return;
         }
 
-        const albumIndex = albumData.findIndex((a) => a.id === albumId);
-        if (albumIndex > -1) {
-          albumData[albumIndex].title = title;
-          albumData[albumIndex].date = date;
-          albumData[albumIndex].desc = desc;
+        const formData = new FormData();
+        formData.append('action', 'update_album');
+        formData.append('album_id', albumId);
+        formData.append('album_name', title);
+        formData.append('activity_name', activityName);
+        formData.append('description', desc);
 
-          renderAlbumList();
-          closeModal("editAlbumModal");
-          alert(`✅ 相簿「${title}」已成功修改！`);
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: formData
+          });
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            showNotification(`✅ 相簿「${title}」已成功修改！`, 'success');
+            closeModal("editAlbumModal");
+            await loadAlbums(); // 重新載入列表
+          } else {
+            showNotification('修改失敗: ' + result.message, 'error');
+          }
+        } catch (error) {
+          console.error('修改相簿失敗:', error);
+          showNotification('修改失敗，請稍後再試', 'error');
         }
       }
 
-      function deleteAlbum(albumId) {
+      async function deleteAlbum(albumId) {
         const album = albumData.find((a) => a.id === albumId);
         if (!album) return;
 
         if (
-          confirm(
+          !confirm(
             `確定要永久刪除相簿「${album.title}」嗎？此操作無法恢復，內含 ${album.count} 個項目！`
           )
         ) {
-          // 模擬刪除相簿及其媒體
-          albumData = albumData.filter((a) => a.id !== albumId);
-          delete mediaData[albumId];
+          return;
+        }
 
-          renderAlbumList();
-          closeAllManagementMenus();
-          alert(`✅ 相簿「${album.title}」已刪除。`);
+        const formData = new FormData();
+        formData.append('action', 'delete_album');
+        formData.append('album_id', albumId);
+
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: formData
+          });
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            showNotification(`✅ 相簿「${album.title}」已刪除。`, 'success');
+            closeAllManagementMenus();
+            await loadAlbums(); // 重新載入列表
+          } else {
+            showNotification('刪除失敗: ' + result.message, 'error');
+          }
+        } catch (error) {
+          console.error('刪除相簿失敗:', error);
+          showNotification('刪除失敗，請稍後再試', 'error');
         }
       }
 
-      function deleteMedia(albumId, mediaId) {
-        if (confirm("確定要刪除此媒體項目嗎？此操作無法恢復！")) {
-          const index = mediaData[albumId].findIndex((m) => m.id === mediaId);
-          if (index > -1) {
-            // 模擬刪除
-            const fileUrl = mediaData[albumId][index].url;
-            mediaData[albumId].splice(index, 1);
-            albumData.find((a) => a.id === albumId).count =
-              mediaData[albumId].length;
+      async function deleteMedia(albumId, mediaId) {
+        if (!confirm("確定要刪除此媒體項目嗎？此操作無法恢復！")) {
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('action', 'delete_media');
+        formData.append('media_id', mediaId);
+
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: formData
+          });
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            showNotification("✅ 媒體項目已刪除。", 'success');
+            await loadAlbumMedia(albumId); // 重新載入該相簿的媒體
             renderAlbumList(); // 更新列表計數
             renderMediaGrid(albumId); // 重新渲染媒體牆
-
-            // 清理暫時的 Blob URL
-            if (fileUrl.startsWith("blob:")) {
-              URL.revokeObjectURL(fileUrl);
-            }
-            alert("✅ 媒體項目已刪除。");
+          } else {
+            showNotification('刪除失敗: ' + result.message, 'error');
           }
+        } catch (error) {
+          console.error('刪除媒體失敗:', error);
+          showNotification('刪除失敗，請稍後再試', 'error');
         }
       }
 
-      // 模擬上傳媒體檔案（管理員功能）
-      function uploadMedia(files) {
-        if (!currentAlbumId) return alert("錯誤：未選定相簿！");
+      // 上傳媒體檔案（管理員功能）
+      async function uploadMedia(files) {
+        if (!currentAlbumId) {
+          showNotification("錯誤：未選定相簿！", 'error');
+          return;
+        }
 
         const albumId = currentAlbumId;
-        const currentMedia = mediaData[albumId];
-
         const uploadedCount = files.length;
         if (uploadedCount === 0) return;
 
         let successCount = 0;
+        let failCount = 0;
+
+        showNotification(`開始上傳 ${uploadedCount} 個檔案...`, 'info');
+
         for (let i = 0; i < uploadedCount; i++) {
           const file = files[i];
-          const fileType = file.type.startsWith("image/")
-            ? "image"
-            : file.type.startsWith("video/")
-            ? "video"
-            : null;
+          const fileType = file.type;
 
-          if (!fileType) {
-            console.warn("不支援的檔案類型:", file.type);
+          // 檢查檔案類型
+          if (!fileType.startsWith("image/") && !fileType.startsWith("video/")) {
+            console.warn("不支援的檔案類型:", fileType);
+            failCount++;
             continue;
           }
-          successCount++;
 
-          // 模擬檔案上傳：創建一個暫時的 URL 供瀏覽器顯示
-          const tempUrl = URL.createObjectURL(file);
-          // 使用更穩定的 ID 生成方式
-          const newMediaId =
-            "m" + Date.now() + Math.random().toString(36).substring(2, 9);
+          const formData = new FormData();
+          formData.append('action', 'upload_media');
+          formData.append('album_id', albumId);
+          formData.append('media_file', file);
+          formData.append('description', file.name);
 
-          currentMedia.push({
-            id: newMediaId,
-            type: fileType,
-            url: tempUrl, // 實際應替換為伺服器上的永久 URL
-          });
+          try {
+            const response = await fetch(API_URL, {
+              method: 'POST',
+              body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+              successCount++;
+            } else {
+              failCount++;
+              console.error('上傳失敗:', result.message);
+            }
+          } catch (error) {
+            failCount++;
+            console.error('上傳失敗:', error);
+          }
         }
 
-        albumData.find((a) => a.id === albumId).count = currentMedia.length;
+        // 重新載入相簿媒體
+        await loadAlbumMedia(albumId);
         renderAlbumList(); // 更新列表計數
         renderMediaGrid(albumId); // 重新渲染媒體牆
         document.getElementById("mediaUploadInput").value = ""; // 清空檔案選擇器
 
         if (successCount > 0) {
-          alert(`✅ 成功上傳 ${successCount} 個項目到相簿！`);
+          showNotification(`✅ 成功上傳 ${successCount} 個項目到相簿！${failCount > 0 ? ` (失敗 ${failCount} 個)` : ''}`, 'success');
         } else {
-          alert(`⚠️ 沒有可支援的檔案被上傳。`);
+          showNotification(`⚠️ 沒有檔案被成功上傳。`, 'error');
         }
       }
 
@@ -1934,6 +2119,63 @@
           });
         }
       });
+
+      // ==========================================
+      // 通知提示函數
+      // ==========================================
+      function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          padding: 15px 25px;
+          background: ${
+            type === 'success' ? 'linear-gradient(135deg, #28a745 0%, #20c997 100%)' :
+            type === 'error' ? 'linear-gradient(135deg, #dc3545 0%, #e83e8c 100%)' :
+            'linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%)'
+          };
+          color: white;
+          border-radius: 10px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+          z-index: 10000;
+          font-weight: 500;
+          animation: slideIn 0.3s ease;
+          cursor: pointer;
+        `;
+        notification.textContent = message;
+
+        notification.addEventListener('click', () => {
+          notification.style.animation = 'slideOut 0.3s ease';
+          setTimeout(() => notification.remove(), 300);
+        });
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+          }
+        }, 3000);
+      }
+
+      // 添加動畫樣式
+      if (!document.querySelector('#notificationStyles')) {
+        const style = document.createElement('style');
+        style.id = 'notificationStyles';
+        style.textContent = `
+          @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+          }
+          @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+          }
+        `;
+        document.head.appendChild(style);
+      }
     </script>
   </body>
 </html>

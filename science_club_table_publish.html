@@ -99,7 +99,6 @@
       }
 
       .icon::after {
-        content: "3";
         position: absolute;
         top: -5px;
         right: -5px;
@@ -156,202 +155,246 @@
         }
       }
 
+      .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+        color: white;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid white;
+        box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        animation: badgePulse 2s infinite;
+      }
+      .notification-badge.active {
+        display: flex;
+      }
+      @keyframes badgePulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        }
+        50% {
+          transform: scale(1.2);
+          box-shadow: 0 6px 20px rgba(255, 71, 87, 0.8);
+        }
+      }
       .notification-panel {
         position: absolute;
         top: 65px;
-        right: 80px;
+        right: 0;
         background: white;
         border-radius: 15px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
         display: none;
-        width: 380px;
-        max-height: 500px;
-        z-index: 1000;
-        animation: slideDown 0.3s ease;
+        width: 400px;
+        max-height: 550px;
+        z-index: 1001;
         overflow: hidden;
+        animation: panelFade 0.3s ease;
+        flex-direction: column;
       }
-
-      @keyframes slideDown {
+      @keyframes panelFade {
         from {
           opacity: 0;
-          transform: translateY(-10px);
+          transform: translateY(-15px) scale(0.95);
         }
         to {
           opacity: 1;
-          transform: translateY(0);
+          transform: translateY(0) scale(1);
         }
       }
-
+      .notification-panel.active {
+        display: flex;
+      }
       .notification-header {
-        padding: 20px;
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        padding: 20px 25px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         color: white;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-radius: 15px 15px 0 0;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
       }
-
       .notification-header h3 {
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0;
-      }
-
-      .notification-actions {
+        font-size: 17px;
+        font-weight: 700;
         display: flex;
-        gap: 10px;
+        align-items: center;
+        gap: 8px;
       }
-
-      .notification-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
+      .notification-header i {
+        font-size: 20px;
+      }
+      .mark-all-read {
+        background: rgba(255, 255, 255, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.3);
         color: white;
-        padding: 5px 12px;
-        border-radius: 6px;
+        padding: 7px 14px;
+        border-radius: 12px;
         cursor: pointer;
         font-size: 12px;
+        font-weight: 600;
         transition: all 0.3s ease;
       }
-
-      .notification-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.05);
+      .mark-all-read:hover {
+        background: rgba(255, 255, 255, 0.35);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
       }
-
       .notification-list {
-        max-height: 400px;
+        flex: 1;
         overflow-y: auto;
+        padding: 10px;
       }
-
       .notification-item {
-        padding: 15px 20px;
-        border-bottom: 1px solid #f0f0f0;
-        transition: all 0.3s ease;
+        padding: 16px;
+        margin-bottom: 8px;
+        border-radius: 12px;
         cursor: pointer;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+        border-left: 4px solid transparent;
         position: relative;
-        display: flex;
-        gap: 12px;
       }
-
       .notification-item:hover {
-        background: rgba(131, 96, 195, 0.05);
+        background: #f0f1f2;
+        transform: translateX(4px);
       }
-
       .notification-item.unread {
-        background: rgba(131, 96, 195, 0.08);
+        background: linear-gradient(135deg, #e8f9f8 0%, #f0fffe 100%);
+        border-left-color: #11998e;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.15);
       }
-
-      .notification-item.unread::before {
+      .notification-item.unread::after {
         content: "";
         position: absolute;
-        left: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 8px;
-        height: 8px;
-        background: #e74c3c;
+        top: 8px;
+        right: 8px;
+        width: 10px;
+        height: 10px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         border-radius: 50%;
+        animation: unreadPulse 2s infinite;
       }
-
-      .notification-icon-type {
-        width: 40px;
-        height: 40px;
+      @keyframes unreadPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.8;
+        }
+      }
+      .notification-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .notification-item-title {
+        font-weight: 700;
+        color: #333;
+        flex: 1;
+        margin-right: 10px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .notification-type-icon {
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 16px;
+        font-size: 11px;
+        color: white;
         flex-shrink: 0;
       }
-
-      .notification-icon-type.activity {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        color: white;
+      .notification-type-icon.info {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
       }
-
-      .notification-icon-type.deadline {
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-        color: white;
+      .notification-type-icon.warning {
+        background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
       }
-
-      .notification-icon-type.announcement {
-        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-        color: white;
+      .notification-item-time {
+        font-size: 12px;
+        color: #999;
+        white-space: nowrap;
       }
-
-      .notification-content {
-        flex: 1;
-      }
-
-      .notification-title {
-        font-size: 14px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 4px;
-      }
-
-      .notification-text {
+      .notification-item-message {
         font-size: 13px;
         color: #666;
-        margin-bottom: 4px;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        font-weight: 500;
       }
-
-      .notification-time {
+      .notification-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .notification-btn {
         font-size: 11px;
-        color: #999;
-      }
-
-      .notification-delete {
-        position: absolute;
-        right: 15px;
-        top: 15px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: rgba(231, 76, 60, 0.1);
-        color: #e74c3c;
+        padding: 6px 12px;
         border: none;
+        border-radius: 8px;
         cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        opacity: 0;
-        transition: all 0.3s ease;
+        gap: 4px;
       }
-
-      .notification-item:hover .notification-delete {
-        opacity: 1;
-      }
-
-      .notification-delete:hover {
-        background: #e74c3c;
+      .notification-btn-read {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         color: white;
-        transform: scale(1.1);
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.2);
       }
-
-      .notification-empty {
-        padding: 60px 20px;
+      .notification-btn-read:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+      }
+      .notification-btn-clear {
+        background: #ffe8e8;
+        color: #d32f2f;
+        box-shadow: 0 2px 8px rgba(211, 47, 47, 0.1);
+      }
+      .notification-btn-clear:hover {
+        background: #ffcccb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+      }
+      .icon-wrapper {
+        position: relative;
+      }
+      .empty-notification {
+        padding: 50px 20px;
         text-align: center;
         color: #999;
       }
-
-      .notification-empty i {
-        font-size: 48px;
-        color: #ddd;
+      .empty-notification i {
+        font-size: 45px;
         margin-bottom: 15px;
+        opacity: 0.4;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
       }
-
-      .notification-list::-webkit-scrollbar {
-        width: 6px;
-      }
-      .notification-list::-webkit-scrollbar-track {
-        background: #f0f0f0;
-      }
-      .notification-list::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        border-radius: 3px;
+      .empty-notification p {
+        font-weight: 600;
+        font-size: 14px;
       }
 
       .avatar {
@@ -943,29 +986,31 @@
         <img src="image/logo1.gif" alt="Logo" class="logo" />
       </div>
       <div class="header-right">
-        <div class="icon" id="notificationIcon">
-          <i class="fas fa-bell"></i>
+        <div class="icon-wrapper">
+          <div class="icon" id="notificationBell">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="notification-badge" id="notificationBadge">0</div>
         </div>
         <div class="notification-panel" id="notificationPanel">
           <div class="notification-header">
-            <h3>通知</h3>
-            <div class="notification-actions">
-              <button class="notification-btn">全部已讀</button>
-              <button
-                class="notification-btn"
-                onclick="clearAllNotifications()"
-              >
-                清除全部
-              </button>
+            <h3><i class="fas fa-bell"></i> 通知中心</h3>
+            <button class="mark-all-read">
+              <i class="fas fa-check-double"></i> 全部已讀
+            </button>
+          </div>
+          <div class="notification-list" id="notificationList">
+            <div class="empty-notification">
+              <i class="fas fa-inbox"></i>
+              <p>沒有通知</p>
             </div>
           </div>
-          <div class="notification-list" id="notificationList"></div>
         </div>
         <div class="avatar" id="avatar">
-          <i class="fas fa-user-shield"></i>
+          <i class="fas fa-user"></i>
         </div>
         <div class="dropdown" id="dropdown">
-          <a href="login_science_club.html">
+          <a href="login_teacher.html">
             <i class="fas fa-sign-out-alt"></i>
             登出
           </a>
@@ -1090,7 +1135,7 @@
                   <label class="form-label"
                     >選擇活動<span class="required">*</span></label
                   >
-                  <select class="form-select" required>
+                  <select class="form-select" id="activitySelect" name="activity_id" required>
                     <option value="">請選擇活動</option>
                     <option value="1">科學週競賽</option>
                     <option value="2">化學實驗競賽</option>
@@ -1106,6 +1151,8 @@
                   <input
                     type="text"
                     class="form-input"
+                    id="formName"
+                    name="form_name"
                     placeholder="例如:科學週競賽活動滿意度調查"
                     required
                   />
@@ -1115,6 +1162,8 @@
                   <label class="form-label">表單說明</label>
                   <textarea
                     class="form-textarea"
+                    id="formDescription"
+                    name="description"
                     placeholder="請輸入表單說明,讓參與者了解填寫目的..."
                   ></textarea>
                 </div>
@@ -1936,18 +1985,90 @@
               <div class="announcement-meta">發布時間：${f.publishDate}</div>
             </div>
             <div class="announcement-actions" style="display:flex; gap:8px;">
+              <button class="btn btn-xs btn-edit" onclick="editPublished(${idx})"><i class="fas fa-edit"></i> 編輯</button>
               <button class="btn btn-xs btn-delete" onclick="deletePublished(${idx})"><i class=\"fas fa-trash\"></i> 刪除</button>
             </div>`;
           list.appendChild(card);
         });
       }
-      function deletePublished(i) {
+      async function deletePublished(i) {
         const f = publishedForms[i];
         if (!confirm(`確定刪除表單「${f.title || "未命名表單"}」嗎？`)) return;
-        publishedForms.splice(i, 1);
-        renderPublished();
-        alert("✅ 已刪除");
+        
+        // 如果有form_id，則調用API刪除
+        if (f.id) {
+          try {
+            const formData = new FormData();
+            formData.append('action', 'delete_feedback_form');
+            formData.append('form_id', f.id);
+            
+            const response = await fetch('api.php', {
+              method: 'POST',
+              body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+              alert("✅ 表單已刪除");
+              // 重新載入列表
+              loadPublishedFormsFromAPI();
+            } else {
+              alert('❌ 刪除失敗: ' + result.message);
+            }
+          } catch (error) {
+            console.error('刪除錯誤:', error);
+            alert('❌ 刪除時發生錯誤');
+          }
+        } else {
+          // 如果沒有ID，從前端數組刪除（向後兼容）
+          publishedForms.splice(i, 1);
+          renderPublished();
+          alert("✅ 已刪除");
+        }
       }
+
+      // 【新增】編輯已發佈表單功能
+      function editPublished(i) {
+        const f = publishedForms[i];
+        if (!f) return;
+
+        // 帶入表單
+        document.getElementById("formName").value = f.title || "";
+        document.getElementById("formDescription").value = f.description || "";
+        
+        // 如果有活動名稱，嘗試在下拉選單中選擇對應的活動
+        const activitySelect = document.getElementById("activitySelect");
+        if (f.activityName && activitySelect) {
+          // 嘗試找到匹配的活動名稱
+          for (let option of activitySelect.options) {
+            if (option.text === f.activityName) {
+              option.selected = true;
+              break;
+            }
+          }
+        }
+
+        // 儲存正在編輯的表單資訊
+        const feedbackForm = document.getElementById("feedbackForm");
+        if (feedbackForm) {
+          feedbackForm.dataset.editingFormId = f.id || '';
+          feedbackForm.dataset.editingIndex = i;
+        }
+
+        // 變更送出按鈕文字
+        const submitBtn = feedbackForm.querySelector("button[type='submit']");
+        if (submitBtn) {
+          submitBtn.innerHTML = '<i class="fas fa-save"></i>儲存修改';
+        }
+
+        // 捲動到表單頂部
+        feedbackForm.scrollIntoView({ 
+          behavior: "smooth", 
+          block: "start" 
+        });
+      }
+      // 【新增結束】
 
       function publishDraft(id) {
         const drafts = loadDrafts();
@@ -1967,15 +2088,111 @@
       // 初始化右側清單
       window.addEventListener("load", function () {
         renderDrafts();
-        renderPublished();
+        // renderPublished(); // 【註解掉】原本的本地渲染
+        loadPublishedFormsFromAPI(); // 【新增】從API載入
       });
+
+      // ========== 新增：從API載入已發佈表單 ==========
+      async function loadPublishedFormsFromAPI() {
+        try {
+          const response = await fetch('api.php?action=get_feedback_forms');
+          const result = await response.json();
+          
+          if (result.success && result.data) {
+            // 只顯示 is_active = 1 的表單（開放填寫中）
+            publishedForms = result.data
+              .filter(item => item.is_active == 1)
+              .map(item => ({
+                id: item.form_id,
+                title: item.form_name || '未命名表單',
+                activityName: item.activity_name || '',
+                description: item.description || '',
+                publishDate: item.created_at ? new Date(item.created_at).toLocaleString('zh-TW') : '',
+                isActive: item.is_active
+              }));
+            
+            // 渲染表單列表
+            renderPublished();
+            console.log('✅ 成功從API載入', publishedForms.length, '個已發佈表單');
+          }
+        } catch (error) {
+          console.error('❌ 載入已發佈表單時發生錯誤:', error);
+          // 如果API載入失敗，顯示空列表
+          publishedForms = [];
+          renderPublished();
+        }
+      }
+      // ========== 新增結束 ==========
 
       document
         .getElementById("feedbackForm")
-        .addEventListener("submit", function (e) {
+        .addEventListener("submit", async function (e) {
           e.preventDefault();
-          if (confirm("確定要發布此反饋表單嗎?")) {
-            alert("表單發布成功!已通知所有參與者填寫。");
+          
+          // 檢查是否為編輯模式
+          const feedbackForm = document.getElementById("feedbackForm");
+          const editingFormId = feedbackForm.dataset.editingFormId;
+          const isEditing = editingFormId && editingFormId !== '';
+          
+          const confirmMessage = isEditing ? "確定要更新此反饋表單嗎?" : "確定要發布此反饋表單嗎?";
+          
+          if (confirm(confirmMessage)) {
+            // 準備表單數據
+            const formData = new FormData();
+            
+            // 根據編輯模式選擇不同的action
+            if (isEditing) {
+              formData.append("action", "update_feedback_form");
+              formData.append("form_id", editingFormId);
+            } else {
+              formData.append("action", "add_feedback_form");
+            }
+            
+            formData.append("form_name", document.getElementById("formName").value);
+            formData.append("activity_name", document.getElementById("activitySelect").selectedOptions[0].text);
+            formData.append("description", document.getElementById("formDescription").value);
+            formData.append("activity_id", document.getElementById("activitySelect").value);
+            formData.append("is_active", "1"); // 設定為開放填寫
+
+            // 提交到後端 API
+            try {
+              const response = await fetch('api.php', {
+                method: 'POST',
+                body: formData
+              });
+              
+              const result = await response.json();
+              
+              if (result.success) {
+                const successMessage = isEditing ? "✅ 表單更新成功!" : "✅ 表單發布成功!已通知所有參與者填寫。";
+                alert(successMessage);
+                
+                // 重新載入已發佈表單
+                loadPublishedFormsFromAPI();
+                
+                // 清空表單
+                document.getElementById("feedbackForm").reset();
+                
+                // 清除編輯模式標記
+                delete feedbackForm.dataset.editingFormId;
+                delete feedbackForm.dataset.editingIndex;
+                
+                // 恢復按鈕文字
+                const submitBtn = feedbackForm.querySelector("button[type='submit']");
+                if (submitBtn) {
+                  submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i>發布表單';
+                }
+                
+                // 清空問題列表
+                document.getElementById("questionBuilder").innerHTML = '';
+                addQuestion();
+              } else {
+                alert('❌ ' + (isEditing ? '更新' : '發布') + '失敗: ' + result.message);
+              }
+            } catch (error) {
+              console.error('提交錯誤:', error);
+              alert('❌ 提交時發生錯誤');
+            }
           }
         });
     </script>

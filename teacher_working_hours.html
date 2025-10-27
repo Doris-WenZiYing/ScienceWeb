@@ -912,6 +912,10 @@
         animation: modalFade 0.3s ease;
       }
 
+      .modal.active {
+        display: flex;
+      }
+
       @keyframes modalFade {
         from {
           opacity: 0;
@@ -1381,10 +1385,72 @@
         updateTime();
         setInterval(updateTime, 1000);
         initializeDates();
+        loadMembers();
         loadRecords();
         loadStats();
         setupAutoCalculate();
       });
+
+      // 🔧 修復2：確保 allRecords 是全域變數（已在原代碼中，這裡再次聲明確保）
+      if (typeof window.allRecords === 'undefined') {
+        window.allRecords = [];
+      }
+
+      // 🔧 修復3：確保 editRecord 函數可以訪問 allRecords
+      window.editRecord = function(work_id) {
+        const record = window.allRecords.find(r => r.work_id == work_id);
+        if (!record) {
+          showToast('找不到這筆資料', 'error');
+          return;
+        }
+
+        window.editingId = work_id;
+        document.getElementById('modalTitle').textContent = '編輯紀錄';
+        document.getElementById('recordDate').value = record.work_date || '';
+        document.getElementById('recordName').value = record.staff_name || '';
+        document.getElementById('recordShift').value = record.shift_time || '';
+        document.getElementById('recordCheckIn').value = record.check_in_time || '';
+        document.getElementById('recordCheckOut').value = record.check_out_time || '';
+        document.getElementById('recordHours').value = record.work_hours || '';
+        document.getElementById('recordStatus').value = record.status || 'present';
+        document.getElementById('recordNote').value = record.notes || '';
+        document.getElementById('recordModal').classList.add('active');
+      };
+
+      // 🔧 修復4：確保 deleteRecord 函數是全域的
+      window.deleteRecord = async function(workId) {
+        if (!confirm('確定要刪除此記錄嗎？')) return;
+        
+        const formData = new FormData();
+        formData.append('action', 'delete_work_hour_record');
+        formData.append('work_id', workId);
+
+        try {
+          const response = await fetch(API_URL, { method: 'POST', body: formData });
+          const data = await response.json();
+
+          if (data.success) {
+            showToast('🗑️ 刪除成功');
+            loadRecords();
+            loadStats();
+          } else {
+            showToast('刪除失敗: ' + data.message, 'error');
+          }
+        } catch (err) {
+          console.error(err);
+          showToast('伺服器錯誤', 'error');
+        }
+      };
+
+      window.openAddModal = function() {
+        window.editingId = null;
+        document.getElementById('modalTitle').textContent = '新增紀錄';
+        document.getElementById('recordForm').reset();
+        document.getElementById('recordDate').valueAsDate = new Date();
+        document.getElementById('recordModal').classList.add('active');
+      };
+
+      console.log('✅ 工作時數頁面修復補丁已載入');
 
       // 顯示現在時間
       function updateTime() {
@@ -1484,37 +1550,6 @@
       function previousPage() { if (currentPage > 1) { currentPage--; loadRecords(); } }
       function nextPage() { if (currentPage < totalPages) { currentPage++; loadRecords(); } }
 
-      // 打開 / 關閉 Modal
-      function openAddModal() {
-        editingId = null;
-        document.getElementById('modalTitle').textContent = '新增紀錄';
-        document.getElementById('recordForm').reset();
-        document.getElementById('recordDate').valueAsDate = new Date();
-        document.getElementById('recordModal').classList.add('active');
-      }
-      function closeModal() {
-        document.getElementById('recordModal').classList.remove('active');
-        document.getElementById('recordForm').reset();
-        editingId = null;
-      }
-
-      // 編輯紀錄
-      function editRecord(work_id) {
-        const record = allRecords.find(r => r.work_id == work_id);
-        if (!record) return showToast('找不到這筆資料', 'error');
-
-        editingId = work_id;
-        document.getElementById('modalTitle').textContent = '編輯紀錄';
-        document.getElementById('recordDate').value = record.work_date || '';
-        document.getElementById('recordName').value = record.staff_name || '';
-        document.getElementById('recordShift').value = record.shift_time || '';
-        document.getElementById('recordCheckIn').value = record.check_in_time || '';
-        document.getElementById('recordCheckOut').value = record.check_out_time || '';
-        document.getElementById('recordHours').value = record.work_hours || '';
-        document.getElementById('recordStatus').value = record.status || 'present';
-        document.getElementById('recordNote').value = record.notes || '';
-        document.getElementById('recordModal').classList.add('active');
-      }
 
       // 表單提交（新增/更新）
       document.getElementById('recordForm').addEventListener('submit', async function(e) {
@@ -1571,6 +1606,49 @@
         } catch (err) {
           console.error(err);
           showToast('伺服器錯誤', 'error');
+        }
+      }
+
+      async function loadMembers() {
+        try {
+          const response = await fetch(`${API_URL}?action=get_members_list`);
+          const data = await response.json();
+          
+          if (data.success && data.data) {
+            const members = data.data;
+            
+            // 填充篩選區的成員選擇
+            const staffSelect = document.getElementById('staffSelect');
+            if (staffSelect) {
+              staffSelect.innerHTML = '<option value="all">全部成員</option>';
+              members.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.teacher_name;
+                option.textContent = `${member.teacher_name}${member.department ? ' (' + member.department + ')' : ''}`;
+                staffSelect.appendChild(option);
+              });
+            }
+            
+            // 填充新增記錄的成員選擇
+            const recordName = document.getElementById('recordName');
+            if (recordName) {
+              recordName.innerHTML = '<option value="">請選擇</option>';
+              members.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.teacher_name;
+                option.textContent = `${member.teacher_name}${member.department ? ' (' + member.department + ')' : ''}`;
+                recordName.appendChild(option);
+              });
+            }
+            
+            console.log('教師列表載入成功:', members);
+          } else {
+            console.warn('無法獲取教師列表:', data.message);
+            showToast('無法獲取教師列表', 'warning');
+          }
+        } catch (error) {
+          console.error('載入教師失敗:', error);
+          showToast('載入教師失敗', 'error');
         }
       }
 
@@ -1645,13 +1723,22 @@
         }
       }
 
-      // Toast 通知
+      function closeModal() {
+        document.getElementById('recordModal').style.display = 'none';
+        document.getElementById('recordForm').reset();
+        editingId = null;
+      }
+
       function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toastMessage');
-        toast.className = `toast show ${type}`;
-        toastMessage.textContent = message;
-        setTimeout(() => toast.classList.remove('show'), 3000);
+        const colors = {success: '#28a745', info: '#17a2b8', warning: '#ffc107', error: '#dc3545'};
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.style.cssText = `position: fixed; top: 100px; right: 30px; background: ${colors[type] || colors.info}; color: white; padding: 15px 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10001; animation: slideIn 0.3s ease; font-size: 15px;`;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+          notification.style.animation = 'slideOut 0.3s ease';
+          setTimeout(() => document.body.removeChild(notification), 300);
+        }, 3000);
       }
       </script>
   </body>

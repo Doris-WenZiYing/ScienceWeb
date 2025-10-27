@@ -1165,21 +1165,14 @@
       let currentSessionId = null;
       let rollcallRecords = {};
 
-      // 頁面載入時初始化
-      window.addEventListener('load', () => {
-        loadStudents();
-        
-        // 設定預設日期和時間
-        const today = new Date();
-        document.getElementById('sessionDate').valueAsDate = today;
-        document.getElementById('sessionTime').value = today.toTimeString().slice(0, 5);
-        
-        // 設定搜尋事件
-        document.getElementById('searchInput').addEventListener('input', renderStudentList);
-        
-        // 設定表單提交事件
-        document.getElementById('createSessionForm').addEventListener('submit', createSession);
+      window.addEventListener('load', async () => {
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+        await loadStudents();
+        await autoCreateTodaySession(); // 添加自動創建場次
+        renderStudentList();
       });
+
 
       // 載入學生列表
       async function loadStudents() {
@@ -1252,12 +1245,57 @@
         }
       }
 
-      // 切換點名狀態
+      // 🆕 自動創建今日場次
+      async function autoCreateTodaySession() {
+        try {
+          // 檢查是否已有今日場次
+          const today = new Date().toISOString().split('T')[0];
+          const sessionName = `例行點名_${today}`;
+          
+          const formData = new FormData();
+          formData.append('action', 'create_rollcall_session');
+          formData.append('session_name', sessionName);
+          formData.append('session_date', today);
+          formData.append('session_time', new Date().toTimeString().slice(0, 5));
+          
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: formData
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            currentSessionId = data.data.session_id;
+            rollcallRecords = {};
+            console.log('✅ 自動創建今日場次成功，場次ID:', currentSessionId);
+            showToast('已自動創建今日點名場次', 'success');
+          } else {
+            console.warn('自動創建場次失敗:', data.message);
+            // 如果失敗，可能是因為已存在場次，這時不顯示錯誤
+          }
+        } catch (error) {
+          console.error('自動創建場次錯誤:', error);
+        }
+      }
+
+      // 🆕 提供手動創建場次的選項
+      function manualCreateSession() {
+        openCreateSessionModal();
+      }
+
+      // 修改現有的 toggleCheck 函數，當沒有場次時引導用戶
       async function toggleCheck(studentId) {
         if (!currentSessionId) {
-          showToast('請先創建點名場次', 'warning');
-          openCreateSessionModal();
-          return;
+          // 嘗試自動創建場次
+          await autoCreateTodaySession();
+          
+          // 如果還是沒有場次，才彈出手動創建視窗
+          if (!currentSessionId) {
+            showToast('請先創建點名場次', 'warning');
+            openCreateSessionModal();
+            return;
+          }
         }
 
         const isCurrentlyPresent = rollcallRecords[studentId] || false;
@@ -1281,7 +1319,10 @@
             rollcallRecords[studentId] = newStatus;
             if (newStatus) {
               const now = new Date();
-              rollcallRecords[studentId + '_time'] = now.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+              rollcallRecords[studentId + '_time'] = now.toLocaleTimeString('zh-TW', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              });
             } else {
               rollcallRecords[studentId + '_time'] = '';
             }
@@ -1296,6 +1337,38 @@
           showToast('操作失敗', 'error');
         }
       }
+
+      // 添加一個顯示當前場次信息的函數
+      function showCurrentSessionInfo() {
+        if (currentSessionId) {
+          const info = document.createElement('div');
+          info.style.cssText = `
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-size: 14px;
+          `;
+          info.innerHTML = `
+            <i class="fas fa-check-circle"></i> 
+            場次已啟用 (ID: ${currentSessionId})
+          `;
+          document.body.appendChild(info);
+          
+          setTimeout(() => {
+            info.remove();
+          }, 3000);
+        }
+      }
+
+      console.log('✅ 點名系統修復補丁已載入');
+
+      
 
       // 更新統計
       function updateStats() {
@@ -1435,6 +1508,14 @@
         setTimeout(() => {
           toast.classList.remove('show');
         }, 3000);
+      }
+
+      function updateDateTime() {
+        const now = new Date();
+        const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'long' };
+        document.getElementById('currentDate').textContent = now.toLocaleDateString('zh-TW', dateOptions);
+        const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        document.getElementById('currentTime').textContent = now.toLocaleTimeString('zh-TW', timeOptions);
       }
     </script>
   </body>

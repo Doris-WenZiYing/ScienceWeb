@@ -145,7 +145,6 @@ function getNotifications() {
     $limit = $_GET['limit'] ?? 20;
     
     try {
-        // ✅ 修正 SQL 語法 - 移除多餘的逗號
         $stmt = $pdo->prepare("
             SELECT 
                 notification_id,

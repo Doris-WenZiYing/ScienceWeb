@@ -116,7 +116,6 @@
       }
 
       .icon::after {
-        content: "3";
         position: absolute;
         top: -5px;
         right: -5px;
@@ -242,194 +241,247 @@
         width: 16px;
       }
 
-      /* 通知面板樣式 */
+      .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+        color: white;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid white;
+        box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        animation: badgePulse 2s infinite;
+      }
+      .notification-badge.active {
+        display: flex;
+      }
+      @keyframes badgePulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        }
+        50% {
+          transform: scale(1.2);
+          box-shadow: 0 6px 20px rgba(255, 71, 87, 0.8);
+        }
+      }
       .notification-panel {
         position: absolute;
         top: 65px;
-        right: 80px;
+        right: 0;
         background: white;
         border-radius: 15px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
         display: none;
-        width: 380px;
-        max-height: 500px;
-        z-index: 1000;
-        animation: dropdownFade 0.3s ease;
+        width: 400px;
+        max-height: 550px;
+        z-index: 1001;
         overflow: hidden;
+        animation: panelFade 0.3s ease;
+        flex-direction: column;
       }
-
+      @keyframes panelFade {
+        from {
+          opacity: 0;
+          transform: translateY(-15px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .notification-panel.active {
+        display: flex;
+      }
       .notification-header {
-        padding: 20px;
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        padding: 20px 25px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         color: white;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-radius: 15px 15px 0 0;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
       }
-
       .notification-header h3 {
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0;
-      }
-
-      .notification-actions {
+        font-size: 17px;
+        font-weight: 700;
         display: flex;
-        gap: 10px;
+        align-items: center;
+        gap: 8px;
       }
-
-      .notification-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
+      .notification-header i {
+        font-size: 20px;
+      }
+      .mark-all-read {
+        background: rgba(255, 255, 255, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.3);
         color: white;
-        padding: 5px 12px;
-        border-radius: 6px;
+        padding: 7px 14px;
+        border-radius: 12px;
         cursor: pointer;
         font-size: 12px;
+        font-weight: 600;
         transition: all 0.3s ease;
       }
-
-      .notification-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.05);
+      .mark-all-read:hover {
+        background: rgba(255, 255, 255, 0.35);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
       }
-
       .notification-list {
-        max-height: 400px;
+        flex: 1;
         overflow-y: auto;
+        padding: 10px;
       }
-
       .notification-item {
-        padding: 15px 20px;
-        border-bottom: 1px solid #f0f0f0;
-        transition: all 0.3s ease;
+        padding: 16px;
+        margin-bottom: 8px;
+        border-radius: 12px;
         cursor: pointer;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+        border-left: 4px solid transparent;
         position: relative;
-        display: flex;
-        gap: 12px;
       }
-
       .notification-item:hover {
-        background: rgba(131, 96, 195, 0.05);
+        background: #f0f1f2;
+        transform: translateX(4px);
       }
-
       .notification-item.unread {
-        background: rgba(131, 96, 195, 0.08);
+        background: linear-gradient(135deg, #e8f9f8 0%, #f0fffe 100%);
+        border-left-color: #11998e;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.15);
       }
-
-      .notification-item.unread::before {
+      .notification-item.unread::after {
         content: "";
         position: absolute;
-        left: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 8px;
-        height: 8px;
-        background: #e74c3c;
+        top: 8px;
+        right: 8px;
+        width: 10px;
+        height: 10px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         border-radius: 50%;
+        animation: unreadPulse 2s infinite;
       }
-
-      .notification-icon {
-        width: 40px;
-        height: 40px;
+      @keyframes unreadPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.8;
+        }
+      }
+      .notification-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .notification-item-title {
+        font-weight: 700;
+        color: #333;
+        flex: 1;
+        margin-right: 10px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .notification-type-icon {
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 16px;
+        font-size: 11px;
+        color: white;
         flex-shrink: 0;
       }
-
-      .notification-icon.activity {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        color: white;
+      .notification-type-icon.info {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
       }
-
-      .notification-icon.deadline {
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-        color: white;
+      .notification-type-icon.warning {
+        background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
       }
-
-      .notification-icon.announcement {
-        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-        color: white;
+      .notification-item-time {
+        font-size: 12px;
+        color: #999;
+        white-space: nowrap;
       }
-
-      .notification-content {
-        flex: 1;
-      }
-
-      .notification-title {
-        font-size: 14px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 4px;
-      }
-
-      .notification-text {
+      .notification-item-message {
         font-size: 13px;
         color: #666;
-        margin-bottom: 4px;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        font-weight: 500;
       }
-
-      .notification-time {
+      .notification-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .notification-btn {
         font-size: 11px;
-        color: #999;
-      }
-
-      .notification-delete {
-        position: absolute;
-        right: 15px;
-        top: 15px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: rgba(231, 76, 60, 0.1);
-        color: #e74c3c;
+        padding: 6px 12px;
         border: none;
+        border-radius: 8px;
         cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        opacity: 0;
-        transition: all 0.3s ease;
+        gap: 4px;
       }
-
-      .notification-item:hover .notification-delete {
-        opacity: 1;
-      }
-
-      .notification-delete:hover {
-        background: #e74c3c;
+      .notification-btn-read {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         color: white;
-        transform: scale(1.1);
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.2);
       }
-
-      .notification-empty {
-        padding: 60px 20px;
+      .notification-btn-read:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+      }
+      .notification-btn-clear {
+        background: #ffe8e8;
+        color: #d32f2f;
+        box-shadow: 0 2px 8px rgba(211, 47, 47, 0.1);
+      }
+      .notification-btn-clear:hover {
+        background: #ffcccb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+      }
+      .empty-notification {
+        padding: 50px 20px;
         text-align: center;
         color: #999;
       }
-
-      .notification-empty i {
-        font-size: 48px;
-        color: #ddd;
+      .empty-notification i {
+        font-size: 45px;
         margin-bottom: 15px;
+        opacity: 0.4;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .empty-notification p {
+        font-weight: 600;
+        font-size: 14px;
       }
 
-      .notification-list::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      .notification-list::-webkit-scrollbar-track {
-        background: #f0f0f0;
-      }
-
-      .notification-list::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        border-radius: 3px;
+.icon-wrapper {
+        position: relative;
       }
 
       .main {
@@ -931,6 +983,162 @@
           justify-content: center;
         }
       }
+
+      /* ==========================================
+         模態窗口樣式
+         ========================================== */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .modal-overlay.show {
+        display: flex;
+      }
+
+      .modal {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease;
+      }
+
+      .modal-header {
+        padding: 25px 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px 15px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-header h2 {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 5px 10px;
+        transition: all 0.3s ease;
+        border-radius: 50%;
+      }
+
+      .modal-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: rotate(90deg);
+      }
+
+      .modal-body {
+        padding: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        font-family: inherit;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .modal-footer {
+        padding: 20px 30px;
+        background: #f8f9fa;
+        border-radius: 0 0 15px 15px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-cancel {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-cancel:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+      }
+
+      .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
     </style>
   </head>
   <body class="sci-page">
@@ -942,29 +1150,31 @@
         <img src="image/logo1.gif" alt="Logo" class="logo" />
       </div>
       <div class="header-right">
-        <div class="icon" id="notificationIcon">
-          <i class="fas fa-bell"></i>
+        <div class="icon-wrapper">
+          <div class="icon" id="notificationBell">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="notification-badge" id="notificationBadge">0</div>
         </div>
         <div class="notification-panel" id="notificationPanel">
           <div class="notification-header">
-            <h3>通知</h3>
-            <div class="notification-actions">
-              <button class="notification-btn">全部已讀</button>
-              <button
-                class="notification-btn"
-                onclick="clearAllNotifications()"
-              >
-                清除全部
-              </button>
+            <h3><i class="fas fa-bell"></i> 通知中心</h3>
+            <button class="mark-all-read">
+              <i class="fas fa-check-double"></i> 全部已讀
+            </button>
+          </div>
+          <div class="notification-list" id="notificationList">
+            <div class="empty-notification">
+              <i class="fas fa-inbox"></i>
+              <p>沒有通知</p>
             </div>
           </div>
-          <div class="notification-list" id="notificationList"></div>
         </div>
         <div class="avatar" id="avatar">
-          <i class="fas fa-user-shield"></i>
+          <i class="fas fa-user"></i>
         </div>
         <div class="dropdown" id="dropdown">
-          <a href="login_science_club.html">
+          <a href="login_teacher.html">
             <i class="fas fa-sign-out-alt"></i>
             登出
           </a>
@@ -1141,133 +1351,212 @@
               </tr>
             </thead>
             <tbody id="registrantsTableBody">
-              <tr>
-                <td>1</td>
-                <td>資五忠</td>
-                <td>110534109</td>
-                <td>蕭鈺萱</td>
-                <td>2025-09-20 14:30</td>
-                <td>
-                  <span class="status-badge status-confirmed">已確認</span>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="action-btn" title="編輯">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn" title="刪除">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>電機二乙</td>
-                <td>110534110</td>
-                <td>李小華</td>
-                <td>2025-09-20 15:15</td>
-                <td>
-                  <span class="status-badge status-confirmed">已確認</span>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="action-btn" title="編輯">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn" title="刪除">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>機械三丙</td>
-                <td>110534111</td>
-                <td>張小美</td>
-                <td>2025-09-21 09:20</td>
-                <td>
-                  <span class="status-badge status-confirmed">已確認</span>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="action-btn" title="編輯">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn" title="刪除">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>化工一甲</td>
-                <td>110534112</td>
-                <td>陳小強</td>
-                <td>2025-09-21 10:45</td>
-                <td>
-                  <span class="status-badge status-confirmed">已確認</span>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="action-btn" title="編輯">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn" title="刪除">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>土木二乙</td>
-                <td>110534113</td>
-                <td>林小芳</td>
-                <td>2025-09-21 13:30</td>
-                <td>
-                  <span class="status-badge status-cancelled">已取消</span>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="action-btn" title="編輯">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn" title="刪除">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>6</td>
-                <td>工管三丙</td>
-                <td>110534114</td>
-                <td>黃小婷</td>
-                <td>2025-09-22 08:15</td>
-                <td>
-                  <span class="status-badge status-confirmed">已確認</span>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="action-btn" title="編輯">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn" title="刪除">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
+              
             </tbody>
           </table>
         </div>
       </div>
     </div>
 
+    <!-- 編輯報名資料模態窗口 -->
+    <div class="modal-overlay" id="editModal">
+      <div class="modal" style="max-width: 500px;">
+        <div class="modal-header">
+          <h2>編輯報名資料</h2>
+          <button class="modal-close" onclick="closeEditModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="editForm" onsubmit="event.preventDefault(); saveEdit();">
+            <div class="form-group">
+              <label for="editStudentNumber">學號</label>
+              <input
+                type="text"
+                id="editStudentNumber"
+                required
+                placeholder="例如：110534109"
+              />
+            </div>
+            <div class="form-group">
+              <label for="editStudentName">姓名</label>
+              <input
+                type="text"
+                id="editStudentName"
+                required
+                placeholder="例如：王小明"
+              />
+            </div>
+            <div class="form-group">
+              <label for="editStudentClass">班級</label>
+              <input
+                type="text"
+                id="editStudentClass"
+                required
+                placeholder="例如：資五忠"
+              />
+            </div>
+            <div class="form-group">
+              <label for="editStatus">狀態</label>
+              <select id="editStatus" required>
+                <option value="registered">已確認</option>
+                <option value="cancelled">已取消</option>
+                <option value="attended">已出席</option>
+                <option value="absent">未出席</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-cancel" onclick="closeEditModal()">取消</button>
+          <button class="btn btn-submit" type="submit" form="editForm">
+            儲存修改
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script>
+      // ==========================================
+      // API 配置
+      // ==========================================
+      const API_URL = 'api.php';
+      
+      // 全局變量
+      let currentActivityId = null;
+      let allRegistrations = [];
+      let currentEditingId = null;
+
+      // ==========================================
+      // 初始化 - 從 API 載入數據
+      // ==========================================
+      document.addEventListener('DOMContentLoaded', async function() {
+        await loadPublishedActivities();
+        initializeEventListeners();
+      });
+
+      // ==========================================
+      // 載入已發佈的活動列表
+      // ==========================================
+      async function loadPublishedActivities() {
+        try {
+          const response = await fetch(`${API_URL}?action=get_activities`);
+          const result = await response.json();
+          
+          if (result.success) {
+            const select = document.getElementById('activitySelect');
+            select.innerHTML = '<option value="">請選擇要查看的活動</option>';
+            
+            // 只顯示已發佈的活動
+            // const publishedActivities = result.data.filter(activity => activity.is_published == 1);
+            const publishedActivities = result.data.filter(activity => activity.status === "published");
+            
+            publishedActivities.forEach(activity => {
+              const option = document.createElement('option');
+              option.value = activity.activity_id;
+              option.textContent = `${activity.activity_name} (${activity.start_date})`;
+              select.appendChild(option);
+            });
+          } else {
+            showNotification('載入活動列表失敗: ' + result.message, 'error');
+          }
+        } catch (error) {
+          console.error('載入活動列表失敗:', error);
+          showNotification('載入活動列表失敗，請稍後再試', 'error');
+        }
+      }
+
+      // ==========================================
+      // 載入報名名單
+      // ==========================================
+      async function loadRegistrants() {
+        const select = document.getElementById("activitySelect");
+        const selectedValue = select.value;
+        const tbody = document.getElementById("registrantsTableBody");
+
+        if (!selectedValue) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #999;">請選擇要查看的活動</td></tr>';
+          return;
+        }
+
+        currentActivityId = selectedValue;
+
+        try {
+          const response = await fetch(`${API_URL}?action=get_registrations&activity_id=${selectedValue}`);
+          const result = await response.json();
+          
+          if (result.success) {
+            allRegistrations = result.data;
+            renderRegistrants(allRegistrations);
+          } else {
+            showNotification('載入報名名單失敗: ' + result.message, 'error');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #999;">載入失敗</td></tr>';
+          }
+        } catch (error) {
+          console.error('載入報名名單失敗:', error);
+          showNotification('載入報名名單失敗，請稍後再試', 'error');
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #999;">載入失敗</td></tr>';
+        }
+      }
+
+      // ==========================================
+      // 渲染報名名單
+      // ==========================================
+      function renderRegistrants(registrations) {
+        const tbody = document.getElementById("registrantsTableBody");
+        
+        if (registrations.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #999;">目前沒有報名資料</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        registrations.forEach((reg, index) => {
+          const row = document.createElement('tr');
+          
+          // 判斷狀態
+          let statusClass = 'status-confirmed';
+          let statusText = '已確認';
+          
+          if (reg.status === 'cancelled') {
+            statusClass = 'status-cancelled';
+            statusText = '已取消';
+          } else if (reg.status === 'registered') {
+            statusClass = 'status-confirmed';
+            statusText = '已確認';
+          } else if (reg.status === 'attended') {
+            statusClass = 'status-confirmed';
+            statusText = '已出席';
+          } else if (reg.status === 'absent') {
+            statusClass = 'status-cancelled';
+            statusText = '未出席';
+          }
+          
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${reg.student_class}</td>
+            <td>${reg.student_number}</td>
+            <td>${reg.student_name}</td>
+            <td>${reg.registration_time}</td>
+            <td>
+              <span class="status-badge ${statusClass}">${statusText}</span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-btn" title="編輯" onclick="openEditModal(${reg.registration_id})">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn" title="刪除" onclick="deleteRegistration(${reg.registration_id})">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          `;
+          
+          tbody.appendChild(row);
+        });
+      }
+
       function toggleMenu(element) {
         const menuItem = element.parentElement;
         const submenu = menuItem.querySelector(".submenu");
@@ -1292,40 +1581,153 @@
         }
       }
 
-      function loadRegistrants() {
-        const select = document.getElementById("activitySelect");
-        const selectedActivity = select.options[select.selectedIndex].text;
-        const selectedValue = select.value;
-
-        if (selectedValue) {
-          console.log("載入活動報名名單:", selectedActivity);
-
-          // 如果是已發佈的活動，顯示相應的報名名單
-          if (selectedValue.startsWith("published_")) {
-            // 這裡可以根據活動ID載入對應的報名名單
-            // 目前顯示預設的報名名單
-            console.log("載入已發佈活動的報名名單:", selectedActivity);
-          }
-        }
-      }
-
+      // ==========================================
+      // 篩選功能
+      // ==========================================
       function filterStatus(status) {
         document.querySelectorAll(".filter-btn").forEach((btn) => {
           btn.classList.remove("active");
         });
         event.target.classList.add("active");
 
-        console.log("篩選狀態:", status);
-        const rows = document.querySelectorAll(".registrants-table tbody tr");
-        rows.forEach((row) => {
-          const statusBadge = row.querySelector(".status-badge");
-          if (status === "all") {
-            row.style.display = "";
+        if (status === "all") {
+          renderRegistrants(allRegistrations);
+        } else {
+          const filtered = allRegistrations.filter(reg => {
+            if (status === 'confirmed') {
+              return reg.status === 'registered' || reg.status === 'attended';
+            } else if (status === 'cancelled') {
+              return reg.status === 'cancelled' || reg.status === 'absent';
+            }
+            return true;
+          });
+          renderRegistrants(filtered);
+        }
+      }
+
+      // ==========================================
+      // 編輯報名
+      // ==========================================
+      function openEditModal(registrationId) {
+        const reg = allRegistrations.find(r => r.registration_id == registrationId);
+        if (!reg) return;
+
+        currentEditingId = registrationId;
+        
+        // 填充表單
+        document.getElementById('editStudentNumber').value = reg.student_number;
+        document.getElementById('editStudentName').value = reg.student_name;
+        document.getElementById('editStudentClass').value = reg.student_class;
+        document.getElementById('editStatus').value = reg.status;
+        
+        // 顯示模態窗口
+        document.getElementById('editModal').classList.add('show');
+      }
+
+      function closeEditModal() {
+        document.getElementById('editModal').classList.remove('show');
+        currentEditingId = null;
+      }
+
+      async function saveEdit() {
+        if (!currentEditingId) return;
+
+        const studentNumber = document.getElementById('editStudentNumber').value.trim();
+        const studentName = document.getElementById('editStudentName').value.trim();
+        const studentClass = document.getElementById('editStudentClass').value.trim();
+        const status = document.getElementById('editStatus').value;
+
+        if (!studentNumber || !studentName || !studentClass) {
+          showNotification('請填寫所有必填欄位', 'error');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('action', 'update_registration');
+        formData.append('registration_id', currentEditingId);
+        formData.append('student_number', studentNumber);
+        formData.append('student_name', studentName);
+        formData.append('student_class', studentClass);
+        formData.append('status', status);
+
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: formData
+          });
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            showNotification('✅ 修改成功！', 'success');
+            closeEditModal();
+            await loadRegistrants(); // 重新載入列表
           } else {
-            const rowStatus = statusBadge.classList.contains("status-confirmed")
-              ? "confirmed"
-              : "cancelled";
-            row.style.display = rowStatus === status ? "" : "none";
+            showNotification('修改失敗: ' + result.message, 'error');
+          }
+        } catch (error) {
+          console.error('修改報名失敗:', error);
+          showNotification('修改失敗，請稍後再試', 'error');
+        }
+      }
+
+      // ==========================================
+      // 刪除報名
+      // ==========================================
+      async function deleteRegistration(registrationId) {
+        const reg = allRegistrations.find(r => r.registration_id == registrationId);
+        if (!reg) return;
+
+        if (!confirm(`確定要刪除 ${reg.student_name} (${reg.student_number}) 的報名資料嗎？`)) {
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('action', 'delete_registration');
+        formData.append('registration_id', registrationId);
+
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: formData
+          });
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            showNotification('✅ 刪除成功！', 'success');
+            await loadRegistrants(); // 重新載入列表
+          } else {
+            showNotification('刪除失敗: ' + result.message, 'error');
+          }
+        } catch (error) {
+          console.error('刪除報名失敗:', error);
+          showNotification('刪除失敗，請稍後再試', 'error');
+        }
+      }
+
+      // ==========================================
+      // 初始化事件監聽器
+      // ==========================================
+      function initializeEventListeners() {
+        // 搜尋功能
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+          searchInput.addEventListener("input", function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll(".registrants-table tbody tr");
+
+            rows.forEach((row) => {
+              const text = row.textContent.toLowerCase();
+              row.style.display = text.includes(searchTerm) ? "" : "none";
+            });
+          });
+        }
+
+        // 關閉模態窗口事件
+        document.addEventListener('click', function(e) {
+          if (e.target.classList.contains('modal-overlay')) {
+            closeEditModal();
           }
         });
       }
@@ -1335,18 +1737,18 @@
         const select = document.getElementById("activitySelect");
         const selectedActivity = select.options[select.selectedIndex].text;
         if (!select.value) {
-          alert("請先選擇活動!");
+          showNotification("請先選擇活動!", 'error');
           return;
         }
 
         // 取得表格資料
         const table = document.querySelector(".registrants-table");
         const rows = Array.from(table.querySelectorAll("tbody tr")).filter(
-          (row) => row.style.display !== "none"
+          (row) => row.style.display !== "none" && row.cells.length > 1
         );
 
         if (rows.length === 0) {
-          alert("沒有可匯出的資料!");
+          showNotification("沒有可匯出的資料!", 'error');
           return;
         }
 
@@ -1418,18 +1820,18 @@
         const select = document.getElementById("activitySelect");
         const selectedActivity = select.options[select.selectedIndex].text;
         if (!select.value) {
-          alert("請先選擇活動!");
+          showNotification("請先選擇活動!", 'error');
           return;
         }
 
         // 取得表格資料
         const table = document.querySelector(".registrants-table");
         const rows = Array.from(table.querySelectorAll("tbody tr")).filter(
-          (row) => row.style.display !== "none"
+          (row) => row.style.display !== "none" && row.cells.length > 1
         );
 
         if (rows.length === 0) {
-          alert("沒有可匯出的資料!");
+          showNotification("沒有可匯出的資料!", 'error');
           return;
         }
 
@@ -1530,55 +1932,62 @@
         });
       });
 
-      // 從活動發佈頁面載入已發佈的活動
-      function loadPublishedActivities() {
-        try {
-          // 從 localStorage 讀取已發佈的活動
-          const publishedActivities = JSON.parse(
-            localStorage.getItem("sc_published_activities") || "[]"
-          );
-          const activitySelect = document.getElementById("activitySelect");
+      // ==========================================
+      // 通知提示函數
+      // ==========================================
+      function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          padding: 15px 25px;
+          background: ${
+            type === 'success' ? 'linear-gradient(135deg, #28a745 0%, #20c997 100%)' :
+            type === 'error' ? 'linear-gradient(135deg, #dc3545 0%, #e83e8c 100%)' :
+            'linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%)'
+          };
+          color: white;
+          border-radius: 10px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+          z-index: 10000;
+          font-weight: 500;
+          animation: slideIn 0.3s ease;
+          cursor: pointer;
+        `;
+        notification.textContent = message;
 
-          // 清空現有選項（保留第一個預設選項）
-          activitySelect.innerHTML =
-            '<option value="">請選擇要查看的活動</option>';
+        notification.addEventListener('click', () => {
+          notification.style.animation = 'slideOut 0.3s ease';
+          setTimeout(() => notification.remove(), 300);
+        });
 
-          // 添加已發佈的活動
-          publishedActivities.forEach((activity, index) => {
-            const option = document.createElement("option");
-            option.value = `published_${activity.id || index}`;
-            option.textContent = activity.title || "未命名活動";
-            activitySelect.appendChild(option);
-          });
+        document.body.appendChild(notification);
 
-          // 如果沒有已發佈的活動，顯示預設活動
-          if (publishedActivities.length === 0) {
-            const defaultActivities = [
-              { value: "1", text: "科學週競賽" },
-              { value: "2", text: "化學實驗競賽" },
-              { value: "3", text: "物理闖關遊戲" },
-              { value: "4", text: "生物知識競賽" },
-              { value: "5", text: "科普講座:宇宙奧秘" },
-            ];
-
-            defaultActivities.forEach((activity) => {
-              const option = document.createElement("option");
-              option.value = activity.value;
-              option.textContent = activity.text;
-              if (activity.value === "2") option.selected = true; // 預設選中化學實驗競賽
-              activitySelect.appendChild(option);
-            });
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
           }
-        } catch (error) {
-          console.error("載入已發佈活動時發生錯誤:", error);
-        }
+        }, 3000);
       }
 
-      // 頁面載入時自動載入選中的活動
-      window.addEventListener("load", function () {
-        loadPublishedActivities();
-        loadRegistrants();
-      });
+      // 添加動畫樣式
+      if (!document.querySelector('#notificationStyles')) {
+        const style = document.createElement('style');
+        style.id = 'notificationStyles';
+        style.textContent = `
+          @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+          }
+          @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+          }
+        `;
+        document.head.appendChild(style);
+      }
     </script>
   </body>
 </html>

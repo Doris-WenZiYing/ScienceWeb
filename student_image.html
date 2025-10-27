@@ -582,63 +582,166 @@
     </div>
 
     <script>
-      const albums = JSON.parse(
-        localStorage.getItem("albums") ||
-          `[ 
-    {"title":"科學展 2025","photos":["image/sample1.jpg","image/sample2.jpg","image/sample3.jpg"]},
-    {"title":"校園活動","photos":["image/sample4.jpg","image/sample5.jpg"]}
-  ]`
-      );
+      // 【註解掉】原本使用localStorage的代碼
+      // const albums = JSON.parse(
+      //   localStorage.getItem("albums") ||
+      //     `[ 
+      // {"title":"科學展 2025","photos":["image/sample1.jpg","image/sample2.jpg","image/sample3.jpg"]},
+      // {"title":"校園活動","photos":["image/sample4.jpg","image/sample5.jpg"]}
+      // ]`
+      // );
 
+      // 全局變量
+      let albums = [];
       const galleryContainer = document.getElementById("galleryContainer");
       const lightbox = document.getElementById("lightbox");
       const lightboxImg = document.getElementById("lightboxImg");
 
-      function renderGallery() {
-        albums.forEach((album) => {
+      // 渲染相簿列表
+      function renderGallery(albumsData) {
+        // 清空容器（保留標題）
+        const title = galleryContainer.querySelector('h2');
+        galleryContainer.innerHTML = '';
+        if (title) galleryContainer.appendChild(title);
+
+        if (!albumsData || albumsData.length === 0) {
+          galleryContainer.innerHTML += '<div style="text-align:center; padding:40px; color:#666;">目前沒有相簿</div>';
+          return;
+        }
+
+        albums = albumsData;
+        
+        albumsData.forEach((album) => {
           const albumDiv = document.createElement("div");
           albumDiv.className = "album";
-          albumDiv.innerHTML = `<div class="album-title">${album.title}</div>`;
-          const photosDiv = document.createElement("div");
-          photosDiv.className = "photos";
-          album.photos.forEach((photo) => {
+          albumDiv.innerHTML = `<div class="album-title">${album.title || '未命名相簿'}</div>`;
+          
+          // 設置封面圖片（如果有）
+          if (album.cover_image) {
+            const coverDiv = document.createElement("div");
+            coverDiv.className = "photos";
+            const coverImg = document.createElement("img");
+            coverImg.src = album.cover_image;
+            coverImg.alt = album.title;
+            coverImg.style.cursor = 'pointer';
+            coverImg.onclick = () => loadAlbumPhotos(album.id);
+            coverDiv.appendChild(coverImg);
+            albumDiv.appendChild(coverDiv);
+          } else {
+            // 如果沒有封面，顯示提示或直接載入照片
+            const placeholderDiv = document.createElement("div");
+            placeholderDiv.className = "photos";
+            placeholderDiv.style.padding = "20px";
+            placeholderDiv.style.textAlign = "center";
+            placeholderDiv.style.color = "#999";
+            placeholderDiv.style.cursor = "pointer";
+            placeholderDiv.innerHTML = '<i class="fas fa-images" style="font-size:48px;"></i><br>點擊查看照片';
+            placeholderDiv.onclick = () => loadAlbumPhotos(album.id);
+            albumDiv.appendChild(placeholderDiv);
+          }
+          
+          galleryContainer.appendChild(albumDiv);
+        });
+
+        console.log('✅ 成功渲染', albumsData.length, '個相簿');
+      }
+
+      // 渲染相簿內的照片
+      function renderPhotos(albumId, photosData) {
+        // 找到對應的相簿元素
+        const albumElements = galleryContainer.querySelectorAll('.album');
+        const album = albums.find(a => a.id == albumId);
+        
+        if (!album) {
+          console.error('找不到相簿ID:', albumId);
+          return;
+        }
+
+        // 找到對應的相簿DOM元素（根據標題匹配）
+        let targetAlbumDiv = null;
+        albumElements.forEach(div => {
+          const titleDiv = div.querySelector('.album-title');
+          if (titleDiv && titleDiv.textContent === album.title) {
+            targetAlbumDiv = div;
+          }
+        });
+
+        if (!targetAlbumDiv) {
+          console.error('找不到相簿DOM元素');
+          return;
+        }
+
+        // 清空原有的照片區域
+        const existingPhotos = targetAlbumDiv.querySelector('.photos');
+        if (existingPhotos) {
+          existingPhotos.remove();
+        }
+
+        // 創建新的照片區域
+        const photosDiv = document.createElement("div");
+        photosDiv.className = "photos";
+
+        if (!photosData || photosData.length === 0) {
+          photosDiv.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">此相簿沒有照片</div>';
+        } else {
+          photosData.forEach((photo) => {
             const img = document.createElement("img");
-            img.src = photo;
-            img.alt = album.title;
+            img.src = photo.path || photo.file_path || '';
+            img.alt = photo.name || photo.file_name || album.title;
             img.onclick = () => {
               lightbox.style.display = "flex";
-              lightboxImg.src = photo;
+              lightboxImg.src = photo.path || photo.file_path || '';
             };
             photosDiv.appendChild(img);
           });
-          albumDiv.appendChild(photosDiv);
-          galleryContainer.appendChild(albumDiv);
-        });
+        }
+
+        targetAlbumDiv.appendChild(photosDiv);
+        console.log('✅ 成功載入', photosData.length, '張照片');
       }
 
-      renderGallery();
-
-      // 修改相簿加載
+      // 【新增】從API載入相簿列表
       async function loadAlbums() {
-        const response = await fetch("student_api.php?action=get_albums");
-        const result = await response.json();
+        try {
+          const response = await fetch("student_api.php?action=get_albums");
+          const result = await response.json();
 
-        if (result.success) {
-          renderGallery(result.data);
+          if (result.success) {
+            renderGallery(result.data);
+          } else {
+            console.error('載入相簿失敗:', result.message);
+            alert('載入相簿失敗: ' + result.message);
+          }
+        } catch (error) {
+          console.error('載入相簿時發生錯誤:', error);
+          alert('載入相簿時發生錯誤，請重新整理頁面');
         }
       }
 
-      // 載入相簿照片
+      // 【新增】載入特定相簿的照片
       async function loadAlbumPhotos(albumId) {
-        const response = await fetch(
-          `student_api.php?action=get_album_photos&album_id=${albumId}`
-        );
-        const result = await response.json();
+        try {
+          const response = await fetch(
+            `student_api.php?action=get_album_photos&album_id=${albumId}`
+          );
+          const result = await response.json();
 
-        if (result.success) {
-          renderPhotos(result.data);
+          if (result.success) {
+            renderPhotos(albumId, result.data);
+          } else {
+            console.error('載入照片失敗:', result.message);
+            alert('載入照片失敗: ' + result.message);
+          }
+        } catch (error) {
+          console.error('載入照片時發生錯誤:', error);
+          alert('載入照片時發生錯誤');
         }
       }
+
+      // 【修改】頁面載入時從API載入相簿
+      window.addEventListener('load', function() {
+        loadAlbums();
+      });
 
       // 下拉選單功能
       function toggleMenu() {

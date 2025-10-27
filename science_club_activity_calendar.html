@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="zh-TW">
   <head>
     <meta charset="UTF-8" />
@@ -16,6 +17,7 @@
         box-sizing: border-box;
       }
 
+      
       html,
       body {
         height: 100%;
@@ -114,7 +116,6 @@
       }
 
       .icon::after {
-        content: "3";
         position: absolute;
         top: -5px;
         right: -5px;
@@ -132,6 +133,10 @@
         border: 2px solid white;
         animation: bounce 1s ease-in-out infinite;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      .icon-wrapper {
+        position: relative;
       }
 
       @keyframes pulse {
@@ -246,194 +251,243 @@
         width: 16px;
       }
 
-      /* 通知面板樣式 */
+      .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+        color: white;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid white;
+        box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        animation: badgePulse 2s infinite;
+      }
+      .notification-badge.active {
+        display: flex;
+      }
+      @keyframes badgePulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        }
+        50% {
+          transform: scale(1.2);
+          box-shadow: 0 6px 20px rgba(255, 71, 87, 0.8);
+        }
+      }
       .notification-panel {
         position: absolute;
         top: 65px;
-        right: 80px;
+        right: 0;
         background: white;
         border-radius: 15px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
         display: none;
-        width: 380px;
-        max-height: 500px;
-        z-index: 1000;
-        animation: dropdownFade 0.3s ease;
+        width: 400px;
+        max-height: 550px;
+        z-index: 1001;
         overflow: hidden;
+        animation: panelFade 0.3s ease;
+        flex-direction: column;
       }
-
+      @keyframes panelFade {
+        from {
+          opacity: 0;
+          transform: translateY(-15px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .notification-panel.active {
+        display: flex;
+      }
       .notification-header {
-        padding: 20px;
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+        padding: 20px 25px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         color: white;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-radius: 15px 15px 0 0;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
       }
-
       .notification-header h3 {
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0;
-      }
-
-      .notification-actions {
+        font-size: 17px;
+        font-weight: 700;
         display: flex;
-        gap: 10px;
+        align-items: center;
+        gap: 8px;
       }
-
-      .notification-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
+      .notification-header i {
+        font-size: 20px;
+      }
+      .mark-all-read {
+        background: rgba(255, 255, 255, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.3);
         color: white;
-        padding: 5px 12px;
-        border-radius: 6px;
+        padding: 7px 14px;
+        border-radius: 12px;
         cursor: pointer;
         font-size: 12px;
+        font-weight: 600;
         transition: all 0.3s ease;
       }
-
-      .notification-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.05);
+      .mark-all-read:hover {
+        background: rgba(255, 255, 255, 0.35);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
       }
-
       .notification-list {
-        max-height: 400px;
+        flex: 1;
         overflow-y: auto;
+        padding: 10px;
       }
-
       .notification-item {
-        padding: 15px 20px;
-        border-bottom: 1px solid #f0f0f0;
-        transition: all 0.3s ease;
+        padding: 16px;
+        margin-bottom: 8px;
+        border-radius: 12px;
         cursor: pointer;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+        border-left: 4px solid transparent;
         position: relative;
-        display: flex;
-        gap: 12px;
       }
-
       .notification-item:hover {
-        background: rgba(131, 96, 195, 0.05);
+        background: #f0f1f2;
+        transform: translateX(4px);
       }
-
       .notification-item.unread {
-        background: rgba(131, 96, 195, 0.08);
+        background: linear-gradient(135deg, #e8f9f8 0%, #f0fffe 100%);
+        border-left-color: #11998e;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.15);
       }
-
-      .notification-item.unread::before {
+      .notification-item.unread::after {
         content: "";
         position: absolute;
-        left: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 8px;
-        height: 8px;
-        background: #e74c3c;
+        top: 8px;
+        right: 8px;
+        width: 10px;
+        height: 10px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         border-radius: 50%;
+        animation: unreadPulse 2s infinite;
       }
-
-      .notification-icon {
-        width: 40px;
-        height: 40px;
+      @keyframes unreadPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.8;
+        }
+      }
+      .notification-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .notification-item-title {
+        font-weight: 700;
+        color: #333;
+        flex: 1;
+        margin-right: 10px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .notification-type-icon {
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 16px;
+        font-size: 11px;
+        color: white;
         flex-shrink: 0;
       }
-
-      .notification-icon.activity {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        color: white;
+      .notification-type-icon.info {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
       }
-
-      .notification-icon.deadline {
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-        color: white;
+      .notification-type-icon.warning {
+        background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
       }
-
-      .notification-icon.announcement {
-        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-        color: white;
+      .notification-item-time {
+        font-size: 12px;
+        color: #999;
+        white-space: nowrap;
       }
-
-      .notification-content {
-        flex: 1;
-      }
-
-      .notification-title {
-        font-size: 14px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 4px;
-      }
-
-      .notification-text {
+      .notification-item-message {
         font-size: 13px;
         color: #666;
-        margin-bottom: 4px;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        font-weight: 500;
       }
-
-      .notification-time {
+      .notification-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .notification-btn {
         font-size: 11px;
-        color: #999;
-      }
-
-      .notification-delete {
-        position: absolute;
-        right: 15px;
-        top: 15px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: rgba(231, 76, 60, 0.1);
-        color: #e74c3c;
+        padding: 6px 12px;
         border: none;
+        border-radius: 8px;
         cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        opacity: 0;
-        transition: all 0.3s ease;
+        gap: 4px;
       }
-
-      .notification-item:hover .notification-delete {
-        opacity: 1;
-      }
-
-      .notification-delete:hover {
-        background: #e74c3c;
+      .notification-btn-read {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         color: white;
-        transform: scale(1.1);
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.2);
       }
-
-      .notification-empty {
-        padding: 60px 20px;
+      .notification-btn-read:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+      }
+      .notification-btn-clear {
+        background: #ffe8e8;
+        color: #d32f2f;
+        box-shadow: 0 2px 8px rgba(211, 47, 47, 0.1);
+      }
+      .notification-btn-clear:hover {
+        background: #ffcccb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+      }
+      .empty-notification {
+        padding: 50px 20px;
         text-align: center;
         color: #999;
       }
-
-      .notification-empty i {
-        font-size: 48px;
-        color: #ddd;
+      .empty-notification i {
+        font-size: 45px;
         margin-bottom: 15px;
+        opacity: 0.4;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
       }
-
-      .notification-list::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      .notification-list::-webkit-scrollbar-track {
-        background: #f0f0f0;
-      }
-
-      .notification-list::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        border-radius: 3px;
+      .empty-notification p {
+        font-weight: 600;
+        font-size: 14px;
       }
 
       .main {
@@ -1182,36 +1236,35 @@
 
   <body class="sci-page">
     <div class="header">
-      <div
-        class="header-left"
-        onclick="location.href='science_club_activity_calendar.html';"
-      >
+      <a href="science_club_activity_calendar.html">
         <img src="image/logo1.gif" alt="Logo" class="logo" />
-      </div>
+      </a>
       <div class="header-right">
-        <div class="icon" id="notificationIcon">
-          <i class="fas fa-bell"></i>
+        <div class="icon-wrapper">
+          <div class="icon" id="notificationBell">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="notification-badge" id="notificationBadge">0</div>
         </div>
         <div class="notification-panel" id="notificationPanel">
           <div class="notification-header">
-            <h3>通知</h3>
-            <div class="notification-actions">
-              <button class="notification-btn">全部已讀</button>
-              <button
-                class="notification-btn"
-                onclick="clearAllNotifications()"
-              >
-                清除全部
-              </button>
+            <h3><i class="fas fa-bell"></i> 通知中心</h3>
+            <button class="mark-all-read">
+              <i class="fas fa-check-double"></i> 全部已讀
+            </button>
+          </div>
+          <div class="notification-list" id="notificationList">
+            <div class="empty-notification">
+              <i class="fas fa-inbox"></i>
+              <p>沒有通知</p>
             </div>
           </div>
-          <div class="notification-list" id="notificationList"></div>
         </div>
         <div class="avatar" id="avatar">
-          <i class="fas fa-user-shield"></i>
+          <i class="fas fa-user"></i>
         </div>
         <div class="dropdown" id="dropdown">
-          <a href="login_science_club.html">
+          <a href="login_teacher.html">
             <i class="fas fa-sign-out-alt"></i>
             登出
           </a>
@@ -1490,75 +1543,108 @@
       </div>
     </div>
 
+
     <script>
+      // ==========================================
+      // 全域變數與設定
+      // ==========================================
       let currentDate = new Date();
+      let eventsData = {}; // 從 API 載入的活動資料
+      const API_URL = 'api.php'; // API 端點
 
-      // 調整事件數據以匹配新的類型需求：
-      // activity: 紅底 (比賽活動)
-      // meeting: 橘底 (內部會議)
-      const eventsData = {
-        "2025-10-07": [
-          {
-            startTime: "09:00",
-            endTime: "10:30",
-            title: "科學營活動",
-            type: "activity",
-            desc: "年度大型活動執行",
-          },
-          {
-            startTime: "14:00",
-            endTime: "16:00",
-            title: "活動籌備會議",
-            type: "meeting",
-            desc: "討論下月活動安排",
-          },
-        ],
-        "2025-10-15": [
-          {
-            startTime: "10:00",
-            endTime: "11:00",
-            title: "月會",
-            type: "meeting",
-            desc: "各組進度報告",
-          },
-        ],
-        "2025-10-25": [
-          {
-            startTime: "全天",
-            endTime: "",
-            title: "校慶活動",
-            type: "activity",
-            desc: "校慶攤位活動",
-          },
-        ],
-        "2025-09-28": [
-          {
-            startTime: "10:00",
-            endTime: "",
-            title: "九月月會",
-            type: "meeting",
-            desc: "九月份各組報告",
-          },
-        ],
-        "2025-11-05": [
-          {
-            startTime: "13:00",
-            endTime: "",
-            title: "外部比賽報名",
-            type: "activity",
-            desc: "全國科學競賽報名開始",
-          },
-        ],
-      };
+      // 全域變數儲存當前選中的事件
+      let currentEvent = null;
+      let currentEventDate = null;
+      let currentEventIndex = null;
+      
+      // 新增/編輯模式控制
+      let selectedEventType = "activity"; // 預設為活動
+      let isEditMode = false;
 
-      document.addEventListener("DOMContentLoaded", function () {
-        currentDate = new Date(2025, 9, 1);
-        renderCalendar();
+      // ==========================================
+      // 登入檢查 (方案B - 只檢查是否登入，不檢查角色)
+      // ==========================================
+      async function checkLogin() {
+        try {
+          const response = await fetch(`${API_URL}?action=check_session`);
+          const result = await response.json();
+          
+          if (!result.success) {
+            alert('請先登入系統！');
+            window.location.href = 'index.html';
+            return false;
+          }
+          
+          // 方案B：不檢查角色，任何已登入使用者都可以訪問
+          return result.data;
+        } catch (error) {
+          console.error('檢查登入狀態失敗:', error);
+          alert('系統錯誤，請稍後再試');
+          return false;
+        }
+      }
+
+      // ==========================================
+      // 初始化
+      // ==========================================
+      document.addEventListener("DOMContentLoaded", async function () {
+        // 先檢查登入狀態
+        const userData = await checkLogin();
+        if (!userData) return;
+        
+        currentDate = new Date(); // 使用當前日期
+        await loadCalendarEvents(); // 載入活動資料
         updateTime();
         setInterval(updateTime, 1000); // 每秒更新時間
       });
 
-      // 更新即時時間
+      // ==========================================
+      // API 功能：載入行事曆活動
+      // ==========================================
+      async function loadCalendarEvents() {
+        try {
+          const response = await fetch(`${API_URL}?action=get_calendar_events`);
+          const result = await response.json();
+          
+          if (result.success) {
+            // 將 API 資料轉換為前端格式
+            eventsData = {};
+            result.data.forEach(event => {
+              const date = event.event_date;
+              if (!eventsData[date]) {
+                eventsData[date] = [];
+              }
+              
+              // 判斷顯示類型：is_public=1 顯示為紅底(activity)，is_public=0 顯示為橘底(meeting)
+              const displayType = event.is_public == 1 ? 'activity' : 'meeting';
+              
+              eventsData[date].push({
+                event_id: event.event_id,
+                startTime: event.start_time || '全天',
+                endTime: event.end_time || '',
+                title: event.title,
+                type: displayType, // 'activity' (紅底-公開) 或 'meeting' (橘底-內部)
+                event_type: event.event_type, // 保留原始類型
+                is_public: event.is_public, // 保留 is_public
+                desc: event.description || '無描述',
+                location: event.location || ''
+              });
+            });
+            
+            renderCalendar(); // 重新渲染日曆
+          } else {
+            console.error('載入活動失敗:', result.message);
+            alert('載入活動失敗: ' + result.message);
+          }
+        } catch (error) {
+          console.error('API 請求失敗:', error);
+          alert('網路連線錯誤，無法載入活動資料');
+        }
+      }
+
+      // ==========================================
+      // 時間顯示更新
+      // ==========================================
       function updateTime() {
         const now = new Date();
         const year = now.getFullYear();
@@ -1585,7 +1671,11 @@
         document.getElementById("timeDisplay").textContent = timeString;
       }
 
-      // 工具：取得今天的 YYYY-MM-DD 字串
+      // ==========================================
+      // 工具函數
+      // ==========================================
+      
+      // 取得今天的 YYYY-MM-DD 字串
       function getTodayString() {
         const now = new Date();
         const y = now.getFullYear();
@@ -1594,7 +1684,7 @@
         return `${y}-${m}-${d}`;
       }
 
-      // 工具：判斷是否為已過去的日期（只比對日期，不含時間）
+      // 判斷是否為已過去的日期（只比對日期，不含時間）
       function isPastDate(dateString) {
         if (!dateString) return false;
         const today = new Date();
@@ -1610,27 +1700,54 @@
         renderCalendar();
       }
 
-      function toggleMenu(element) {
-        const menuItem = element.parentElement;
-        const submenu = menuItem.querySelector(".submenu");
-        const isExpanded = menuItem.classList.contains("expanded");
+      // ==========================================
+      // 日曆渲染
+      // ==========================================
+      function renderCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
 
-        document.querySelectorAll(".menu-item").forEach((item) => {
-          if (item !== menuItem) {
-            item.classList.remove("expanded");
-            const otherSubmenu = item.querySelector(".submenu");
-            if (otherSubmenu) {
-              otherSubmenu.classList.remove("show");
-            }
-          }
-        });
+        document.getElementById("currentMonth").textContent = 
+          `${year}年${String(month + 1).padStart(2, "0")}月`;
 
-        if (isExpanded) {
-          menuItem.classList.remove("expanded");
-          submenu.classList.remove("show");
-        } else {
-          menuItem.classList.add("expanded");
-          submenu.classList.add("show");
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const firstDayOfWeek = firstDay.getDay(); // 0 (Sun) to 6 (Sat)
+
+        const calendarGrid = document.getElementById("calendarGrid");
+
+        // 移除除了標頭外的所有元素
+        while (calendarGrid.children.length > 7) {
+          calendarGrid.removeChild(calendarGrid.lastChild);
+        }
+
+        // 計算總共要顯示的格子數 (目標是 5 行，即 5 * 7 = 35 個格子)
+        let startOffset = firstDayOfWeek;
+        const totalCells = 5 * 7; // 5 行
+
+        // 填入前一個月的日期
+        const prevMonthLastDay = new Date(year, month, 0).getDate();
+        for (let i = startOffset - 1; i >= 0; i--) {
+          const day = prevMonthLastDay - i;
+          const dateString = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          createDayElement(day, dateString, "other-month", calendarGrid);
+        }
+
+        // 填入當前月份的日期
+        for (let day = 1; day <= daysInMonth; day++) {
+          const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          const todayStr = getTodayString();
+          const classes = dateString === todayStr ? "today" : "";
+          createDayElement(day, dateString, classes, calendarGrid);
+        }
+
+        // 填入下一個月的日期
+        const cellsUsed = startOffset + daysInMonth;
+        const remainingCells = totalCells - cellsUsed;
+        for (let day = 1; day <= remainingCells; day++) {
+          const dateString = `${year}-${String(month + 2).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          createDayElement(day, dateString, "other-month", calendarGrid);
         }
       }
 
@@ -1643,9 +1760,7 @@
         if (eventsData[dateString]) {
           dayDiv.classList.add("has-events");
           eventsData[dateString].forEach((event) => {
-            // 使用新的 'activity' 和 'meeting' 類型
-            const eventClass =
-              event.type === "activity" ? "activity" : "meeting";
+            const eventClass = event.type === "activity" ? "activity" : "meeting";
             const eventDiv = document.createElement("div");
             eventDiv.className = `event-item ${eventClass}`;
             eventDiv.textContent = event.title;
@@ -1673,126 +1788,38 @@
         parentElement.appendChild(dayDiv);
       }
 
-      function renderCalendar() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-
-        document.getElementById(
-          "currentMonth"
-        ).textContent = `${year}年${String(month + 1).padStart(2, "0")}月`;
-
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const daysInMonth = lastDay.getDate();
-        const firstDayOfWeek = firstDay.getDay(); // 0 (Sun) to 6 (Sat)
-
-        const calendarGrid = document.getElementById("calendarGrid");
-
-        // 移除除了標頭外的所有元素
-        while (calendarGrid.children.length > 7) {
-          calendarGrid.removeChild(calendarGrid.lastChild);
-        }
-
-        // 計算總共要顯示的格子數 (目標是 5 行，即 5 * 7 = 35 個格子)
-        // 找出當前月份可以顯示在 5 行內的起始日
-        // 5 行 * 7 天 = 35 天
-        // 假設月份日期是從第 X 個格子開始
-        let startOffset = firstDayOfWeek; // 當前月份的第一天在第幾個格子 (0=第一個)
-
-        // 如果當月 31 天，且第一天是星期六 (firstDayOfWeek = 6)，則需要 31 + 6 = 37 格，超過 5 行 (35格)
-        // 為了保持 5 行，我們要從上個月的某一天開始算起，使得剛好 35 格
-
-        let totalCells = 35; // 固定為 5 行 * 7 天
-        let prevMonthLastDay = new Date(year, month, 0).getDate();
-        let startDay = prevMonthLastDay - startOffset + 1;
-
-        // 確保日期能包含當月 1 號
-        let dayCounter = 0;
-
-        // 渲染上個月的日期
-        for (let i = 0; i < startOffset; i++) {
-          const dayNumber = prevMonthLastDay - startOffset + i + 1;
-          const prevMonth = month === 0 ? 11 : month - 1;
-          const prevYear = month === 0 ? year - 1 : year;
-          const dateString = `${prevYear}-${String(prevMonth + 1).padStart(
-            2,
-            "0"
-          )}-${String(dayNumber).padStart(2, "0")}`;
-
-          createDayElement(dayNumber, dateString, "other-month", calendarGrid);
-          dayCounter++;
-        }
-
-        // 渲染當月的日期
-        for (let day = 1; day <= daysInMonth; day++) {
-          const dateString = `${year}-${String(month + 1).padStart(
-            2,
-            "0"
-          )}-${String(day).padStart(2, "0")}`;
-          let classes = "";
-
-          const today = new Date();
-          if (
-            year === today.getFullYear() &&
-            month === today.getMonth() &&
-            day === today.getDate()
-          ) {
-            classes += "today";
-          }
-
-          createDayElement(day, dateString, classes, calendarGrid);
-          dayCounter++;
-        }
-
-        // 渲染下個月的日期，直到達到 5 行 (35 個格子)
-        let nextMonthDay = 1;
-        while (dayCounter < totalCells) {
-          const nextMonth = month === 11 ? 0 : month + 1;
-          const nextYear = month === 11 ? year + 1 : year;
-          const dateString = `${nextYear}-${String(nextMonth + 1).padStart(
-            2,
-            "0"
-          )}-${String(nextMonthDay).padStart(2, "0")}`;
-
-          createDayElement(
-            nextMonthDay,
-            dateString,
-            "other-month",
-            calendarGrid
-          );
-          nextMonthDay++;
-          dayCounter++;
-        }
-
-        // 如果月份需要超過 5 行才能完整顯示 (如 31 天且第一天是星期六，共 37 格)
-        // 則必須使用 6 行 (42 格) 來顯示完整月份，否則會遺失部分天數。
-        // 為了遵守「行事曆總體最多呈現五行就好」的要求，我們將移除多餘的第六行。
-        // 但如果當月日期超出 35 格，則最後幾天將不會顯示。
-
-        while (calendarGrid.children.length > 35 + 7) {
-          // 35 天 + 7 標頭
-          calendarGrid.removeChild(calendarGrid.lastChild);
-        }
-      }
-
+      // ==========================================
+      // 日曆導航
+      // ==========================================
       function previousMonth() {
-        currentDate.setMonth(currentDate.getMonth() - 1);
+        currentDate = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth() - 1,
+          1
+        );
         renderCalendar();
       }
 
       function nextMonth() {
-        currentDate.setMonth(currentDate.getMonth() + 1);
+        currentDate = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth() + 1,
+          1
+        );
         renderCalendar();
       }
 
+      // ==========================================
+      // 選擇日期
+      // ==========================================
       function selectDate(dateString) {
+        // 移除所有選中狀態
         document.querySelectorAll(".calendar-day").forEach((day) => {
           day.classList.remove("selected");
         });
 
-        const selectedDay = document.querySelector(
-          `[data-date="${dateString}"]`
-        );
+        // 標記當前選中
+        const selectedDay = document.querySelector(`[data-date="${dateString}"]`);
         if (selectedDay) {
           selectedDay.classList.add("selected");
         }
@@ -1807,20 +1834,16 @@
         openAddEventModal(dateString);
       }
 
-      // 全域變數儲存當前選中的事件
-      let currentEvent = null;
-      let currentEventDate = null;
-      let currentEventIndex = null;
-
+      // ==========================================
+      // 顯示活動詳情
+      // ==========================================
       function showEventDetail(event) {
         currentEvent = event;
+        
         // 找到事件所在的日期和索引
         for (const date in eventsData) {
           const eventIndex = eventsData[date].findIndex(
-            (e) =>
-              e.title === event.title &&
-              e.startTime === event.startTime &&
-              e.type === event.type
+            e => e.event_id === event.event_id
           );
           if (eventIndex !== -1) {
             currentEventDate = date;
@@ -1835,25 +1858,19 @@
         };
 
         // 顯示事件詳情
-        document.getElementById("detailType").textContent =
-          typeText[event.type];
+        document.getElementById("detailType").textContent = typeText[event.type];
         document.getElementById("detailTitle").textContent = event.title;
         document.getElementById("detailDate").textContent = currentEventDate;
-        document.getElementById("detailStartTime").textContent =
-          event.startTime || "未設定";
-        document.getElementById("detailEndTime").textContent =
-          event.endTime || "未設定";
-        document.getElementById("detailDesc").textContent =
-          event.desc || "無描述";
+        document.getElementById("detailStartTime").textContent = event.startTime || "未設定";
+        document.getElementById("detailEndTime").textContent = event.endTime || "未設定";
+        document.getElementById("detailDesc").textContent = event.desc || "無描述";
 
-        // 顯示詳情彈窗
         document.getElementById("eventDetailModal").classList.add("show");
       }
 
-      // 新增活動彈跳視窗相關功能
-      let selectedEventType = "activity"; // 預設改為 activity
-      let isEditMode = false; // 是否為編輯模式
-
+      // ==========================================
+      // 新增活動彈窗
+      // ==========================================
       function openAddEventModal(dateString) {
         isEditMode = false;
         document.getElementById("modalTitle").textContent = "新增活動";
@@ -1878,11 +1895,12 @@
         document.querySelectorAll(".event-type-option").forEach((opt) => {
           opt.classList.remove("selected");
         });
-        document
-          .querySelector('[data-type="activity"]')
-          .classList.add("selected");
+        document.querySelector('[data-type="activity"]').classList.add("selected");
       }
 
+      // ==========================================
+      // 編輯活動彈窗
+      // ==========================================
       function openEditEventModal() {
         isEditMode = true;
         document.getElementById("modalTitle").textContent = "編輯活動";
@@ -1895,22 +1913,21 @@
         // 填入當前事件資料
         document.getElementById("eventTitle").value = currentEvent.title;
         document.getElementById("eventDate").value = currentEventDate;
-        document.getElementById("eventStartTime").value =
-          currentEvent.startTime || "";
-        document.getElementById("eventEndTime").value =
-          currentEvent.endTime || "";
+        document.getElementById("eventStartTime").value = currentEvent.startTime === '全天' ? '' : currentEvent.startTime;
+        document.getElementById("eventEndTime").value = currentEvent.endTime || "";
         document.getElementById("eventDesc").value = currentEvent.desc || "";
 
-        // 設置事件類型
-        selectedEventType = currentEvent.type;
+        // 設置事件類型：根據 type 欄位（從 is_public 轉換而來）
+        selectedEventType = currentEvent.type; // 'activity' 或 'meeting'
         document.querySelectorAll(".event-type-option").forEach((opt) => {
           opt.classList.remove("selected");
         });
-        document
-          .querySelector(`[data-type="${currentEvent.type}"]`)
-          .classList.add("selected");
+        document.querySelector(`[data-type="${currentEvent.type}"]`).classList.add("selected");
       }
 
+      // ==========================================
+      // 關閉彈窗
+      // ==========================================
       function closeModal(event) {
         if (
           !event ||
@@ -1926,23 +1943,36 @@
           document.querySelectorAll(".event-type-option").forEach((opt) => {
             opt.classList.remove("selected");
           });
-          document
-            .querySelector('[data-type="activity"]')
-            .classList.add("selected");
+          document.querySelector('[data-type="activity"]').classList.add("selected");
         }
       }
 
+      function closeEventDetailModal(event) {
+        if (
+          !event ||
+          event.target.id === "eventDetailModal" ||
+          event.target.closest(".modal-close") ||
+          event.target.closest(".btn-cancel")
+        ) {
+          document.getElementById("eventDetailModal").classList.remove("show");
+        }
+      }
+
+      // ==========================================
+      // 選擇事件類型
+      // ==========================================
       function selectEventType(type) {
         selectedEventType = type;
         document.querySelectorAll(".event-type-option").forEach((opt) => {
           opt.classList.remove("selected");
         });
-        document
-          .querySelector(`[data-type="${type}"]`)
-          .classList.add("selected");
+        document.querySelector(`[data-type="${type}"]`).classList.add("selected");
       }
 
-      function submitEvent() {
+      // ==========================================
+      // 提交活動 (新增或編輯)
+      // ==========================================
+      async function submitEvent() {
         const title = document.getElementById("eventTitle").value.trim();
         const date = document.getElementById("eventDate").value;
         const startTime = document.getElementById("eventStartTime").value;
@@ -1960,139 +1990,131 @@
           return;
         }
 
-        // 格式化日期
-        const dateString = date; // 格式: YYYY-MM-DD
-        const startTimeString = startTime || "全天";
-        const endTimeString = endTime || "";
-
+        const formData = new FormData();
+        
         if (isEditMode) {
-          // 編輯模式：更新現有事件
-          if (currentEventDate !== dateString) {
-            // 如果日期改變了，需要從原日期移除，添加到新日期
-            eventsData[currentEventDate].splice(currentEventIndex, 1);
-            if (eventsData[currentEventDate].length === 0) {
-              delete eventsData[currentEventDate];
-            }
-
-            if (!eventsData[dateString]) {
-              eventsData[dateString] = [];
-            }
-            eventsData[dateString].push({
-              startTime: startTimeString,
-              endTime: endTimeString,
-              title: title,
-              type: selectedEventType,
-              desc: desc || "無描述",
-            });
-          } else {
-            // 日期沒變，直接更新
-            eventsData[dateString][currentEventIndex] = {
-              startTime: startTimeString,
-              endTime: endTimeString,
-              title: title,
-              type: selectedEventType,
-              desc: desc || "無描述",
-            };
-          }
-
-          // 重新渲染日曆
-          renderCalendar();
-
-          // 關閉彈窗
-          closeModal();
-
-          // 顯示成功提示
-          const timeDisplay =
-            startTimeString === "全天"
-              ? "全天"
-              : endTimeString
-              ? `${startTimeString}-${endTimeString}`
-              : startTimeString;
-          alert(
-            `✅ 活動已成功修改！\n\n標題：${title}\n日期：${dateString}\n時間：${timeDisplay}`
-          );
+          // 編輯模式
+          formData.append('action', 'update_calendar_event');
+          formData.append('event_id', currentEvent.event_id);
         } else {
-          // 新增模式：添加新事件
-          if (!eventsData[dateString]) {
-            eventsData[dateString] = [];
-          }
+          // 新增模式
+          formData.append('action', 'add_calendar_event');
+        }
+        
+        // 根據 selectedEventType 決定顏色和 is_public
+        // activity (紅底) = 比賽/活動，公開給學生 (is_public=1, color=red)
+        // meeting (橘底) = 內部會議，不公開 (is_public=0, color=orange)
+        const isPublic = selectedEventType === 'activity' ? 1 : 0;
+        const color = selectedEventType === 'activity' ? 'red' : 'orange';
+        
+        formData.append('title', title);
+        formData.append('description', desc);
+        formData.append('event_date', date);
+        formData.append('start_time', startTime || null);
+        formData.append('end_time', endTime || null);
+        formData.append('event_type', selectedEventType); // 使用選擇的類型
+        formData.append('color', color);
+        formData.append('is_public', isPublic);
+        formData.append('location', '');
 
-          eventsData[dateString].push({
-            startTime: startTimeString,
-            endTime: endTimeString,
-            title: title,
-            type: selectedEventType,
-            desc: desc || "無描述",
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: formData
           });
-
-          // 重新渲染日曆
-          renderCalendar();
-
-          // 關閉彈窗
-          closeModal();
-
-          // 顯示成功提示
-          const timeDisplay =
-            startTimeString === "全天"
-              ? "全天"
-              : endTimeString
-              ? `${startTimeString}-${endTimeString}`
-              : startTimeString;
-          alert(
-            `✅ 活動已成功新增！\n\n標題：${title}\n日期：${dateString}\n時間：${timeDisplay}`
-          );
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            const timeDisplay = startTime ? 
+              (endTime ? `${startTime}-${endTime}` : startTime) : '全天';
+            
+            const typeText = selectedEventType === 'activity' ? '比賽/活動（紅底）' : '內部會議（橘底）';
+            
+            alert(isEditMode ? 
+              `✅ 活動已成功修改！\n\n標題：${title}\n類型：${typeText}\n日期：${date}\n時間：${timeDisplay}` :
+              `✅ 活動已成功新增！\n\n標題：${title}\n類型：${typeText}\n日期：${date}\n時間：${timeDisplay}`
+            );
+            
+            closeModal();
+            await loadCalendarEvents(); // 重新載入資料
+          } else {
+            alert('操作失敗: ' + result.message);
+          }
+        } catch (error) {
+          console.error('API 請求失敗:', error);
+          alert('操作失敗，請稍後再試');
         }
       }
 
-      function addNewEvent() {
-        openAddEventModal();
-      }
-
-      // 關閉事件詳情彈窗
-      // 注意：編輯流程需要保留 currentEvent 等資料以帶入表單，
-      // 因此這裡僅關閉視窗，不清空資料。
-      function closeEventDetailModal(event) {
-        if (
-          !event ||
-          event.target.id === "eventDetailModal" ||
-          event.target.closest(".modal-close") ||
-          event.target.closest(".btn-cancel")
-        ) {
-          document.getElementById("eventDetailModal").classList.remove("show");
-        }
-      }
-
+      // ==========================================
       // 編輯事件
+      // ==========================================
       function editEvent() {
         openEditEventModal();
       }
 
+      // ==========================================
       // 刪除事件
-      function deleteEvent() {
-        if (
-          confirm(
-            `確定要刪除活動「${currentEvent.title}」嗎？\n\n此操作無法復原！`
-          )
-        ) {
-          // 從事件數據中移除
-          eventsData[currentEventDate].splice(currentEventIndex, 1);
+      // ==========================================
+      async function deleteEvent() {
+        if (!confirm(`確定要刪除活動「${currentEvent.title}」嗎？\n\n此操作無法復原！`)) {
+          return;
+        }
 
-          // 如果該日期沒有其他事件，刪除該日期
-          if (eventsData[currentEventDate].length === 0) {
-            delete eventsData[currentEventDate];
+        const formData = new FormData();
+        formData.append('action', 'delete_calendar_event');
+        formData.append('event_id', currentEvent.event_id);
+
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: formData
+          });
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            alert(`✅ 活動「${currentEvent.title}」已成功刪除！`);
+            closeEventDetailModal();
+            await loadCalendarEvents(); // 重新載入資料
+          } else {
+            alert('刪除失敗: ' + result.message);
           }
-
-          // 重新渲染日曆
-          renderCalendar();
-
-          // 關閉詳情彈窗
-          closeEventDetailModal();
-
-          // 顯示成功提示
-          alert(`✅ 活動「${currentEvent.title}」已成功刪除！`);
+        } catch (error) {
+          console.error('API 請求失敗:', error);
+          alert('刪除失敗，請稍後再試');
         }
       }
 
+      // ==========================================
+      // 選單控制
+      // ==========================================
+      function toggleMenu(element) {
+        const menuItem = element.parentElement;
+        const submenu = menuItem.querySelector(".submenu");
+        const isExpanded = menuItem.classList.contains("expanded");
+
+        document.querySelectorAll(".menu-item").forEach((item) => {
+          if (item !== menuItem) {
+            item.classList.remove("expanded");
+            const otherSubmenu = item.querySelector(".submenu");
+            if (otherSubmenu) {
+              otherSubmenu.classList.remove("show");
+            }
+          }
+        });
+
+        if (isExpanded) {
+          menuItem.classList.remove("expanded");
+          submenu.classList.remove("show");
+        } else {
+          menuItem.classList.add("expanded");
+          submenu.classList.add("show");
+        }
+      }
+
+      // 點擊外部關閉選單
       document.addEventListener("click", function (e) {
         if (!e.target.closest(".menu")) {
           document.querySelectorAll(".menu-item").forEach((item) => {

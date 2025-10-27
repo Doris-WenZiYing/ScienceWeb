@@ -16,11 +16,255 @@
         box-sizing: border-box;
       }
 
+
+      .icon-wrapper {
+        position: relative;
+      }
+      
       html,
       body {
         height: 100%;
         font-family: "Microsoft JhengHei", "Arial", sans-serif;
         background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      }
+
+      .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+        color: white;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid white;
+        box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        animation: badgePulse 2s infinite;
+      }
+      .notification-badge.active {
+        display: flex;
+      }
+      @keyframes badgePulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        }
+        50% {
+          transform: scale(1.2);
+          box-shadow: 0 6px 20px rgba(255, 71, 87, 0.8);
+        }
+      }
+      .notification-panel {
+        position: absolute;
+        top: 65px;
+        right: 0;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        display: none;
+        width: 400px;
+        max-height: 550px;
+        z-index: 1001;
+        overflow: hidden;
+        animation: panelFade 0.3s ease;
+        flex-direction: column;
+      }
+      @keyframes panelFade {
+        from {
+          opacity: 0;
+          transform: translateY(-15px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .notification-panel.active {
+        display: flex;
+      }
+      .notification-header {
+        padding: 20px 25px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      }
+      .notification-header h3 {
+        font-size: 17px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .notification-header i {
+        font-size: 20px;
+      }
+      .mark-all-read {
+        background: rgba(255, 255, 255, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 7px 14px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      .mark-all-read:hover {
+        background: rgba(255, 255, 255, 0.35);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+      }
+      .notification-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+      }
+      .notification-item {
+        padding: 16px;
+        margin-bottom: 8px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+        border-left: 4px solid transparent;
+        position: relative;
+      }
+      .notification-item:hover {
+        background: #f0f1f2;
+        transform: translateX(4px);
+      }
+      .notification-item.unread {
+        background: linear-gradient(135deg, #e8f9f8 0%, #f0fffe 100%);
+        border-left-color: #11998e;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.15);
+      }
+      .notification-item.unread::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 10px;
+        height: 10px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border-radius: 50%;
+        animation: unreadPulse 2s infinite;
+      }
+      @keyframes unreadPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.8;
+        }
+      }
+      .notification-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .notification-item-title {
+        font-weight: 700;
+        color: #333;
+        flex: 1;
+        margin-right: 10px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .notification-type-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: white;
+        flex-shrink: 0;
+      }
+      .notification-type-icon.info {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      }
+      .notification-type-icon.warning {
+        background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
+      }
+      .notification-item-time {
+        font-size: 12px;
+        color: #999;
+        white-space: nowrap;
+      }
+      .notification-item-message {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+      .notification-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .notification-btn {
+        font-size: 11px;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .notification-btn-read {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.2);
+      }
+      .notification-btn-read:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+      }
+      .notification-btn-clear {
+        background: #ffe8e8;
+        color: #d32f2f;
+        box-shadow: 0 2px 8px rgba(211, 47, 47, 0.1);
+      }
+      .notification-btn-clear:hover {
+        background: #ffcccb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+      }
+      .empty-notification {
+        padding: 50px 20px;
+        text-align: center;
+        color: #999;
+      }
+      .empty-notification i {
+        font-size: 45px;
+        margin-bottom: 15px;
+        opacity: 0.4;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .empty-notification p {
+        font-weight: 600;
+        font-size: 14px;
       }
 
       .header {
@@ -95,7 +339,6 @@
       }
 
       .icon::after {
-        content: "3";
         position: absolute;
         top: -5px;
         right: -5px;
@@ -214,190 +457,6 @@
 
       .dropdown a i {
         margin-right: 8px;
-      }
-
-      .notification-panel {
-        position: absolute;
-        top: 65px;
-        right: 80px;
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        display: none;
-        width: 380px;
-        max-height: 500px;
-        z-index: 1000;
-        animation: dropdownFade 0.3s ease;
-        overflow: hidden;
-      }
-
-      .notification-header {
-        padding: 20px;
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .notification-header h3 {
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0;
-      }
-
-      .notification-actions {
-        display: flex;
-        gap: 10px;
-      }
-
-      .notification-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        padding: 5px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 12px;
-        transition: all 0.3s ease;
-      }
-
-      .notification-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.05);
-      }
-
-      .notification-list {
-        max-height: 400px;
-        overflow-y: auto;
-      }
-
-      .notification-item {
-        padding: 15px 20px;
-        border-bottom: 1px solid #f0f0f0;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        position: relative;
-        display: flex;
-        gap: 12px;
-      }
-
-      .notification-item:hover {
-        background: rgba(131, 96, 195, 0.05);
-      }
-
-      .notification-item.unread {
-        background: rgba(131, 96, 195, 0.08);
-      }
-
-      .notification-item.unread::before {
-        content: "";
-        position: absolute;
-        left: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 8px;
-        height: 8px;
-        background: #e74c3c;
-        border-radius: 50%;
-      }
-
-      .notification-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        flex-shrink: 0;
-      }
-
-      .notification-icon.activity {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        color: white;
-      }
-
-      .notification-icon.deadline {
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-        color: white;
-      }
-
-      .notification-icon.announcement {
-        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-        color: white;
-      }
-
-      .notification-content {
-        flex: 1;
-      }
-
-      .notification-title {
-        font-size: 14px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 4px;
-      }
-
-      .notification-text {
-        font-size: 13px;
-        color: #666;
-        margin-bottom: 4px;
-      }
-
-      .notification-time {
-        font-size: 11px;
-        color: #999;
-      }
-
-      .notification-delete {
-        position: absolute;
-        right: 15px;
-        top: 15px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: rgba(231, 76, 60, 0.1);
-        color: #e74c3c;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        opacity: 0;
-        transition: all 0.3s ease;
-      }
-
-      .notification-item:hover .notification-delete {
-        opacity: 1;
-      }
-
-      .notification-delete:hover {
-        background: #e74c3c;
-        color: white;
-        transform: scale(1.1);
-      }
-
-      .notification-empty {
-        padding: 60px 20px;
-        text-align: center;
-        color: #999;
-      }
-
-      .notification-empty i {
-        font-size: 48px;
-        color: #ddd;
-        margin-bottom: 15px;
-      }
-
-      .notification-list::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      .notification-list::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        border-radius: 3px;
       }
 
       .main {
@@ -949,38 +1008,37 @@
   </head>
   <body class="sci-page">
     <div class="header">
-      <div
-        class="header-left"
-        onclick="location.href='science_club_activity_calendar.html';"
-        style="cursor: pointer"
-      >
+      <a href="science_club_activity_calendar.html">
         <img src="image/logo1.gif" alt="Logo" class="logo" />
-      </div>
+      </a>
       <div class="header-right">
-        <div class="icon" id="notificationIcon">
-          <i class="fas fa-bell"></i>
+        <div class="icon-wrapper">
+          <div class="icon" id="notificationBell">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="notification-badge" id="notificationBadge">0</div>
         </div>
         <div class="notification-panel" id="notificationPanel">
           <div class="notification-header">
-            <h3>通知</h3>
-            <div class="notification-actions">
-              <button class="notification-btn">全部已讀</button>
-              <button
-                class="notification-btn"
-                onclick="clearAllNotifications()"
-              >
-                清除全部
-              </button>
+            <h3><i class="fas fa-bell"></i> 通知中心</h3>
+            <button class="mark-all-read">
+              <i class="fas fa-check-double"></i> 全部已讀
+            </button>
+          </div>
+          <div class="notification-list" id="notificationList">
+            <div class="empty-notification">
+              <i class="fas fa-inbox"></i>
+              <p>沒有通知</p>
             </div>
           </div>
-          <div class="notification-list" id="notificationList"></div>
         </div>
         <div class="avatar" id="avatar">
-          <i class="fas fa-user-shield"></i>
+          <i class="fas fa-user"></i>
         </div>
         <div class="dropdown" id="dropdown">
-          <a href="login_science_club.html">
-            <i class="fas fa-sign-out-alt"></i>登出
+          <a href="login_teacher.html">
+            <i class="fas fa-sign-out-alt"></i>
+            登出
           </a>
         </div>
       </div>
@@ -1083,9 +1141,9 @@
               />
               <select class="filter-select" id="statusFilter">
                 <option value="">全部狀態</option>
-                <option value="pending">待審核</option>
-                <option value="approved">已核准</option>
-                <option value="rejected">已拒絕</option>
+                <option value="pending" id="pendingCount">待審核</option>
+                <option value="approved" id="approvedCount">已核准</option>
+                <option value="rejected" id="rejectedCount">已拒絕</option>
               </select>
               <select class="filter-select" id="departmentFilter">
                 <option value="">全部部門</option>
@@ -1161,106 +1219,14 @@
     </div>
 
     <script>
-      const requestsData = [
-        {
-          id: 1,
-          name: "王小明",
-          department: "activity",
-          position: "活動組長",
-          type: "事假",
-          startDate: "2025-09-20",
-          endDate: "2025-09-20",
-          reason: "家庭重要事務",
-          status: "pending",
-          submitTime: "2025-09-18 09:30:00",
-          attachments: ["醫療證明.pdf"],
-        },
-        {
-          id: 2,
-          name: "李美華",
-          department: "publicity",
-          position: "美宣組員",
-          type: "病假",
-          startDate: "2025-09-19",
-          endDate: "2025-09-21",
-          reason: "感冒發燒,需要休息",
-          status: "approved",
-          submitTime: "2025-09-17 14:20:00",
-          approver: "張主任",
-          approveTime: "2025-09-18 08:15:00",
-          attachments: [],
-        },
-        {
-          id: 3,
-          name: "陳志強",
-          department: "secretariat",
-          position: "文書組員",
-          type: "公假",
-          startDate: "2025-09-25",
-          endDate: "2025-09-25",
-          reason: "參與校外競賽活動",
-          status: "pending",
-          submitTime: "2025-09-18 10:15:00",
-          attachments: ["競賽通知.jpg"],
-        },
-        {
-          id: 4,
-          name: "林雅婷",
-          department: "finance",
-          position: "總務組長",
-          type: "特休",
-          startDate: "2025-09-30",
-          endDate: "2025-10-02",
-          reason: "個人休假安排",
-          status: "rejected",
-          submitTime: "2025-09-15 16:45:00",
-          rejectReason: "該時段有重要活動需要參與",
-          rejectTime: "2025-09-16 09:00:00",
-        },
-      ];
-
-      const attendanceData = [
-        {
-          name: "王小明",
-          department: "activity",
-          position: "活動組長",
-          checkIn: "08:45",
-          checkOut: "17:30",
-          workHours: 8.75,
-          status: "present",
-          note: "",
-        },
-        {
-          name: "李美華",
-          department: "publicity",
-          position: "美宣組員",
-          checkIn: "09:15",
-          checkOut: "17:00",
-          workHours: 7.75,
-          status: "late",
-          note: "遲到15分鐘",
-        },
-        {
-          name: "陳志強",
-          department: "secretariat",
-          position: "文書組員",
-          checkIn: "-",
-          checkOut: "-",
-          workHours: 0,
-          status: "leave",
-          note: "病假",
-        },
-        {
-          name: "林雅婷",
-          department: "finance",
-          position: "總務組長",
-          checkIn: "08:30",
-          checkOut: "18:00",
-          workHours: 9.5,
-          status: "present",
-          note: "加班1.5小時",
-        },
-      ];
+      // API 基礎路徑
+      const API_BASE = 'api.php';
+      
+      // 請假申請資料 (從 API 載入)
+      let requestsData = [];
+      
+      // 出勤資料 (從 API 載入)
+      let attendanceData = [];
 
       let filteredRequests = [...requestsData];
       const departmentMap = {
@@ -1286,7 +1252,10 @@
       document.addEventListener("DOMContentLoaded", function () {
         updateTime();
         setInterval(updateTime, 1000);
-        renderRequests();
+        
+        // 從後端載入請假申請資料
+        loadLeaveRequests();
+        
         loadAttendance();
         document.getElementById("attendanceDate").value = new Date()
           .toISOString()
@@ -1384,6 +1353,76 @@
         }
       }
 
+      // ==========================================
+      // API 相關函數
+      // ==========================================
+      
+      // 從後端載入請假申請資料
+      async function loadLeaveRequests() {
+        try {
+          const response = await fetch(`${API_BASE}?action=get_leave_requests`);
+          const data = await response.json();
+          
+          if (data.success) {
+            
+            // 建立一個從 DB 英文值到前端中文值的映射
+            const leaveTypeDBMap = {
+                'personal': '事假',
+                'sick': '病假',
+                'official': '公假',
+            };
+
+            // 轉換後端資料格式為前端格式
+            requestsData = data.data.map(item => {
+              
+              const leaveTypeDisplay = leaveTypeDBMap[item.leave_type] || item.leave_type || '事假';
+
+              return {
+                id: item.request_id, 
+                
+                // 修正: item.name -> item.applicant_name
+                name: item.applicant_name || '未提供', 
+                
+                // 修正: 新增 applicant_number
+                applicantNumber: item.applicant_number || 'N/A', 
+
+                // 移除 department 和 position，因為此表格沒有
+                
+                type: leaveTypeDisplay, 
+                
+                // 修正: item.start_date -> item.leave_date
+                startDate: item.leave_date, 
+                
+                endDate: item.end_date, 
+                reason: item.reason, 
+                status: item.status, 
+                
+                // 修正: item.created_at -> item.submitted_at
+                submitTime: item.submitted_at, 
+                
+                approver: item.reviewed_by, 
+                approveTime: item.reviewed_at, 
+                rejectReason: item.review_comment, 
+                rejectTime: item.reviewed_at, 
+                attachments: item.attachments ? item.attachments.split(',') : [] 
+              };
+            });
+            
+            filteredRequests = [...requestsData];
+            renderRequests();
+            updateStats();
+            
+            console.log(`✅ 成功載入 ${requestsData.length} 筆請假申請`);
+          } else {
+            showNotification('載入請假申請失敗: ' + data.message, 'error');
+            console.error('API Error:', data.message);
+          }
+        } catch (error) {
+          showNotification('載入請假申請時發生錯誤', 'error');
+          console.error('Fetch Error:', error);
+        }
+      }
+
       function renderRequests() {
         const list = document.getElementById("requestList");
         list.innerHTML = "";
@@ -1400,14 +1439,14 @@
                   <div class="request-header">
                       <div class="request-info">
                           <h4>${r.name} - ${r.type}</h4>
-                          <p><i class="fas fa-users"></i> ${
-                            departmentMap[r.department]
-                          } | ${r.position}</p>
+                          
+                          <p><i class="fas fa-id-card"></i> 學號: ${r.applicantNumber}</p>
+                          
                           <p><i class="fas fa-calendar"></i> ${r.startDate}${
             r.startDate !== r.endDate ? " 至 " + r.endDate : ""
           }</p>
                           <p><i class="fas fa-clock"></i> 申請時間:${
-                            r.submitTime
+                            r.submitTime // 這裡也確保是 submitTime
                           }</p>
                       </div>
                       <div class="status-badge ${statusInfo.class}">${
@@ -1496,7 +1535,7 @@
         document.getElementById("requestModal").style.display = "block";
       }
 
-      function approveRequest(id) {
+      async function approveRequest(id) {
         const r = requestsData.find((x) => x.id === id);
         if (!r) return;
         if (
@@ -1510,39 +1549,62 @@
             }\n原因: ${r.reason}`
           )
         ) {
-          r.status = "approved";
-          r.approver = "管理員";
-          r.approveTime = new Date().toLocaleString("zh-TW", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false,
-          });
+          try {
+            const formData = new FormData();
+            formData.append('action', 'review_leave_request');
+            formData.append('request_id', id);
+            formData.append('status', 'approved');
+            formData.append('review_comment', '核准');
 
-          // 更新顯示
-          renderRequests();
-          updateStats();
+            const response = await fetch(API_BASE, {
+              method: 'POST',
+              body: formData
+            });
 
-          // 添加新通知
-          const newNotif = {
-            id: notifications.length + 1,
-            type: "activity",
-            icon: "fa-check-circle",
-            title: "請假核准通知",
-            text: `已核准 ${r.name} 的${r.type}申請`,
-            time: "剛剛",
-            read: false,
-          };
-          notifications.unshift(newNotif);
+            const data = await response.json();
 
-          showNotification(`✅ 已核准 ${r.name} 的請假申請`, "success");
+            if (data.success) {
+              // 更新本地資料
+              r.status = "approved";
+              r.approver = "管理員";
+              r.approveTime = new Date().toLocaleString("zh-TW", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false,
+              });
+
+              // 更新顯示
+              renderRequests();
+              updateStats();
+
+              // 添加新通知
+              const newNotif = {
+                id: notifications.length + 1,
+                type: "activity",
+                icon: "fa-check-circle",
+                title: "請假核准通知",
+                text: `已核准 ${r.name} 的${r.type}申請`,
+                time: "剛剛",
+                read: false,
+              };
+              notifications.unshift(newNotif);
+
+              showNotification(`✅ 已核准 ${r.name} 的請假申請`, "success");
+            } else {
+              showNotification('核准失敗: ' + data.message, 'error');
+            }
+          } catch (error) {
+            showNotification('核准時發生錯誤', 'error');
+            console.error('Approve Error:', error);
+          }
         }
       }
 
-      function rejectRequest(id) {
+      async function rejectRequest(id) {
         const r = requestsData.find((x) => x.id === id);
         if (!r) return;
         const reason = prompt(
@@ -1553,36 +1615,59 @@
           }\n原因: ${r.reason}`
         );
         if (reason && reason.trim()) {
-          r.status = "rejected";
-          r.rejectReason = reason.trim();
-          r.rejectTime = new Date().toLocaleString("zh-TW", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false,
-          });
+          try {
+            const formData = new FormData();
+            formData.append('action', 'review_leave_request');
+            formData.append('request_id', id);
+            formData.append('status', 'rejected');
+            formData.append('review_comment', reason.trim());
 
-          // 更新顯示
-          renderRequests();
-          updateStats();
+            const response = await fetch(API_BASE, {
+              method: 'POST',
+              body: formData
+            });
 
-          // 添加新通知
-          const newNotif = {
-            id: notifications.length + 1,
-            type: "deadline",
-            icon: "fa-times-circle",
-            title: "請假拒絕通知",
-            text: `已拒絕 ${r.name} 的${r.type}申請`,
-            time: "剛剛",
-            read: false,
-          };
-          notifications.unshift(newNotif);
-          updateNotificationBadge();
+            const data = await response.json();
 
-          showNotification(`❌ 已拒絕 ${r.name} 的請假申請`, "error");
+            if (data.success) {
+              // 更新本地資料
+              r.status = "rejected";
+              r.rejectReason = reason.trim();
+              r.rejectTime = new Date().toLocaleString("zh-TW", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false,
+              });
+
+              // 更新顯示
+              renderRequests();
+              updateStats();
+
+              // 添加新通知
+              const newNotif = {
+                id: notifications.length + 1,
+                type: "deadline",
+                icon: "fa-times-circle",
+                title: "請假拒絕通知",
+                text: `已拒絕 ${r.name} 的${r.type}申請`,
+                time: "剛剛",
+                read: false,
+              };
+              notifications.unshift(newNotif);
+              updateNotificationBadge();
+
+              showNotification(`❌ 已拒絕 ${r.name} 的請假申請`, "error");
+            } else {
+              showNotification('拒絕失敗: ' + data.message, 'error');
+            }
+          } catch (error) {
+            showNotification('拒絕時發生錯誤', 'error');
+            console.error('Reject Error:', error);
+          }
         } else if (reason !== null) {
           alert("請輸入拒絕原因!");
         }
@@ -1624,79 +1709,123 @@
         renderRequests();
       }
 
-      function loadAttendance() {
+      async function loadAttendance() {
         const body = document.getElementById("attendanceBody");
         const dept = document.getElementById("attendanceDepartment").value;
         const selectedDate = document.getElementById("attendanceDate").value;
-        const filtered = dept
-          ? attendanceData.filter((r) => r.department === dept)
-          : attendanceData;
 
-        body.innerHTML = "";
+        try {
+          // 呼叫後端 API
+          let apiUrl = `${API_BASE}?action=get_attendance_records`;
+          if (selectedDate) {
+            apiUrl += `&date=${selectedDate}`;
+          }
+          
+          const response = await fetch(apiUrl);
+          const result = await response.json();
 
-        if (filtered.length === 0) {
-          body.innerHTML =
-            '<tr><td colspan="8" style="text-align:center;padding:40px;color:#999;">無出勤記錄</td></tr>';
-          return;
+          if (!result.success) {
+            showNotification('載入出勤資料失敗: ' + result.message, 'error');
+            console.error(result.message);
+            body.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:#999;">載入失敗</td></tr>';
+            return;
+          }
+
+          // 儲存到全域變數並轉換欄位名稱
+          attendanceData = (result.data || []).map(record => ({
+            name: record.member_name,
+            department: record.department,
+            position: record.position || '',
+            checkIn: record.check_in_time ? record.check_in_time.substring(11, 16) : '-',
+            checkOut: '-', // API 沒有提供 check_out_time
+            workHours: calculateWorkHours(record.check_in_time),
+            status: record.status,
+            note: record.notes || ''
+          }));
+
+          // 根據部門篩選
+          const filtered = dept
+            ? attendanceData.filter((r) => r.department === dept)
+            : attendanceData;
+
+          body.innerHTML = "";
+
+          if (filtered.length === 0) {
+            body.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:#999;">無出勤記錄</td></tr>';
+            return;
+          }
+
+          filtered.forEach((r) => {
+            const statusClass = {
+              present: "status-present",
+              late: "status-late",
+              leave: "status-leave",
+            }[r.status] || "";
+
+            const statusText = {
+              present: "正常",
+              late: "遲到",
+              leave: "請假",
+            }[r.status] || "未知";
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${r.name}</td>
+              <td>${departmentMap[r.department] || r.department}</td>
+              <td>${r.position}</td>
+              <td>${r.checkIn}</td>
+              <td>${r.checkOut}</td>
+              <td>${r.workHours}h</td>
+              <td><span class="attendance-status ${statusClass}">${statusText}</span></td>
+              <td>${r.note}</td>
+            `;
+            body.appendChild(row);
+          });
+
+          // 統計
+          const presentCount = filtered.filter((r) => r.status === "present").length;
+          const lateCount = filtered.filter((r) => r.status === "late").length;
+          const leaveCount = filtered.filter((r) => r.status === "leave").length;
+          const totalHours = filtered.reduce((sum, r) => sum + (parseFloat(r.workHours) || 0), 0).toFixed(2);
+
+          console.log(`📊 ${selectedDate || '今日'} 出勤統計: 正常${presentCount}人, 遲到${lateCount}人, 請假${leaveCount}人, 總工時${totalHours}小時`);
+        } catch (error) {
+          showNotification('載入出勤資料發生錯誤', 'error');
+          console.error('Fetch Error:', error);
+          body.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:#999;">載入錯誤</td></tr>';
         }
+      }
 
-        filtered.forEach((r) => {
-          const statusClass = {
-            present: "status-present",
-            late: "status-late",
-            leave: "status-leave",
-          }[r.status];
-          const statusText = { present: "正常", late: "遲到", leave: "請假" }[
-            r.status
-          ];
-          const row = document.createElement("tr");
-          row.innerHTML = `<td>${r.name}</td><td>${
-            departmentMap[r.department]
-          }</td><td>${r.position}</td><td>${r.checkIn}</td><td>${
-            r.checkOut
-          }</td><td>${
-            r.workHours
-          }h</td><td><span class="attendance-status ${statusClass}">${statusText}</span></td><td>${
-            r.note
-          }</td>`;
-          body.appendChild(row);
-        });
-
-        // 計算統計
-        const presentCount = filtered.filter(
-          (r) => r.status === "present"
-        ).length;
-        const lateCount = filtered.filter((r) => r.status === "late").length;
-        const leaveCount = filtered.filter((r) => r.status === "leave").length;
-        const totalHours = filtered
-          .reduce((sum, r) => sum + r.workHours, 0)
-          .toFixed(2);
-
-        console.log(
-          `📊 ${selectedDate} 出勤統計: 正常${presentCount}人, 遲到${lateCount}人, 請假${leaveCount}人, 總工時${totalHours}小時`
-        );
+      // 計算工作時數（簡單計算，假設標準工作8小時）
+      function calculateWorkHours(checkInTime) {
+        if (!checkInTime) return 0;
+        // 如果有簽到時間，預設8小時（可根據實際需求調整）
+        return 8;
       }
 
       function exportAttendance() {
         const selectedDate = document.getElementById("attendanceDate").value;
+        
+        if (attendanceData.length === 0) {
+          showNotification('沒有可匯出的資料', 'error');
+          return;
+        }
 
         // 創建CSV內容
-        let csvContent =
-          "姓名,部門,職位,簽到時間,簽退時間,工作時數,狀態,備註\n";
+        let csvContent = "姓名,部門,職位,簽到時間,簽退時間,工作時數,狀態,備註\n";
         const dept = document.getElementById("attendanceDepartment").value;
         const filtered = dept
           ? attendanceData.filter((r) => r.department === dept)
           : attendanceData;
 
         filtered.forEach((r) => {
-          const statusText = { present: "正常", late: "遲到", leave: "請假" }[
-            r.status
-          ];
-          csvContent += `${r.name},${departmentMap[r.department]},${
-            r.position
-          },${r.checkIn},${r.checkOut},${r.workHours}h,${statusText},${
-            r.note
-          }\n`;
+          const statusText = { 
+            present: "正常", 
+            late: "遲到", 
+            leave: "請假" 
+          }[r.status] || "未知";
+          
+          csvContent += `${r.name},${departmentMap[r.department] || r.department},${r.position},${r.checkIn},${r.checkOut},${r.workHours}h,${statusText},${r.note}\n`;
         });
 
         // 創建下載連結
@@ -1706,13 +1835,13 @@
         const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
-        link.setAttribute("download", `出勤報表_${selectedDate}.csv`);
+        link.setAttribute("download", `出勤報表_${selectedDate || 'all'}.csv`);
         link.style.visibility = "hidden";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
-        showNotification(`已成功匯出 ${selectedDate} 出勤報表`, "success");
+        showNotification(`已成功匯出 ${filtered.length} 筆出勤記錄`, "success");
       }
 
       function updateStats() {

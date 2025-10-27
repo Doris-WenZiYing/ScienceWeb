@@ -1,6 +1,6 @@
 <?php
 /**
- * 教師專用 API - 完整可用版
+ * 教師專用 API - 修復版
  */
 
 session_start();
@@ -69,17 +69,22 @@ switch ($action) {
     case 'get_work_hour_stats':
         getWorkHourStats();
         break;
+    case 'export_work_hours':
+        exportWorkHours();
+        break;
+
+    // 🆕 新增：獲取成員列表
+    case 'get_members_list':
+        getMembersList();
+        break;
 
     case 'get_user_info':
         getUserInfo();
         break;
     
-    // 1. 首頁統計數據
     case 'get_dashboard_stats':
         getDashboardStats();
         break;
-    
-    // 2. 活動管理
     case 'get_activities':
         getActivities();
         break;
@@ -95,33 +100,18 @@ switch ($action) {
     case 'cancel_activity':
         cancelActivity();
         break;
-    
-    // 3. 報名統計
     case 'get_registration_stats':
         getRegistrationStats();
         break;
     case 'get_activity_registrations':
         getActivityRegistrations();
         break;
-    case 'export_registrations':
-        exportRegistrations();
-        break;
-    
-    // 4. 學生回饋
     case 'get_feedback_list':
         getFeedbackList();
-        break;
-    case 'get_feedback_detail':
-        getFeedbackDetail();
         break;
     case 'mark_feedback_read':
         markFeedbackRead();
         break;
-    case 'reply_feedback':
-        replyFeedback();
-        break;
-    
-    // 5. 排班管理
     case 'get_schedules':
         getSchedules();
         break;
@@ -131,8 +121,6 @@ switch ($action) {
     case 'clear_schedule':
         clearSchedule();
         break;
-    
-    // 6. 請假審核
     case 'get_leave_requests':
         getLeaveRequests();
         break;
@@ -145,8 +133,6 @@ switch ($action) {
     case 'get_leave_stats':
         getLeaveStats();
         break;
-    
-    // 7. 點名系統
     case 'get_attendance_sessions':
         getAttendanceSessions();
         break;
@@ -162,8 +148,6 @@ switch ($action) {
     case 'get_attendance_statistics':
         getAttendanceStatistics();
         break;
-    
-    // 8. 工作時數
     case 'get_work_hours':
         getWorkHours();
         break;
@@ -179,10 +163,6 @@ switch ($action) {
     case 'get_work_stats':
         getWorkStats();
         break;
-    case 'export_work_hours':
-        exportWorkHours();
-        break;
-
     case 'get_notifications':
         getNotifications();
         break;
@@ -200,9 +180,659 @@ switch ($action) {
         jsonResponse(false, '未知的操作: ' . $action);
 }
 
+// ==========================================
+// 🔧 修復：點名系統
+// ==========================================
+
 /**
- * 獲取活動列表（含報名狀況）
+ * 獲取學生列表 - 修復版
  */
+function getStudentList() {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->query("
+            SELECT 
+                student_id as id,
+                number as student_idnumber,
+                student_name,
+                class,
+                phone,
+                email
+            FROM student 
+            ORDER BY class, student_name
+        ");
+        
+        $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        jsonResponse(true, '獲取成功', $students);
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
+    }
+}
+
+/**
+ * 創建點名場次 - 修復版
+ */
+function createRollcallSession() {
+    global $pdo;
+    
+    $session_name = $_POST['session_name'] ?? '';
+    $session_date = $_POST['session_date'] ?? date('Y-m-d');
+    $session_time = $_POST['session_time'] ?? date('H:i');
+    $teacher_id = $_SESSION['user_id'] ?? 0;
+    
+    if (!$session_name) {
+        jsonResponse(false, '請輸入場次名稱');
+    }
+    
+    try {
+        $pdo->beginTransaction();
+        
+        // 創建場次
+        $stmt = $pdo->prepare("
+            INSERT INTO rollcall_sessions (session_name, session_date, session_time, created_by, created_at)
+            VALUES (?, ?, ?, ?, NOW())
+        ");
+        $stmt->execute([$session_name, $session_date, $session_time, $teacher_id]);
+        $session_id = $pdo->lastInsertId();
+        
+        // 獲取所有學生
+        $stmt = $pdo->query("SELECT student_id FROM student");
+        $students = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        // 為每個學生創建點名記錄
+        $stmt = $pdo->prepare("
+            INSERT INTO rollcall_records (session_id, student_id, is_present, check_time)
+            VALUES (?, ?, 0, NULL)
+        ");
+        
+        foreach ($students as $student_id) {
+            $stmt->execute([$session_id, $student_id]);
+        }
+        
+        $pdo->commit();
+        jsonResponse(true, '場次創建成功', ['session_id' => $session_id]);
+        
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        jsonResponse(false, '創建失敗: ' . $e->getMessage());
+    }
+}
+
+/**
+ * 保存點名記錄
+ */
+function saveRollcall() {
+    global $pdo;
+    
+    $session_id = $_POST['session_id'] ?? 0;
+    $student_id = $_POST['student_id'] ?? 0;
+    $is_present = $_POST['is_present'] ?? 0;
+    
+    if (!$session_id || !$student_id) {
+        jsonResponse(false, '參數錯誤');
+    }
+    
+    try {
+        $stmt = $pdo->prepare("
+            SELECT record_id FROM rollcall_records 
+            WHERE session_id = ? AND student_id = ?
+        ");
+        $stmt->execute([$session_id, $student_id]);
+        $exists = $stmt->fetch();
+        
+        $check_time = $is_present ? date('Y-m-d H:i:s') : null;
+        
+        if ($exists) {
+            $stmt = $pdo->prepare("
+                UPDATE rollcall_records 
+                SET is_present = ?, check_time = ?
+                WHERE session_id = ? AND student_id = ?
+            ");
+            $stmt->execute([$is_present, $check_time, $session_id, $student_id]);
+        } else {
+            $stmt = $pdo->prepare("
+                INSERT INTO rollcall_records (session_id, student_id, is_present, check_time)
+                VALUES (?, ?, ?, ?)
+            ");
+            $stmt->execute([$session_id, $student_id, $is_present, $check_time]);
+        }
+        
+        jsonResponse(true, '保存成功');
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '保存失敗: ' . $e->getMessage());
+    }
+}
+
+/**
+ * 匯出點名記錄
+ */
+function exportRollcall() {
+    global $pdo;
+    
+    $session_id = $_GET['session_id'] ?? 0;
+    
+    try {
+        $stmt = $pdo->prepare("
+            SELECT 
+                rs.session_name,
+                rs.session_date,
+                s.student_name,
+                s.number as student_idnumber,
+                s.class,
+                CASE WHEN rr.is_present = 1 THEN '已出席' ELSE '未出席' END as status,
+                rr.check_time
+            FROM rollcall_records rr
+            JOIN student s ON rr.student_id = s.student_id
+            JOIN rollcall_sessions rs ON rr.session_id = rs.session_id
+            WHERE rr.session_id = ?
+            ORDER BY s.class, s.student_name
+        ");
+        $stmt->execute([$session_id]);
+        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        jsonResponse(true, '獲取成功', $records);
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
+    }
+}
+
+function getScheduleWeek() {
+    global $pdo;
+    
+    $week_start = $_GET['week_start'] ?? date('Y-m-d');
+    
+    try {
+        $stmt = $pdo->prepare("
+            SELECT 
+                schedule_id,
+                week_start_date,
+                day_of_week,
+                time_slot,
+                staff_name,
+                notes
+            FROM work_schedules
+            WHERE week_start_date = ?
+            ORDER BY 
+                FIELD(day_of_week, '星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'),
+                time_slot
+        ");
+        $stmt->execute([$week_start]);
+        $schedules = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        jsonResponse(true, '獲取成功', $schedules);
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
+    }
+}
+
+function saveScheduleCell() {
+    global $pdo;
+    
+    $week_start = $_POST['week_start'] ?? '';
+    $day_of_week = $_POST['day_of_week'] ?? '';
+    $time_slot = $_POST['time_slot'] ?? '';
+    $staff_name = $_POST['staff_name'] ?? '';
+    $notes = $_POST['notes'] ?? '';
+    
+    if (!$week_start || !$day_of_week || !$time_slot) {
+        jsonResponse(false, '參數錯誤');
+    }
+    
+    try {
+        // 先檢查這筆資料是否存在
+        $stmt = $pdo->prepare("
+            SELECT schedule_id FROM work_schedules 
+            WHERE week_start_date = ? AND day_of_week = ? AND time_slot = ?
+        ");
+        $stmt->execute([$week_start, $day_of_week, $time_slot]);
+        $existing_record = $stmt->fetch();
+        
+        // ** 核心邏輯修改 **
+        
+        if (empty($staff_name)) {
+            // 1. 如果 staff_name 是空的，代表要刪除
+            if ($existing_record) {
+                // 只有在資料存在時才需要刪除
+                $stmt = $pdo->prepare("DELETE FROM work_schedules WHERE schedule_id = ?");
+                $stmt->execute([$existing_record['schedule_id']]);
+            }
+        } else {
+            // 2. 如果 staff_name 不是空的
+            if ($existing_record) {
+                // 資料存在 -> 更新
+                $stmt = $pdo->prepare("
+                    UPDATE work_schedules 
+                    SET staff_name = ?, notes = ?, updated_at = NOW()
+                    WHERE schedule_id = ?
+                ");
+                $stmt->execute([$staff_name, $notes, $existing_record['schedule_id']]);
+            } else {
+                // 資料不存在 -> 新增
+                $stmt = $pdo->prepare("
+                    INSERT INTO work_schedules (week_start_date, day_of_week, time_slot, staff_name, notes, created_at)
+                    VALUES (?, ?, ?, ?, ?, NOW())
+                ");
+                $stmt->execute([$week_start, $day_of_week, $time_slot, $staff_name, $notes]);
+            }
+        }
+        
+        jsonResponse(true, '保存成功');
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '保存失敗: ' . $e->getMessage());
+    }
+}
+
+function clearScheduleWeek() {
+    global $pdo;
+    
+    $week_start = $_POST['week_start'] ?? '';
+    
+    if (!$week_start) {
+        jsonResponse(false, '參數錯誤');
+    }
+    
+    try {
+        $stmt = $pdo->prepare("DELETE FROM work_schedules WHERE week_start_date = ?");
+        $stmt->execute([$week_start]);
+        
+        jsonResponse(true, '清空成功');
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '清空失敗: ' . $e->getMessage());
+    }
+}
+
+function exportSchedule() {
+    global $pdo;
+    
+    $week_start = $_GET['week_start'] ?? date('Y-m-d');
+    
+    try {
+        $stmt = $pdo->prepare("
+            SELECT * FROM work_schedules 
+            WHERE week_start_date = ?
+            ORDER BY 
+                FIELD(day_of_week, '星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'),
+                time_slot
+        ");
+        $stmt->execute([$week_start]);
+        $schedules = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        jsonResponse(true, '獲取成功', $schedules);
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
+    }
+}
+
+function getWorkHoursList() {
+    global $pdo;
+    
+    $staff_name = $_GET['staff_name'] ?? 'all';
+    $start_date = $_GET['start_date'] ?? date('Y-m-01');
+    $end_date = $_GET['end_date'] ?? date('Y-m-t');
+    $page = $_GET['page'] ?? 1;
+    $limit = 10;
+    $offset = ($page - 1) * $limit;
+    
+    try {
+        $where = "work_date BETWEEN ? AND ?";
+        $params = [$start_date, $end_date];
+        
+        if ($staff_name !== 'all') {
+            $where .= " AND staff_name = ?";
+            $params[] = $staff_name;
+        }
+        
+        $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM work_hours WHERE $where");
+        $stmt->execute($params);
+        $total = $stmt->fetch()['total'];
+        
+        $stmt = $pdo->prepare("
+            SELECT 
+                work_id,
+                work_date,
+                staff_name,
+                shift_time,
+                check_in_time,
+                check_out_time,
+                work_hours,
+                status,
+                notes
+            FROM work_hours 
+            WHERE $where
+            ORDER BY work_date DESC, check_in_time DESC
+            LIMIT $limit OFFSET $offset
+        ");
+        $stmt->execute($params);
+        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        jsonResponse(true, '獲取成功', [
+            'records' => $records,
+            'total' => $total,
+            'page' => $page,
+            'total_pages' => ceil($total / $limit)
+        ]);
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
+    }
+}
+
+function addWorkHourRecord() {
+    global $pdo;
+    
+    $work_date = $_POST['work_date'] ?? '';
+    $staff_name = $_POST['staff_name'] ?? '';
+    $shift_time = $_POST['shift_time'] ?? '';
+    $check_in_time = $_POST['check_in_time'] ?? null;
+    $check_out_time = $_POST['check_out_time'] ?? null;
+    $work_hours = $_POST['work_hours'] ?? 0;
+    $status = $_POST['status'] ?? 'present';
+    $notes = $_POST['notes'] ?? '';
+    
+    if (!$work_date || !$staff_name) {
+        jsonResponse(false, '日期和成員姓名不能為空');
+    }
+    
+    try {
+        $stmt = $pdo->prepare("
+            INSERT INTO work_hours 
+            (work_date, staff_name, shift_time, check_in_time, check_out_time, work_hours, status, notes, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        ");
+        
+        $result = $stmt->execute([
+            $work_date,
+            $staff_name,
+            $shift_time,
+            $check_in_time,
+            $check_out_time,
+            $work_hours,
+            $status,
+            $notes
+        ]);
+        
+        jsonResponse($result, $result ? '新增成功' : '新增失敗');
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '新增失敗: ' . $e->getMessage());
+    }
+}
+
+function updateWorkHourRecord() {
+    global $pdo;
+    
+    $work_id = $_POST['work_id'] ?? 0;
+    $work_date = $_POST['work_date'] ?? '';
+    $staff_name = $_POST['staff_name'] ?? '';
+    $shift_time = $_POST['shift_time'] ?? '';
+    $check_in_time = $_POST['check_in_time'] ?? null;
+    $check_out_time = $_POST['check_out_time'] ?? null;
+    $work_hours = $_POST['work_hours'] ?? 0;
+    $status = $_POST['status'] ?? 'present';
+    $notes = $_POST['notes'] ?? '';
+    
+    if (!$work_id) {
+        jsonResponse(false, '記錄ID不能為空');
+    }
+    
+    try {
+        $stmt = $pdo->prepare("
+            UPDATE work_hours 
+            SET work_date = ?, 
+                staff_name = ?, 
+                shift_time = ?, 
+                check_in_time = ?, 
+                check_out_time = ?, 
+                work_hours = ?, 
+                status = ?, 
+                notes = ?,
+                updated_at = NOW()
+            WHERE work_id = ?
+        ");
+        
+        $result = $stmt->execute([
+            $work_date,
+            $staff_name,
+            $shift_time,
+            $check_in_time,
+            $check_out_time,
+            $work_hours,
+            $status,
+            $notes,
+            $work_id
+        ]);
+        
+        jsonResponse($result, $result ? '更新成功' : '更新失敗');
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '更新失敗: ' . $e->getMessage());
+    }
+}
+
+function deleteWorkHourRecord() {
+    global $pdo;
+    
+    $work_id = $_POST['work_id'] ?? 0;
+    
+    if (!$work_id) {
+        jsonResponse(false, '記錄ID不能為空');
+    }
+    
+    try {
+        $stmt = $pdo->prepare("DELETE FROM work_hours WHERE work_id = ?");
+        $result = $stmt->execute([$work_id]);
+        
+        jsonResponse($result, $result ? '刪除成功' : '刪除失敗');
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '刪除失敗: ' . $e->getMessage());
+    }
+}
+
+function getWorkHourStats() {
+    global $pdo;
+    
+    $start_date = $_GET['start_date'] ?? date('Y-m-01');
+    $end_date = $_GET['end_date'] ?? date('Y-m-t');
+    
+    try {
+        $stmt = $pdo->prepare("
+            SELECT SUM(work_hours) as total_hours
+            FROM work_hours
+            WHERE work_date BETWEEN ? AND ?
+        ");
+        $stmt->execute([$start_date, $end_date]);
+        $total_hours = $stmt->fetch()['total_hours'] ?? 0;
+        
+        $stmt = $pdo->prepare("
+            SELECT 
+                COUNT(CASE WHEN status IN ('present', 'late') THEN 1 END) * 100.0 / COUNT(*) as attendance_rate
+            FROM work_hours
+            WHERE work_date BETWEEN ? AND ?
+        ");
+        $stmt->execute([$start_date, $end_date]);
+        $attendance_rate = round($stmt->fetch()['attendance_rate'] ?? 0, 1);
+        
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) as late_count
+            FROM work_hours
+            WHERE work_date BETWEEN ? AND ? AND status = 'late'
+        ");
+        $stmt->execute([$start_date, $end_date]);
+        $late_count = $stmt->fetch()['late_count'];
+        
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) as absent_count
+            FROM work_hours
+            WHERE work_date BETWEEN ? AND ? AND status = 'absent'
+        ");
+        $stmt->execute([$start_date, $end_date]);
+        $absent_count = $stmt->fetch()['absent_count'];
+        
+        jsonResponse(true, '獲取成功', [
+            'total_hours' => round($total_hours, 1),
+            'attendance_rate' => $attendance_rate,
+            'late_count' => $late_count,
+            'absent_count' => $absent_count
+        ]);
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
+    }
+}
+
+function exportWorkHours() {
+    global $pdo;
+    
+    $staff_name = $_GET['staff_name'] ?? 'all';
+    $start_date = $_GET['start_date'] ?? date('Y-m-01');
+    $end_date = $_GET['end_date'] ?? date('Y-m-t');
+    
+    try {
+        $where = "work_date BETWEEN ? AND ?";
+        $params = [$start_date, $end_date];
+        
+        if ($staff_name !== 'all') {
+            $where .= " AND staff_name = ?";
+            $params[] = $staff_name;
+        }
+        
+        $stmt = $pdo->prepare("
+            SELECT 
+                work_date,
+                staff_name,
+                shift_time,
+                check_in_time,
+                check_out_time,
+                work_hours,
+                status,
+                notes
+            FROM work_hours 
+            WHERE $where
+            ORDER BY work_date DESC, check_in_time DESC
+        ");
+        $stmt->execute($params);
+        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        jsonResponse(true, '獲取成功', $records);
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
+    }
+}
+
+// ==========================================
+// 🆕 新增：獲取成員列表（從science_club_members）
+// ==========================================
+
+/**
+ * 獲取科學會成員列表
+ */
+function getMembersList() {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->query("
+            SELECT 
+                teacher_id,
+                teacher_number,
+                teacher_name,
+                department,
+                phone,
+                email
+            FROM teachers 
+            ORDER BY teacher_name
+        ");
+        
+        $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        jsonResponse(true, '獲取成功', $members);
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
+    }
+}
+
+function getUserInfo() {
+    global $pdo;
+    
+    $userId = $_SESSION['user_id'] ?? 0;
+    if (!$userId) {
+        jsonResponse(false, '未登入');
+    }
+    
+    // ✅ 注意：表名是 user 不是 users
+    $stmt = $pdo->prepare("
+        SELECT id, account, name, email, role 
+        FROM user 
+        WHERE id = ?
+    ");
+    $stmt->execute([$userId]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$user) {
+        jsonResponse(false, '找不到使用者');
+    }
+    
+    jsonResponse(true, '獲取成功', $user);
+}
+
+function getDashboardStats() {
+    global $pdo;
+    
+    try {
+        // 進行中的活動數
+        $stmt = $pdo->query("SELECT COUNT(*) as count FROM activities WHERE status = 'published'");
+        $activeActivities = $stmt->fetch()['count'];
+        
+        // 總報名人數
+        $stmt = $pdo->query("SELECT COUNT(*) as count FROM registrations WHERE status = 'registered'");
+        $totalStudents = $stmt->fetch()['count'];
+        
+        // 平均評分
+        $stmt = $pdo->query("SELECT AVG(satisfaction_score) as avg_rating FROM feedback_responses");
+        $avgRating = round($stmt->fetch()['avg_rating'] ?? 0, 1);
+        
+        // 待審核表單
+        $stmt = $pdo->query("SELECT COUNT(*) as count FROM feedback_responses WHERE is_read = 0");
+        $pendingReviews = $stmt->fetch()['count'];
+        
+        // 今日課程安排（從行事曆取得）
+        $today = date('Y-m-d');
+        $stmt = $pdo->prepare("
+            SELECT 
+                title,
+                start_time,
+                end_time,
+                location
+            FROM calendar_events 
+            WHERE event_date = ? AND is_public = 1
+            ORDER BY start_time
+            LIMIT 4
+        ");
+        $stmt->execute([$today]);
+        $todaySchedule = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        jsonResponse(true, '獲取成功', [
+            'activeActivities' => $activeActivities,
+            'totalStudents' => $totalStudents,
+            'avgRating' => $avgRating,
+            'pendingReviews' => $pendingReviews,
+            'todaySchedule' => $todaySchedule
+        ]);
+        
+    } catch (Exception $e) {
+        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
+    }
+}
+
 function getActivities() {
     global $pdo;
     
@@ -224,7 +854,6 @@ function getActivities() {
         ");
         
         $activities = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
         echo json_encode($activities, JSON_UNESCAPED_UNICODE);
         exit;
         
@@ -233,16 +862,12 @@ function getActivities() {
     }
 }
 
-/**
- * 獲取活動詳情
- */
 function getActivityDetail() {
     global $pdo;
     
     $activity_id = $_GET['activity_id'] ?? 0;
     
     try {
-        // 活動基本資訊
         $stmt = $pdo->prepare("SELECT * FROM activities WHERE activity_id = ?");
         $stmt->execute([$activity_id]);
         $activity = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -251,7 +876,6 @@ function getActivityDetail() {
             jsonResponse(false, '找不到此活動');
         }
         
-        // 報名學生列表
         $stmt = $pdo->prepare("
             SELECT 
                 r.registration_id,
@@ -276,9 +900,6 @@ function getActivityDetail() {
     }
 }
 
-/**
- * 更新活動狀態
- */
 function updateActivityStatus() {
     global $pdo;
     
@@ -301,56 +922,13 @@ function updateActivityStatus() {
     }
 }
 
-/**
- * 暫停活動
- */
 function pauseActivity() {
-    global $pdo;
-    
-    $activity_id = $_POST['activity_id'] ?? 0;
-    
-    try {
-        $stmt = $pdo->prepare("UPDATE activities SET status = 'closed' WHERE activity_id = ?");
-        $result = $stmt->execute([$activity_id]);
-        
-        jsonResponse($result, $result ? '活動已暫停' : '操作失敗');
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '操作失敗: ' . $e->getMessage());
-    }
+    updateActivityStatus();
 }
 
-/**
- * 取消活動
- */
 function cancelActivity() {
-    global $pdo;
-    
-    $activity_id = $_POST['activity_id'] ?? 0;
-    
-    try {
-        $pdo->beginTransaction();
-        
-        // 更新活動狀態
-        $stmt = $pdo->prepare("UPDATE activities SET status = 'cancelled' WHERE activity_id = ?");
-        $stmt->execute([$activity_id]);
-        
-        // 取消所有報名
-        $stmt = $pdo->prepare("UPDATE registrations SET status = 'cancelled' WHERE activity_id = ?");
-        $stmt->execute([$activity_id]);
-        
-        $pdo->commit();
-        jsonResponse(true, '活動已取消');
-        
-    } catch (Exception $e) {
-        $pdo->rollBack();
-        jsonResponse(false, '操作失敗: ' . $e->getMessage());
-    }
+    updateActivityStatus();
 }
-
-// ==========================================
-// 3. 報名統計
-// ==========================================
 
 function getRegistrationStats() {
     global $pdo;
@@ -710,9 +1288,6 @@ function calculateTrend($current, $previous) {
     return round((($current - $previous) / $previous) * 100, 1);
 }
 
-/**
- * 獲取特定活動的報名詳情
- */
 function getActivityRegistrations() {
     global $pdo;
     
@@ -744,13 +1319,6 @@ function getActivityRegistrations() {
     }
 }
 
-// ==========================================
-// 4. 學生回饋
-// ==========================================
-
-/**
- * 獲取回饋列表
- */
 function getFeedbackList() {
     global $pdo;
     
@@ -807,9 +1375,6 @@ function getFeedbackList() {
     }
 }
 
-/**
- * 標記回饋為已讀
- */
 function markFeedbackRead() {
     global $pdo;
     
@@ -826,14 +1391,6 @@ function markFeedbackRead() {
     }
 }
 
-// ==========================================
-// 5. 排班管理
-// ==========================================
-
-/**
- * 獲取排班表
- * 注意：需要創建 schedules 表，或使用 attendance_sessions
- */
 function getSchedules() {
     global $pdo;
     
@@ -864,9 +1421,6 @@ function getSchedules() {
     }
 }
 
-/**
- * 儲存排班表
- */
 function saveSchedule() {
     global $pdo;
     
@@ -919,9 +1473,6 @@ function saveSchedule() {
     }
 }
 
-/**
- * 清空排班表
- */
 function clearSchedule() {
     global $pdo;
     
@@ -941,13 +1492,6 @@ function clearSchedule() {
     }
 }
 
-// ==========================================
-// 6. 請假審核
-// ==========================================
-
-/**
- * 獲取請假申請列表
- */
 function getLeaveRequests() {
     global $pdo;
     
@@ -1007,9 +1551,6 @@ function getLeaveRequests() {
     }
 }
 
-/**
- * 核准請假
- */
 function approveLeave() {
     global $pdo;
     
@@ -1039,9 +1580,6 @@ function approveLeave() {
     }
 }
 
-/**
- * 拒絕請假
- */
 function rejectLeave() {
     global $pdo;
     
@@ -1075,9 +1613,6 @@ function rejectLeave() {
     }
 }
 
-/**
- * 獲取請假統計
- */
 function getLeaveStats() {
     global $pdo;
     
@@ -1133,13 +1668,6 @@ function getLeaveStats() {
     }
 }
 
-// ==========================================
-// 7. 點名系統
-// ==========================================
-
-/**
- * 獲取簽到場次列表
- */
 function getAttendanceSessions() {
     global $pdo;
     
@@ -1169,9 +1697,6 @@ function getAttendanceSessions() {
     }
 }
 
-/**
- * 創建簽到場次
- */
 function createAttendanceSession() {
     global $pdo;
     
@@ -1213,9 +1738,6 @@ function createAttendanceSession() {
     }
 }
 
-/**
- * 獲取場次的成員列表（用於點名）
- */
 function getSessionMembers() {
     global $pdo;
     
@@ -1275,9 +1797,6 @@ function getSessionMembers() {
     }
 }
 
-/**
- * 記錄簽到
- */
 function recordAttendance() {
     global $pdo;
     
@@ -1318,9 +1837,6 @@ function recordAttendance() {
     }
 }
 
-/**
- * 獲取出席統計
- */
 function getAttendanceStatistics() {
     global $pdo;
     
@@ -1353,13 +1869,6 @@ function getAttendanceStatistics() {
     }
 }
 
-// ==========================================
-// 8. 工作時數管理
-// ==========================================
-
-/**
- * 獲取工作時數記錄
- */
 function getWorkHours() {
     global $pdo;
     
@@ -1404,9 +1913,6 @@ function getWorkHours() {
     }
 }
 
-/**
- * 新增工作記錄
- */
 function addWorkRecord() {
     global $pdo;
     
@@ -1476,9 +1982,6 @@ function addWorkRecord() {
     }
 }
 
-/**
- * 更新工作記錄
- */
 function updateWorkRecord() {
     global $pdo;
     
@@ -1515,9 +2018,6 @@ function updateWorkRecord() {
     }
 }
 
-/**
- * 刪除工作記錄
- */
 function deleteWorkRecord() {
     global $pdo;
     
@@ -1534,9 +2034,6 @@ function deleteWorkRecord() {
     }
 }
 
-/**
- * 獲取工時統計
- */
 function getWorkStats() {
     global $pdo;
     
@@ -1602,600 +2099,6 @@ function getWorkStats() {
     }
 }
 
-function getUserInfo() {
-    global $pdo;
-    
-    $userId = $_SESSION['user_id'] ?? 0;
-    if (!$userId) {
-        jsonResponse(false, '未登入');
-    }
-    
-    // ✅ 注意：表名是 user 不是 users
-    $stmt = $pdo->prepare("
-        SELECT id, account, name, email, role 
-        FROM user 
-        WHERE id = ?
-    ");
-    $stmt->execute([$userId]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if (!$user) {
-        jsonResponse(false, '找不到使用者');
-    }
-    
-    jsonResponse(true, '獲取成功', $user);
-}
-
-/**
- * 獲取教師首頁統計數據
- */
-function getDashboardStats() {
-    global $pdo;
-    
-    try {
-        // 進行中的活動數
-        $stmt = $pdo->query("SELECT COUNT(*) as count FROM activities WHERE status = 'published'");
-        $activeActivities = $stmt->fetch()['count'];
-        
-        // 總報名人數
-        $stmt = $pdo->query("SELECT COUNT(*) as count FROM registrations WHERE status = 'registered'");
-        $totalStudents = $stmt->fetch()['count'];
-        
-        // 平均評分
-        $stmt = $pdo->query("SELECT AVG(satisfaction_score) as avg_rating FROM feedback_responses");
-        $avgRating = round($stmt->fetch()['avg_rating'] ?? 0, 1);
-        
-        // 待審核表單
-        $stmt = $pdo->query("SELECT COUNT(*) as count FROM feedback_responses WHERE is_read = 0");
-        $pendingReviews = $stmt->fetch()['count'];
-        
-        // 今日課程安排（從行事曆取得）
-        $today = date('Y-m-d');
-        $stmt = $pdo->prepare("
-            SELECT 
-                title,
-                start_time,
-                end_time,
-                location
-            FROM calendar_events 
-            WHERE event_date = ? AND is_public = 1
-            ORDER BY start_time
-            LIMIT 4
-        ");
-        $stmt->execute([$today]);
-        $todaySchedule = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        jsonResponse(true, '獲取成功', [
-            'activeActivities' => $activeActivities,
-            'totalStudents' => $totalStudents,
-            'avgRating' => $avgRating,
-            'pendingReviews' => $pendingReviews,
-            'todaySchedule' => $todaySchedule
-        ]);
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
-    }
-}
-
-// ==========================================
-// 點名系統
-// ==========================================
-
-function getStudentList() {
-    global $pdo;
-    
-    try {
-        $stmt = $pdo->query("
-            SELECT 
-                student_id,
-                student_name,
-                class,
-                phone,
-                email
-            FROM student 
-            ORDER BY class, student_name
-        ");
-        
-        $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        jsonResponse(true, '獲取成功', $students);
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
-    }
-}
-
-function createRollcallSession() {
-    global $pdo;
-    
-    $session_name = $_POST['session_name'] ?? '';
-    $session_date = $_POST['session_date'] ?? date('Y-m-d');
-    $session_time = $_POST['session_time'] ?? date('H:i');
-    $teacher_id = $_SESSION['user_id'] ?? 0;
-    
-    if (!$session_name) {
-        jsonResponse(false, '請輸入場次名稱');
-    }
-    
-    try {
-        $pdo->beginTransaction();
-        
-        $stmt = $pdo->prepare("
-            INSERT INTO rollcall_sessions (session_name, session_date, session_time, created_by, created_at)
-            VALUES (?, ?, ?, ?, NOW())
-        ");
-        $stmt->execute([$session_name, $session_date, $session_time, $teacher_id]);
-        $session_id = $pdo->lastInsertId();
-        
-        $stmt = $pdo->query("SELECT id FROM student");
-        $students = $stmt->fetchAll(PDO::FETCH_COLUMN);
-        
-        $stmt = $pdo->prepare("
-            INSERT INTO rollcall_records (session_id, student_id, is_present, check_time)
-            VALUES (?, ?, 0, NULL)
-        ");
-        
-        foreach ($students as $student_id) {
-            $stmt->execute([$session_id, $student_id]);
-        }
-        
-        $pdo->commit();
-        jsonResponse(true, '場次創建成功', ['session_id' => $session_id]);
-        
-    } catch (Exception $e) {
-        $pdo->rollBack();
-        jsonResponse(false, '創建失敗: ' . $e->getMessage());
-    }
-}
-
-function saveRollcall() {
-    global $pdo;
-    
-    $session_id = $_POST['session_id'] ?? 0;
-    $student_id = $_POST['student_id'] ?? 0;
-    $is_present = $_POST['is_present'] ?? 0;
-    
-    if (!$session_id || !$student_id) {
-        jsonResponse(false, '參數錯誤');
-    }
-    
-    try {
-        $stmt = $pdo->prepare("
-            SELECT record_id FROM rollcall_records 
-            WHERE session_id = ? AND student_id = ?
-        ");
-        $stmt->execute([$session_id, $student_id]);
-        $exists = $stmt->fetch();
-        
-        $check_time = $is_present ? date('Y-m-d H:i:s') : null;
-        
-        if ($exists) {
-            $stmt = $pdo->prepare("
-                UPDATE rollcall_records 
-                SET is_present = ?, check_time = ?
-                WHERE session_id = ? AND student_id = ?
-            ");
-            $stmt->execute([$is_present, $check_time, $session_id, $student_id]);
-        } else {
-            $stmt = $pdo->prepare("
-                INSERT INTO rollcall_records (session_id, student_id, is_present, check_time)
-                VALUES (?, ?, ?, ?)
-            ");
-            $stmt->execute([$session_id, $student_id, $is_present, $check_time]);
-        }
-        
-        jsonResponse(true, '保存成功');
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '保存失敗: ' . $e->getMessage());
-    }
-}
-
-function exportRollcall() {
-    global $pdo;
-    
-    $session_id = $_GET['session_id'] ?? 0;
-    
-    try {
-        $stmt = $pdo->prepare("
-            SELECT 
-                rs.session_name,
-                rs.session_date,
-                s.student_name,
-                s.student_idnumber,
-                s.class,
-                CASE WHEN rr.is_present = 1 THEN '已出席' ELSE '未出席' END as status,
-                rr.check_time
-            FROM rollcall_records rr
-            JOIN student s ON rr.student_id = s.id
-            JOIN rollcall_sessions rs ON rr.session_id = rs.session_id
-            WHERE rr.session_id = ?
-            ORDER BY s.class, s.student_name
-        ");
-        $stmt->execute([$session_id]);
-        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        jsonResponse(true, '獲取成功', $records);
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
-    }
-}
-
-// ==========================================
-// 排班系統
-// ==========================================
-
-function getScheduleWeek() {
-    global $pdo;
-    
-    $week_start = $_GET['week_start'] ?? date('Y-m-d');
-    
-    try {
-        $stmt = $pdo->prepare("
-            SELECT 
-                schedule_id,
-                week_start_date,
-                day_of_week,
-                time_slot,
-                staff_name,
-                notes
-            FROM schedules
-            WHERE week_start_date = ?
-            ORDER BY 
-                FIELD(day_of_week, '星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'),
-                time_slot
-        ");
-        $stmt->execute([$week_start]);
-        $schedules = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        jsonResponse(true, '獲取成功', $schedules);
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
-    }
-}
-
-function saveScheduleCell() {
-    global $pdo;
-    
-    $week_start = $_POST['week_start'] ?? '';
-    $day_of_week = $_POST['day_of_week'] ?? '';
-    $time_slot = $_POST['time_slot'] ?? '';
-    $staff_name = $_POST['staff_name'] ?? '';
-    $notes = $_POST['notes'] ?? '';
-    
-    if (!$week_start || !$day_of_week || !$time_slot) {
-        jsonResponse(false, '參數錯誤');
-    }
-    
-    try {
-        $stmt = $pdo->prepare("
-            SELECT schedule_id FROM schedules 
-            WHERE week_start_date = ? AND day_of_week = ? AND time_slot = ?
-        ");
-        $stmt->execute([$week_start, $day_of_week, $time_slot]);
-        $exists = $stmt->fetch();
-        
-        if ($exists) {
-            $stmt = $pdo->prepare("
-                UPDATE schedules 
-                SET staff_name = ?, notes = ?, updated_at = NOW()
-                WHERE week_start_date = ? AND day_of_week = ? AND time_slot = ?
-            ");
-            $stmt->execute([$staff_name, $notes, $week_start, $day_of_week, $time_slot]);
-        } else {
-            $stmt = $pdo->prepare("
-                INSERT INTO schedules (week_start_date, day_of_week, time_slot, staff_name, notes, created_at)
-                VALUES (?, ?, ?, ?, ?, NOW())
-            ");
-            $stmt->execute([$week_start, $day_of_week, $time_slot, $staff_name, $notes]);
-        }
-        
-        jsonResponse(true, '保存成功');
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '保存失敗: ' . $e->getMessage());
-    }
-}
-
-function clearScheduleWeek() {
-    global $pdo;
-    
-    $week_start = $_POST['week_start'] ?? '';
-    
-    if (!$week_start) {
-        jsonResponse(false, '參數錯誤');
-    }
-    
-    try {
-        $stmt = $pdo->prepare("DELETE FROM schedules WHERE week_start_date = ?");
-        $stmt->execute([$week_start]);
-        
-        jsonResponse(true, '清空成功');
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '清空失敗: ' . $e->getMessage());
-    }
-}
-
-function exportSchedule() {
-    global $pdo;
-    
-    $week_start = $_GET['week_start'] ?? date('Y-m-d');
-    
-    try {
-        $stmt = $pdo->prepare("
-            SELECT * FROM schedules 
-            WHERE week_start_date = ?
-            ORDER BY 
-                FIELD(day_of_week, '星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'),
-                time_slot
-        ");
-        $stmt->execute([$week_start]);
-        $schedules = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        jsonResponse(true, '獲取成功', $schedules);
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
-    }
-}
-
-// ==========================================
-// 工作時數
-// ==========================================
-
-function getWorkHoursList() {
-    global $pdo;
-    
-    $staff_name = $_GET['staff_name'] ?? 'all';
-    $start_date = $_GET['start_date'] ?? date('Y-m-01');
-    $end_date = $_GET['end_date'] ?? date('Y-m-t');
-    $page = $_GET['page'] ?? 1;
-    $limit = 10;
-    $offset = ($page - 1) * $limit;
-    
-    try {
-        $where = "work_date BETWEEN ? AND ?";
-        $params = [$start_date, $end_date];
-        
-        if ($staff_name !== 'all') {
-            $where .= " AND staff_name = ?";
-            $params[] = $staff_name;
-        }
-        
-        $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM work_hours WHERE $where");
-        $stmt->execute($params);
-        $total = $stmt->fetch()['total'];
-        
-        $stmt = $pdo->prepare("
-            SELECT 
-                work_id,
-                work_date,
-                staff_name,
-                shift_time,
-                check_in_time,
-                check_out_time,
-                work_hours,
-                status,
-                notes
-            FROM work_hours 
-            WHERE $where
-            ORDER BY work_date DESC, check_in_time DESC
-            LIMIT $limit OFFSET $offset
-        ");
-        $stmt->execute($params);
-        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        jsonResponse(true, '獲取成功', [
-            'records' => $records,
-            'total' => $total,
-            'page' => $page,
-            'total_pages' => ceil($total / $limit)
-        ]);
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
-    }
-}
-
-function addWorkHourRecord() {
-    global $pdo;
-    
-    $work_date = $_POST['work_date'] ?? '';
-    $staff_name = $_POST['staff_name'] ?? '';
-    $shift_time = $_POST['shift_time'] ?? '';
-    $check_in = $_POST['check_in_time'] ?? '';
-    $check_out = $_POST['check_out_time'] ?? '';
-    $hours = $_POST['work_hours'] ?? 0;
-    $status = $_POST['status'] ?? 'present';
-    $notes = $_POST['notes'] ?? '';
-    
-    if (!$work_date || !$staff_name || !$shift_time) {
-        jsonResponse(false, '必填欄位不完整');
-    }
-    
-    try {
-        $stmt = $pdo->prepare("
-            INSERT INTO work_hours 
-            (work_date, staff_name, shift_time, check_in_time, check_out_time, work_hours, status, notes, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
-        ");
-        
-        $result = $stmt->execute([
-            $work_date, $staff_name, $shift_time, $check_in, $check_out, $hours, $status, $notes
-        ]);
-        
-        jsonResponse($result, $result ? '新增成功' : '新增失敗');
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '新增失敗: ' . $e->getMessage());
-    }
-}
-
-function updateWorkHourRecord() {
-    global $pdo;
-    
-    $work_id = $_POST['work_id'] ?? 0;
-    $work_date = $_POST['work_date'] ?? '';
-    $staff_name = $_POST['staff_name'] ?? '';
-    $shift_time = $_POST['shift_time'] ?? '';
-    $check_in = $_POST['check_in_time'] ?? '';
-    $check_out = $_POST['check_out_time'] ?? '';
-    $hours = $_POST['work_hours'] ?? 0;
-    $status = $_POST['status'] ?? 'present';
-    $notes = $_POST['notes'] ?? '';
-    
-    if (!$work_id) {
-        jsonResponse(false, '記錄ID不能為空');
-    }
-    
-    try {
-        $stmt = $pdo->prepare("
-            UPDATE work_hours SET
-                work_date = ?,
-                staff_name = ?,
-                shift_time = ?,
-                check_in_time = ?,
-                check_out_time = ?,
-                work_hours = ?,
-                status = ?,
-                notes = ?,
-                updated_at = NOW()
-            WHERE work_id = ?
-        ");
-        
-        $result = $stmt->execute([
-            $work_date, $staff_name, $shift_time, $check_in, $check_out, $hours, $status, $notes, $work_id
-        ]);
-        
-        jsonResponse($result, $result ? '更新成功' : '更新失敗');
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '更新失敗: ' . $e->getMessage());
-    }
-}
-
-function deleteWorkHourRecord() {
-    global $pdo;
-    
-    $work_id = $_POST['work_id'] ?? 0;
-    
-    if (!$work_id) {
-        jsonResponse(false, '記錄ID不能為空');
-    }
-    
-    try {
-        $stmt = $pdo->prepare("DELETE FROM work_hours WHERE work_id = ?");
-        $result = $stmt->execute([$work_id]);
-        
-        jsonResponse($result, $result ? '刪除成功' : '刪除失敗');
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '刪除失敗: ' . $e->getMessage());
-    }
-}
-
-function getWorkHourStats() {
-    global $pdo;
-    
-    $start_date = $_GET['start_date'] ?? date('Y-m-01');
-    $end_date = $_GET['end_date'] ?? date('Y-m-t');
-    
-    try {
-        $stmt = $pdo->prepare("
-            SELECT SUM(work_hours) as total_hours
-            FROM work_hours
-            WHERE work_date BETWEEN ? AND ?
-        ");
-        $stmt->execute([$start_date, $end_date]);
-        $total_hours = $stmt->fetch()['total_hours'] ?? 0;
-        
-        $stmt = $pdo->prepare("
-            SELECT 
-                COUNT(CASE WHEN status IN ('present', 'late') THEN 1 END) * 100.0 / COUNT(*) as attendance_rate
-            FROM work_hours
-            WHERE work_date BETWEEN ? AND ?
-        ");
-        $stmt->execute([$start_date, $end_date]);
-        $attendance_rate = round($stmt->fetch()['attendance_rate'] ?? 0, 1);
-        
-        $stmt = $pdo->prepare("
-            SELECT COUNT(*) as late_count
-            FROM work_hours
-            WHERE work_date BETWEEN ? AND ? AND status = 'late'
-        ");
-        $stmt->execute([$start_date, $end_date]);
-        $late_count = $stmt->fetch()['late_count'];
-        
-        $stmt = $pdo->prepare("
-            SELECT COUNT(*) as absent_count
-            FROM work_hours
-            WHERE work_date BETWEEN ? AND ? AND status = 'absent'
-        ");
-        $stmt->execute([$start_date, $end_date]);
-        $absent_count = $stmt->fetch()['absent_count'];
-        
-        jsonResponse(true, '獲取成功', [
-            'total_hours' => round($total_hours, 1),
-            'attendance_rate' => $attendance_rate,
-            'late_count' => $late_count,
-            'absent_count' => $absent_count
-        ]);
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
-    }
-}
-
-function exportWorkHours() {
-    global $pdo;
-    
-    $staff_name = $_GET['staff_name'] ?? 'all';
-    $start_date = $_GET['start_date'] ?? date('Y-m-01');
-    $end_date = $_GET['end_date'] ?? date('Y-m-t');
-    
-    try {
-        $where = "work_date BETWEEN ? AND ?";
-        $params = [$start_date, $end_date];
-        
-        if ($staff_name !== 'all') {
-            $where .= " AND staff_name = ?";
-            $params[] = $staff_name;
-        }
-        
-        $stmt = $pdo->prepare("
-            SELECT 
-                work_date,
-                staff_name,
-                shift_time,
-                check_in_time,
-                check_out_time,
-                work_hours,
-                status,
-                notes
-            FROM work_hours 
-            WHERE $where
-            ORDER BY work_date DESC, check_in_time DESC
-        ");
-        $stmt->execute($params);
-        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        jsonResponse(true, '獲取成功', $records);
-        
-    } catch (Exception $e) {
-        jsonResponse(false, '獲取失敗: ' . $e->getMessage());
-    }
-}
-
-// ==========================================
-// 通知系統
-// ==========================================
-
-/**
- * 獲取教師的通知列表
- */
 function getNotifications() {
     global $pdo;
     
@@ -2203,7 +2106,6 @@ function getNotifications() {
     $limit = $_GET['limit'] ?? 20;
     
     try {
-        // 獲取針對教師的通知
         $stmt = $pdo->prepare("
             SELECT 
                 notification_id,
@@ -2222,12 +2124,9 @@ function getNotifications() {
         $stmt->execute([$limit]);
         $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        // 處理通知數據，添加更多信息
         foreach ($notifications as &$notification) {
-            // 格式化時間
             $notification['time_ago'] = formatTimeAgo($notification['created_at']);
             
-            // 根據類型添加圖標和鏈接
             switch ($notification['notification_type']) {
                 case 'leave_request':
                     $notification['icon'] = 'clipboard-check';
@@ -2267,9 +2166,6 @@ function getNotifications() {
     }
 }
 
-/**
- * 標記單個通知為已讀
- */
 function markNotificationRead() {
     global $pdo;
     
@@ -2290,9 +2186,6 @@ function markNotificationRead() {
     }
 }
 
-/**
- * 標記所有通知為已讀
- */
 function markAllNotificationsRead() {
     global $pdo;
     
@@ -2313,16 +2206,12 @@ function markAllNotificationsRead() {
     }
 }
 
-/**
- * 刪除通知（軟刪除）
- */
 function deleteNotification() {
     global $pdo;
     
     $notification_id = $_POST['notification_id'] ?? 0;
     
     try {
-        // 使用軟刪除，不真正從資料庫移除
         $stmt = $pdo->prepare("
             UPDATE notifications 
             SET is_deleted = 1, deleted_at = NOW()
@@ -2337,9 +2226,6 @@ function deleteNotification() {
     }
 }
 
-/**
- * 格式化時間為相對時間
- */
 function formatTimeAgo($datetime) {
     if (!$datetime) return '剛剛';
     

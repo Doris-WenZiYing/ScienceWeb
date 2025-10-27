@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Oct 24, 2025 at 05:45 AM
+-- Generation Time: Oct 27, 2025 at 03:57 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -63,17 +63,22 @@ INSERT INTO `activities` (`activity_id`, `activity_name`, `activity_type`, `desc
 (100, '科學園遊會', 'activity', '有趣的科學體驗', '2025-10-25', '2025-10-25', '2025-10-10 00:00:00', '2025-10-24 23:59:59', '2025-10-22 23:59:59', 80, 75, '操場', '請穿著運動服', 'closed', 'teacher001', '2025-10-05 02:00:00', '2025-10-21 03:00:45'),
 (101, '環保淨灘活動', 'activity', '保護海洋環境', '2025-11-15', '2025-11-15', '2025-11-01 00:00:00', '2025-11-14 23:59:59', '2025-11-12 23:59:59', 50, 42, '海邊', '需自備環保手套', 'published', 'teacher001', '2025-10-25 02:00:00', '2025-10-21 03:00:45'),
 (102, '校外教學-博物館', 'activity', '參觀科學展覽', '2025-11-28', '2025-11-28', '2025-11-10 00:00:00', '2025-11-27 23:59:59', '2025-11-25 23:59:59', 45, 40, '科學博物館', '需繳交家長同意書', 'published', 'teacher001', '2025-11-05 02:00:00', '2025-10-21 03:00:45'),
-(103, '聖誕慶祝活動', 'activity', '歡慶聖誕節', '2025-12-20', '2025-12-20', '2025-12-01 00:00:00', '2025-12-19 23:59:59', '2025-12-17 23:59:59', 60, 25, '大禮堂', '歡迎全校師生參加', 'published', 'teacher001', '2025-11-20 02:00:00', '2025-10-21 03:00:45'),
+(103, '聖誕慶祝活動', 'activity', '歡慶聖誕節', '2025-12-20', '2025-12-20', '2025-12-01 00:00:00', '2025-12-19 23:59:59', '2025-12-17 23:59:59', 60, 29, '大禮堂', '歡迎全校師生參加', 'published', 'teacher001', '2025-11-20 02:00:00', '2025-10-24 08:07:17'),
 (104, 'Python 程式設計工作坊', 'workshop', '學習 Python 基礎', '2025-10-10', '2025-10-12', '2025-09-25 00:00:00', '2025-10-09 23:59:59', '2025-10-07 23:59:59', 25, 23, '電腦教室 A', '需自備筆電', 'closed', 'teacher001', '2025-09-20 02:00:00', '2025-10-21 03:00:45'),
 (105, '3D 列印體驗營', 'workshop', '體驗 3D 列印技術', '2025-10-28', '2025-10-29', '2025-10-15 00:00:00', '2025-10-27 23:59:59', '2025-10-25 23:59:59', 20, 20, '創客教室', '無特殊要求', 'closed', 'teacher001', '2025-10-10 02:00:00', '2025-10-21 03:00:45'),
 (106, '攝影技巧工作坊', 'workshop', '學習攝影基礎', '2025-11-08', '2025-11-09', '2025-10-25 00:00:00', '2025-11-07 23:59:59', '2025-11-05 23:59:59', 15, 12, '藝術教室', '需自備相機', 'published', 'teacher001', '2025-10-20 02:00:00', '2025-10-21 03:00:45'),
-(107, 'Arduino 機器人工作坊', 'workshop', '製作簡易機器人', '2025-11-25', '2025-11-27', '2025-11-10 00:00:00', '2025-11-24 23:59:59', '2025-11-22 23:59:59', 25, 18, '科技教室', '需具備基礎電子知識', 'published', 'teacher001', '2025-11-05 02:00:00', '2025-10-21 03:00:45'),
+(107, 'Arduino 機器人工作坊', 'workshop', '製作簡易機器人', '2025-11-25', '2025-11-27', '2025-11-10 00:00:00', '2025-11-24 23:59:59', '2025-11-22 23:59:59', 25, 20, '科技教室', '需具備基礎電子知識', 'published', 'teacher001', '2025-11-05 02:00:00', '2025-10-24 04:06:28'),
 (108, '網頁設計工作坊', 'workshop', '學習 HTML/CSS/JS', '2025-12-05', '2025-12-07', '2025-11-20 00:00:00', '2025-12-04 23:59:59', '2025-12-02 23:59:59', 30, 22, '電腦教室 B', '需自備筆電', 'published', 'teacher001', '2025-11-15 02:00:00', '2025-10-21 03:00:45'),
 (109, '科學家分享會', 'seminar', '知名科學家演講', '2025-10-12', '2025-10-12', '2025-10-01 00:00:00', '2025-10-11 23:59:59', '2025-10-09 23:59:59', 100, 85, '演講廳', '無特殊要求', 'closed', 'teacher001', '2025-09-28 02:00:00', '2025-10-21 03:00:45'),
 (110, '升學輔導講座', 'seminar', '大學升學資訊', '2025-10-22', '2025-10-22', '2025-10-08 00:00:00', '2025-10-21 23:59:59', '2025-10-19 23:59:59', 80, 72, '大禮堂', '僅限高三學生', 'closed', 'teacher001', '2025-10-05 02:00:00', '2025-10-21 03:00:46'),
 (111, '網路安全講座', 'seminar', '了解網路詐騙防範', '2025-11-03', '2025-11-03', '2025-10-20 00:00:00', '2025-11-02 23:59:59', '2025-10-31 23:59:59', 50, 45, '會議室', '無特殊要求', 'published', 'teacher001', '2025-10-15 02:00:00', '2025-10-21 03:00:46'),
 (112, '環保永續講座', 'seminar', '探討環境議題', '2025-11-18', '2025-11-18', '2025-11-05 00:00:00', '2025-11-17 23:59:59', '2025-11-15 23:59:59', 60, 55, '演講廳', '無特殊要求', 'published', 'teacher001', '2025-11-01 02:00:00', '2025-10-21 03:00:46'),
-(113, '生涯規劃講座', 'seminar', '職業探索與規劃', '2025-12-08', '2025-12-08', '2025-11-20 00:00:00', '2025-12-07 23:59:59', '2025-12-05 23:59:59', 70, 30, '大禮堂', '無特殊要求', 'published', 'teacher001', '2025-11-15 02:00:00', '2025-10-21 03:00:46');
+(113, '生涯規劃講座', 'seminar', '職業探索與規劃', '2025-12-08', '2025-12-08', '2025-11-20 00:00:00', '2025-12-07 23:59:59', '2025-12-05 23:59:59', 70, 30, '大禮堂', '無特殊要求', 'published', 'teacher001', '2025-11-15 02:00:00', '2025-10-21 03:00:46'),
+(114, 'aaa', 'activity', 'aaa', '2025-10-28', '2025-10-29', '2025-10-28 00:00:00', '2025-10-28 00:00:00', NULL, 111, 0, '111', 'null', 'draft', 'system', '2025-10-27 01:54:43', '2025-10-27 01:54:43'),
+(115, 'qqqqq', 'activity', 'qqqqq', '2025-10-28', '2025-10-29', '2025-10-28 00:00:00', '2025-10-28 00:00:00', NULL, 11, 0, '111111', 'null', 'draft', 'system', '2025-10-27 01:56:34', '2025-10-27 01:56:34'),
+(116, 'aaaaaaa', 'activity', 'aaaaaaa', '2025-10-28', '2025-10-29', '2025-10-28 00:00:00', '2025-10-28 00:00:00', NULL, 11, 0, '11', 'null', 'draft', 'system', '2025-10-27 01:57:36', '2025-10-27 01:57:36'),
+(117, 'aaaaa', 'activity', 'aaaaaa', '2025-10-28', '2025-10-31', '2025-10-28 00:00:00', '2025-10-28 00:00:00', NULL, 11, 2, '111', 'null', 'published', 'system', '2025-10-27 02:14:24', '2025-10-27 02:47:16'),
+(118, 'aaaaaa', 'activity', 'aaaaaaa', '2025-10-28', '2025-10-31', '2025-10-28 00:00:00', '2025-10-28 00:00:00', NULL, 11, 0, '11', 'null', 'published', 'system', '2025-10-27 02:32:21', '2025-10-27 02:32:21');
 
 -- --------------------------------------------------------
 
@@ -116,6 +121,14 @@ CREATE TABLE `album_media` (
   `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='相簿媒體檔案';
 
+--
+-- Dumping data for table `album_media`
+--
+
+INSERT INTO `album_media` (`media_id`, `album_id`, `media_type`, `file_path`, `file_extension`, `file_name`, `description`, `upload_order`, `uploaded_at`) VALUES
+(1, 1, 'image', 'uploads/albums/68fdbd16bfb86_1761459478.png', NULL, 'Screenshot 2025-10-19 at 13.24.27.png', 'Screenshot 2025-10-19 at 13.24.27.png', 0, '2025-10-26 06:17:58'),
+(2, 4, 'image', 'uploads/albums/68fedb6112a7d_1761532769.png', NULL, 'Screenshot 2025-10-19 at 13.24.27.png', 'Screenshot 2025-10-19 at 13.24.27.png', 0, '2025-10-27 02:39:29');
+
 -- --------------------------------------------------------
 
 --
@@ -143,7 +156,16 @@ CREATE TABLE `announcements` (
 INSERT INTO `announcements` (`announcement_id`, `title`, `content`, `announcement_type`, `is_important`, `has_detail`, `detail_content`, `attachment`, `publish_date`, `created_by`, `created_at`) VALUES
 (1, '🎉 2025科學探索營開始報名！', '一年一度的科學探索營即將開始，名額有限，報名從速！活動時間：2025/02/01-05，地點：科學館3F實驗室。', 'activity', 1, 0, NULL, NULL, '2025-10-19 12:42:35', 'admin', '2025-10-19 04:42:35'),
 (2, '📢 校園科學競賽徵件開始', '2025年度校園科學競賽開始徵件，歡迎有興趣的同學組隊參加！競賽日期：2025/03/15。', 'competition', 1, 0, NULL, NULL, '2025-10-19 12:42:35', 'admin', '2025-10-19 04:42:35'),
-(3, 'ℹ️ 科學會定期活動通知', '本學期科學會每週三下午3點於會議室舉辦定期聚會，歡迎參加！', 'general', 0, 0, NULL, NULL, '2025-10-19 12:42:35', 'admin', '2025-10-19 04:42:35');
+(3, 'ℹ️ 科學會定期活動通知', '本學期科學會每週三下午3點於會議室舉辦定期聚會，歡迎參加！', 'general', 0, 0, NULL, NULL, '2025-10-19 12:42:35', 'admin', '2025-10-19 04:42:35'),
+(4, 'abccba', 'asfajkef', 'general', 0, 0, '', NULL, '2025-10-27 00:52:04', 'sciclub', '2025-10-26 16:52:04'),
+(5, 'adawdawd', 'adawd', 'general', 0, 0, '', NULL, '2025-10-27 01:24:45', 'sciclub', '2025-10-26 17:24:45'),
+(6, 'ascadc', 'adadvc', 'general', 0, 0, '', NULL, '2025-10-27 01:27:28', 'sciclub', '2025-10-26 17:27:28'),
+(7, 'zsdcSDV', 'SDvSDvzsd', 'general', 0, 0, '', NULL, '2025-10-27 02:02:25', 'sciclub', '2025-10-26 18:02:25'),
+(8, '測試公告 - 2025/10/27 上午9:17:14', '這是一條測試公告內容', 'general', 0, 0, '', NULL, '2025-10-27 09:17:14', 'sciclub', '2025-10-27 01:17:14'),
+(9, 'aaa', 'aaaa', 'general', 0, 0, '', NULL, '2025-10-27 09:38:38', 'sciclub', '2025-10-27 01:38:38'),
+(10, 'aa', 'aaa', 'general', 0, 0, '', NULL, '2025-10-27 09:57:00', 'sciclub', '2025-10-27 01:57:00'),
+(11, '111', '1111', 'general', 0, 0, '', NULL, '2025-10-26 19:18:28', 'teacher01', '2025-10-27 02:18:28'),
+(12, 'qqq', 'qqq', 'general', 0, 0, '', NULL, '2025-10-26 19:40:33', 'sciclub', '2025-10-27 02:40:33');
 
 --
 -- Triggers `announcements`
@@ -168,10 +190,26 @@ CREATE TABLE `attendance_records` (
   `session_id` int(11) NOT NULL COMMENT '場次ID',
   `member_name` varchar(50) NOT NULL COMMENT '成員姓名',
   `member_number` varchar(20) DEFAULT NULL COMMENT '成員編號',
+  `department` varchar(50) DEFAULT NULL,
+  `position` varchar(80) DEFAULT NULL,
   `check_in_time` datetime DEFAULT current_timestamp() COMMENT '簽到時間',
   `status` enum('present','late','absent','leave') DEFAULT 'present' COMMENT '狀態',
   `notes` text DEFAULT NULL COMMENT '備註'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='簽到紀錄';
+
+--
+-- Dumping data for table `attendance_records`
+--
+
+INSERT INTO `attendance_records` (`record_id`, `session_id`, `member_name`, `member_number`, `department`, `position`, `check_in_time`, `status`, `notes`) VALUES
+(2, 1, '王小明', 'SC001', 'activity', '活動組長', '2025-10-22 08:45:00', 'present', ''),
+(3, 1, '李美華', 'SC002', 'publicity', '美宣組員', '2025-10-22 09:10:00', 'late', '遲到10分鐘'),
+(4, 1, '陳志強', 'SC003', 'secretariat', '文書組員', NULL, 'leave', '病假'),
+(5, 1, '林雅婷', 'SC004', 'finance', '總務組長', '2025-10-22 08:30:00', 'present', '準時到'),
+(6, 2, '張世杰', 'SC005', 'activity', '活動組員', '2025-10-22 14:05:00', 'present', ''),
+(7, 2, '黃怡如', 'SC006', 'publicity', '美宣組長', '2025-10-22 14:20:00', 'late', '延誤15分鐘'),
+(8, 2, '何志宏', 'SC007', 'secretariat', '文書組長', '2025-10-22 13:55:00', 'present', ''),
+(9, 2, '吳佩蓉', 'SC008', 'finance', '出納', NULL, 'leave', '事假');
 
 -- --------------------------------------------------------
 
@@ -218,24 +256,27 @@ CREATE TABLE `calendar_events` (
   `location` varchar(200) DEFAULT NULL COMMENT '地點',
   `created_by_account` varchar(50) DEFAULT NULL COMMENT '建立者帳號',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_by` varchar(100) DEFAULT NULL COMMENT '建立者'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='行事曆活動';
 
 --
 -- Dumping data for table `calendar_events`
 --
 
-INSERT INTO `calendar_events` (`event_id`, `title`, `description`, `event_date`, `start_time`, `end_time`, `event_type`, `color`, `is_public`, `location`, `created_by_account`, `created_at`, `updated_at`) VALUES
-(1, '科學營報名截止', '2025科學探索營報名最後一天', '2025-01-25', '23:59:00', NULL, 'other', 'red', 1, '線上', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35'),
-(2, '科學營開始', '2025科學探索營第一天', '2025-02-01', '09:00:00', '17:00:00', 'activity', 'blue', 1, '科學館 3F', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35'),
-(3, '科學競賽', '校園科學競賽日', '2025-03-15', '09:00:00', '16:00:00', 'competition', 'green', 1, '大禮堂', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35'),
-(4, 'AI講座', 'AI與機器學習專題講座', '2025-01-30', '14:00:00', '16:00:00', 'activity', 'purple', 1, '視聽教室A', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35'),
-(5, '化學工作坊', '化學實驗工作坊', '2025-01-22', '13:00:00', '17:00:00', 'activity', 'orange', 1, '化學實驗室', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35'),
-(6, '科技展開幕', '校園科技展覽開幕式', '2025-02-10', '10:00:00', '12:00:00', 'activity', 'cyan', 1, '活動中心', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35'),
-(7, '期末檢討會議', '科學會期末檢討會議', '2025-01-28', '15:00:00', '17:00:00', 'meeting', 'gray', 1, '會議室', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35'),
-(8, '科學營 2025', NULL, '2025-10-15', '09:00:00', '17:00:00', 'competition', 'red', 1, NULL, NULL, '2025-10-19 06:09:24', '2025-10-19 06:09:24'),
-(9, '物理實驗', NULL, '2025-10-20', '14:00:00', '16:00:00', 'competition', 'red', 1, '化學實驗室', NULL, '2025-10-19 06:09:24', '2025-10-20 09:57:40'),
-(10, '校園科技展', NULL, '2025-11-10', '10:00:00', '15:00:00', 'competition', 'red', 1, NULL, NULL, '2025-10-19 06:09:24', '2025-10-19 06:09:24');
+INSERT INTO `calendar_events` (`event_id`, `title`, `description`, `event_date`, `start_time`, `end_time`, `event_type`, `color`, `is_public`, `location`, `created_by_account`, `created_at`, `updated_at`, `created_by`) VALUES
+(1, '科學營報名截止', '2025科學探索營報名最後一天', '2025-01-25', '23:59:00', NULL, 'other', 'red', 1, '線上', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35', NULL),
+(2, '科學營開始', '2025科學探索營第一天', '2025-02-01', '09:00:00', '17:00:00', 'activity', 'blue', 1, '科學館 3F', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35', NULL),
+(3, '科學競賽', '校園科學競賽日', '2025-03-15', '09:00:00', '16:00:00', 'competition', 'green', 1, '大禮堂', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35', NULL),
+(4, 'AI講座', 'AI與機器學習專題講座', '2025-01-30', '14:00:00', '16:00:00', 'activity', 'purple', 1, '視聽教室A', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35', NULL),
+(5, '化學工作坊', '化學實驗工作坊', '2025-01-22', '13:00:00', '17:00:00', 'activity', 'orange', 1, '化學實驗室', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35', NULL),
+(6, '科技展開幕', '校園科技展覽開幕式', '2025-02-10', '10:00:00', '12:00:00', 'activity', 'cyan', 1, '活動中心', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35', NULL),
+(7, '期末檢討會議', '科學會期末檢討會議', '2025-01-28', '15:00:00', '17:00:00', 'meeting', 'gray', 1, '會議室', 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35', NULL),
+(8, '科學營 2025', NULL, '2025-10-15', '09:00:00', '17:00:00', 'competition', 'red', 1, NULL, NULL, '2025-10-19 06:09:24', '2025-10-19 06:09:24', NULL),
+(9, '物理實驗', NULL, '2025-10-20', '14:00:00', '16:00:00', 'competition', 'red', 1, '化學實驗室', NULL, '2025-10-19 06:09:24', '2025-10-20 09:57:40', NULL),
+(10, '校園科技展', NULL, '2025-11-10', '10:00:00', '15:00:00', 'competition', 'red', 1, NULL, NULL, '2025-10-19 06:09:24', '2025-10-19 06:09:24', NULL),
+(11, 'test', 'test', '2025-10-25', '12:00:00', '13:00:00', 'activity', 'red', 1, '', 'student001', '2025-10-25 04:06:38', '2025-10-25 04:06:38', NULL),
+(12, 'abc', '', '2025-10-27', '11:11:00', '11:11:00', 'activity', 'red', 1, '', 'sciclub', '2025-10-27 02:39:10', '2025-10-27 02:39:10', NULL);
 
 -- --------------------------------------------------------
 
@@ -256,6 +297,28 @@ CREATE TABLE `competition_results` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='比賽成績';
+
+--
+-- Dumping data for table `competition_results`
+--
+
+INSERT INTO `competition_results` (`result_id`, `activity_id`, `student_number`, `student_name`, `student_class`, `score`, `rank`, `award`, `notes`, `created_at`, `updated_at`) VALUES
+(4, 97, 'S1001', '王小明', '三年甲班', 95.50, 1, '金牌', '表現優秀', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(5, 97, 'S1002', '林美麗', '三年乙班', 92.00, 2, '銀牌', '', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(6, 97, 'S1003', '陳志強', '三年丙班', 90.50, 3, '銅牌', '', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(7, 97, 'S1004', '李佩君', '三年甲班', 88.00, 4, '佳作', '', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(8, 97, 'S1005', '張家豪', '三年乙班', 85.50, 5, '佳作', '', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(9, 96, 'S2001', '黃欣怡', '二年甲班', 98.00, 1, '金牌', '語音清晰', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(10, 96, 'S2002', '陳柏翰', '二年乙班', 96.00, 2, '銀牌', '', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(11, 96, 'S2003', '劉雅婷', '二年丙班', 93.00, 3, '銅牌', '', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(12, 96, 'S2004', '許哲偉', '二年甲班', 91.00, 4, '佳作', '', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(13, 98, 'S3001', '吳冠霖', '三年乙班', 100.00, 1, '冠軍', '機器人穩定度高', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(14, 98, 'S3002', '蔡依庭', '三年丙班', 97.50, 2, '亞軍', '', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(15, 98, 'S3003', '林信宏', '三年甲班', 95.00, 3, '季軍', '', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(16, 98, 'S3004', '高子萱', '三年乙班', 90.00, 4, '佳作', '', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(17, 106, 'S4001', '陳怡安', '一年甲班', 93.00, 1, '金牌', '', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(18, 106, 'S4002', '張文傑', '一年乙班', 90.50, 2, '銀牌', '', '2025-10-26 10:34:57', '2025-10-26 10:34:57'),
+(19, 106, 'S4003', '李佳穎', '一年甲班', 88.00, 3, '銅牌', '', '2025-10-26 10:34:57', '2025-10-26 10:34:57');
 
 -- --------------------------------------------------------
 
@@ -281,7 +344,11 @@ CREATE TABLE `feedback_forms` (
 INSERT INTO `feedback_forms` (`form_id`, `form_name`, `activity_name`, `activity_id`, `description`, `is_active`, `created_by`, `created_at`) VALUES
 (1, '科學營滿意度調查', '2025 科學探索營', 1, '請填寫您對本次科學營的意見與建議', 1, 'admin', '2025-10-19 04:42:35'),
 (2, '科學競賽回饋表', '校園科學競賽 2025', NULL, '競賽活動回饋與改進建議', 1, 'admin', '2025-10-19 04:42:35'),
-(3, 'AI講座問卷', 'AI與機器學習講座', NULL, '講座內容與講師評價', 1, 'admin', '2025-10-19 04:42:35');
+(3, 'AI講座問卷', 'AI與機器學習講座', NULL, '講座內容與講師評價', 1, 'admin', '2025-10-19 04:42:35'),
+(5, 'ada', '化學實驗競賽', 2, 'adadfc', 1, 'sciclub', '2025-10-26 17:20:07'),
+(6, 'adadfa', '化學實驗競賽', 2, '', 1, 'sciclub', '2025-10-26 18:05:48'),
+(7, '測試表單 - 2025/10/27 上午9:17:30', '測試活動', 1, '這是一個測試反饋表單', 1, 'sciclub', '2025-10-27 01:17:30'),
+(8, '測試表單 - 2025/10/27 上午9:25:29', '測試活動', 1, '這是一個測試反饋表單', 1, 'sciclub', '2025-10-27 01:25:29');
 
 -- --------------------------------------------------------
 
@@ -307,7 +374,8 @@ CREATE TABLE `feedback_responses` (
 
 INSERT INTO `feedback_responses` (`response_id`, `form_id`, `student_number`, `student_name`, `student_class`, `satisfaction_score`, `feedback_text`, `is_read`, `submitted_at`) VALUES
 (1, 2, 'student001', 'test', '', 5, 'test', 1, '2025-10-19 06:11:34'),
-(2, 3, 'student001', 'abc', '', 5, 'abc', 1, '2025-10-20 13:46:14');
+(2, 3, 'student001', 'abc', '', 5, 'abc', 1, '2025-10-20 13:46:14'),
+(3, 5, 'student001', 'qq', '', 5, 'qq', 0, '2025-10-27 02:49:25');
 
 -- --------------------------------------------------------
 
@@ -327,6 +395,15 @@ CREATE TABLE `file_upload_zones` (
   `created_by` varchar(50) DEFAULT NULL COMMENT '建立者',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='檔案上傳區';
+
+--
+-- Dumping data for table `file_upload_zones`
+--
+
+INSERT INTO `file_upload_zones` (`zone_id`, `zone_name`, `description`, `activity_id`, `is_active`, `file_types`, `max_file_size`, `deadline`, `created_by`, `created_at`) VALUES
+(1, 'abc', 'abc', NULL, 0, '.pdf', 10, '2025-10-26 18:46:00', 'sciclub', '2025-10-26 10:46:43'),
+(3, 'abc', 'asdasd', NULL, 0, 'jpg', 10, '2025-10-31 19:05:00', 'sciclub', '2025-10-26 11:05:13'),
+(4, 'qqqqq', 'qqqq', NULL, 1, 'pdf', 10, '2025-10-26 20:43:00', 'sciclub', '2025-10-27 02:43:26');
 
 -- --------------------------------------------------------
 
@@ -356,11 +433,11 @@ CREATE TABLE `leave_requests` (
 --
 
 INSERT INTO `leave_requests` (`request_id`, `applicant_name`, `applicant_number`, `leave_type`, `leave_date`, `end_date`, `start_time`, `end_time`, `reason`, `status`, `reviewed_by`, `review_comment`, `reviewed_at`, `submitted_at`) VALUES
-(1, '王小明', 'T001', 'sick', '2025-10-25', '2025-10-25', '08:00:00', '17:00:00', '感冒發燒需要休息，已附上醫生證明', 'rejected', '系統', 'test', '2025-10-22 10:51:25', '2025-10-23 01:30:00'),
-(2, '李小華', 'T002', 'personal', '2025-10-28', '2025-10-28', '13:00:00', '17:00:00', '家中有事需要處理', 'approved', '系統', '', '2025-10-22 10:51:16', '2025-10-23 02:15:00'),
+(1, '王小明', 'T001', 'sick', '2025-10-25', '2025-10-25', '08:00:00', '17:00:00', '感冒發燒需要休息，已附上醫生證明', 'approved', 'sciclub', '核准', '2025-10-26 19:21:44', '2025-10-23 01:30:00'),
+(2, '李小華', 'T002', 'personal', '2025-10-28', '2025-10-28', '13:00:00', '17:00:00', '家中有事需要處理', 'rejected', 'sciclub', '該時段有重要活動需要參與', '2025-10-26 19:21:46', '2025-10-23 02:15:00'),
 (3, '張大同', 'T003', 'official', '2025-11-01', '2025-11-03', '08:00:00', '17:00:00', '參加教育訓練研習課程，預計請假三天', 'approved', '王老師', '核准，請記得帶回研習證明', '2025-10-22 14:30:00', '2025-10-20 03:20:00'),
 (4, '陳美玲', 'T004', 'sick', '2025-10-24', '2025-10-24', '08:00:00', '12:00:00', '需要去醫院複診', 'rejected', '系統', 'test', '2025-10-22 11:54:53', '2025-10-23 00:45:00'),
-(5, '林志明', 'T005', 'other', '2025-10-26', '2025-10-27', '08:00:00', '17:00:00', '個人因素需要請假兩天', 'rejected', '王老師', '該時段有重要會議，無法批准，請改期', '2025-10-22 16:00:00', '2025-10-22 02:00:00');
+(5, '林志明', 'T005', 'other', '2025-10-26', '2025-10-27', '08:00:00', '17:00:00', '個人因素需要請假兩天', 'rejected', 'sciclub', 'aaa', '2025-10-26 19:44:24', '2025-10-22 02:00:00');
 
 -- --------------------------------------------------------
 
@@ -385,6 +462,15 @@ CREATE TABLE `meeting_records` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='開會紀錄';
+
+--
+-- Dumping data for table `meeting_records`
+--
+
+INSERT INTO `meeting_records` (`meeting_id`, `meeting_title`, `meeting_date`, `start_time`, `end_time`, `location`, `attendees`, `agenda`, `content`, `decisions`, `action_items`, `next_meeting`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, '1', '2025-10-24', '12:00:00', '13:00:00', '1', 'a', 'a', 'a', 'a', 'a', '2025-10-01', 'a', '2025-10-24 15:08:17', '2025-10-25 04:54:35'),
+(2, 'aaa', '2025-10-26', '12:00:00', '12:00:00', 'a', 'a', 'a', 'a', 'aaa', 'aaa', '2025-11-11', 'sciclub', '2025-10-26 05:55:57', '2025-10-26 05:55:57'),
+(3, 'qqq', '2025-10-28', '11:01:00', '11:11:00', 'qqq', 'qqq', 'qqq', 'qq', 'qqq', 'qqq', '2025-10-30', 'sciclub', '2025-10-27 02:46:01', '2025-10-27 02:46:01');
 
 -- --------------------------------------------------------
 
@@ -413,12 +499,21 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`notification_id`, `recipient_type`, `recipient_account`, `notification_type`, `title`, `message`, `related_type`, `related_id`, `is_read`, `read_at`, `created_at`, `is_deleted`, `deleted_at`) VALUES
-(1, 'student', NULL, 'registration', '1', '1', NULL, NULL, 1, '2025-10-22 21:02:58', '2025-10-22 11:14:46', 0, NULL),
-(2, 'teacher', NULL, 'announcement', '2', '2', NULL, NULL, 1, '2025-10-22 21:03:08', '2025-10-22 11:15:02', 0, NULL),
-(3, 'science_club', NULL, 'approval', '3', '3', NULL, NULL, 0, NULL, '2025-10-22 11:15:32', 0, NULL),
-(4, 'all', NULL, 'system', '4', '4', NULL, NULL, 1, '2025-10-22 21:03:08', '2025-10-22 11:15:44', 0, NULL),
+(5, 'science_club', NULL, 'announcement', '1', '1', NULL, NULL, 1, '2025-10-26 19:06:01', '2025-10-25 04:46:49', 0, NULL),
 (6, 'teacher', NULL, 'deadline', '6', '6', NULL, NULL, 1, '2025-10-22 21:03:07', '2025-10-22 11:18:28', 0, NULL),
-(7, 'student', NULL, 'approval', '7', '7', NULL, NULL, 1, '2025-10-22 21:02:54', '2025-10-22 12:55:49', 0, NULL);
+(7, 'student', NULL, 'approval', '7', '7', NULL, NULL, 1, '2025-10-22 21:02:54', '2025-10-22 12:55:49', 0, NULL),
+(196, 'student', 'student001', 'registration', '報名成功', '您已成功報名「Arduino 機器人工作坊」活動', 'activity', 107, 0, NULL, '2025-10-24 04:06:28', 0, NULL),
+(197, 'student', 'teacher01', 'registration', '報名成功', '您已成功報名「聖誕慶祝活動」活動', 'activity', 103, 0, NULL, '2025-10-24 08:07:17', 0, NULL),
+(198, 'all', NULL, 'announcement', '新公告', 'abccba', 'announcement', 4, 0, NULL, '2025-10-26 16:52:04', 0, NULL),
+(199, 'all', NULL, 'announcement', '新公告', 'adawdawd', 'announcement', 5, 0, NULL, '2025-10-26 17:24:45', 0, NULL),
+(200, 'all', NULL, 'announcement', '新公告', 'ascadc', 'announcement', 6, 0, NULL, '2025-10-26 17:27:28', 0, NULL),
+(201, 'all', NULL, 'announcement', '新公告', 'zsdcSDV', 'announcement', 7, 0, NULL, '2025-10-26 18:02:25', 0, NULL),
+(202, 'all', NULL, 'announcement', '新公告', '測試公告 - 2025/10/27 上午9:17:14', 'announcement', 8, 0, NULL, '2025-10-27 01:17:14', 0, NULL),
+(203, 'all', NULL, 'announcement', '新公告', 'aaa', 'announcement', 9, 0, NULL, '2025-10-27 01:38:38', 0, NULL),
+(204, 'all', NULL, 'announcement', '新公告', 'aa', 'announcement', 10, 0, NULL, '2025-10-27 01:57:00', 0, NULL),
+(205, 'all', NULL, 'announcement', '新公告', '111', 'announcement', 11, 0, NULL, '2025-10-27 02:18:28', 0, NULL),
+(206, 'all', NULL, 'announcement', '新公告', 'qqq', 'announcement', 12, 0, NULL, '2025-10-27 02:40:33', 0, NULL),
+(207, 'student', 'student001', 'registration', '報名成功', '您已成功報名「aaaaa」活動', 'activity', 117, 0, NULL, '2025-10-27 02:47:16', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -445,7 +540,8 @@ CREATE TABLE `photo_albums` (
 INSERT INTO `photo_albums` (`album_id`, `album_name`, `activity_name`, `description`, `cover_image`, `is_public`, `created_by`, `created_at`, `updated_at`) VALUES
 (1, '2024科學營精彩花絮', '2024科學探索營', '去年科學營的精彩瞬間', NULL, 1, 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35'),
 (2, '科學競賽得獎作品', '2024科學競賽', '優秀作品展示', NULL, 1, 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35'),
-(3, '實驗室開放日', '實驗室參觀', '實驗室設備介紹', NULL, 1, 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35');
+(3, '實驗室開放日', '實驗室參觀', '實驗室設備介紹', NULL, 1, 'admin', '2025-10-19 04:42:35', '2025-10-19 04:42:35'),
+(4, 'abcv', 'abc', 'abcfcd', NULL, 1, 'sciclub', '2025-10-26 06:18:40', '2025-10-26 06:20:13');
 
 -- --------------------------------------------------------
 
@@ -470,7 +566,6 @@ CREATE TABLE `registrations` (
 --
 
 INSERT INTO `registrations` (`registration_id`, `activity_id`, `student_number`, `student_name`, `student_class`, `registration_time`, `modified_time`, `status`, `notes`) VALUES
-(1, 1, 'student001', '王小明', '資三忠', '2025-10-19 12:42:35', NULL, 'registered', NULL),
 (2, 2, 'S1025', 'Test', '資二甲', '2025-10-21 11:43:31', NULL, 'registered', NULL),
 (83, 94, 'S1001', '王小明', '高一1班', '2025-10-10 09:15:30', NULL, 'registered', NULL),
 (84, 94, 'S1002', '李小華', '高一2班', '2025-10-10 10:22:15', NULL, 'registered', NULL),
@@ -646,7 +741,11 @@ INSERT INTO `registrations` (`registration_id`, `activity_id`, `student_number`,
 (286, 98, 'S5012', '選手12', '高1年2班', '2025-11-25 20:00:00', NULL, 'registered', NULL),
 (287, 98, 'S5013', '選手13', '高2年2班', '2025-11-25 21:00:00', NULL, 'registered', NULL),
 (288, 98, 'S5014', '選手14', '高3年2班', '2025-11-25 22:00:00', NULL, 'registered', NULL),
-(289, 98, 'S5015', '選手15', '高1年2班', '2025-11-25 23:00:00', NULL, 'registered', NULL);
+(289, 98, 'S5015', '選手15', '高1年2班', '2025-11-25 23:00:00', NULL, 'registered', NULL),
+(290, 103, 'sciclub', 'Student abc', '資二忠', '2025-10-24 11:52:25', NULL, 'registered', NULL),
+(291, 107, 'student001', 'AAA', '資一忠', '2025-10-24 12:06:28', NULL, 'registered', NULL),
+(292, 103, 'teacher01', 'BBB', '資四忠', '2025-10-24 16:07:17', NULL, 'registered', NULL),
+(293, 117, 'student001', 'BBB', '資一忠', '2025-10-26 19:47:16', NULL, 'registered', NULL);
 
 --
 -- Triggers `registrations`
@@ -693,6 +792,42 @@ CREATE TABLE `rollcall_records` (
   `check_time` datetime DEFAULT NULL COMMENT '點名時間'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='點名記錄表';
 
+--
+-- Dumping data for table `rollcall_records`
+--
+
+INSERT INTO `rollcall_records` (`record_id`, `session_id`, `student_id`, `is_present`, `check_time`) VALUES
+(1, 2, 1, 0, NULL),
+(2, 2, 2, 0, NULL),
+(3, 2, 3, 0, NULL),
+(4, 3, 1, 0, NULL),
+(5, 3, 2, 0, NULL),
+(6, 3, 3, 0, NULL),
+(7, 4, 1, 1, '2025-10-24 13:34:00'),
+(8, 4, 2, 1, '2025-10-24 13:34:01'),
+(9, 4, 3, 1, '2025-10-24 13:34:02'),
+(10, 5, 1, 0, NULL),
+(11, 5, 2, 0, NULL),
+(12, 5, 3, 0, NULL),
+(13, 6, 1, 1, '2025-10-24 16:03:14'),
+(14, 6, 2, 1, '2025-10-24 16:03:16'),
+(15, 6, 3, 1, '2025-10-24 16:03:16'),
+(16, 7, 1, 0, NULL),
+(17, 7, 2, 0, NULL),
+(18, 7, 3, 0, NULL),
+(19, 8, 1, 1, '2025-10-24 16:05:55'),
+(20, 8, 2, 1, '2025-10-24 16:05:56'),
+(21, 8, 3, 1, '2025-10-24 16:05:57'),
+(22, 9, 1, 0, NULL),
+(23, 9, 2, 0, NULL),
+(24, 9, 3, 0, NULL),
+(25, 10, 1, 0, NULL),
+(26, 10, 2, 0, NULL),
+(27, 10, 3, 0, NULL),
+(28, 11, 1, 1, '2025-10-27 10:37:05'),
+(29, 11, 2, 1, '2025-10-27 10:37:10'),
+(30, 11, 3, 0, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -707,6 +842,23 @@ CREATE TABLE `rollcall_sessions` (
   `created_by` int(11) NOT NULL COMMENT '創建教師ID',
   `created_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='點名場次表';
+
+--
+-- Dumping data for table `rollcall_sessions`
+--
+
+INSERT INTO `rollcall_sessions` (`session_id`, `session_name`, `session_date`, `session_time`, `created_by`, `created_at`) VALUES
+(1, 'test', '2025-10-24', '13:32:00', 1, '2025-10-24 07:32:11'),
+(2, '例行點名_2025-10-24', '2025-10-24', '13:33:00', 10, '2025-10-24 13:33:19'),
+(3, '例行點名_2025-10-24', '2025-10-24', '13:33:00', 10, '2025-10-24 13:33:32'),
+(4, '例行點名_2025-10-24', '2025-10-24', '13:33:00', 10, '2025-10-24 13:33:57'),
+(5, '例行點名_2025-10-24', '2025-10-24', '15:43:00', 10, '2025-10-24 15:43:29'),
+(6, '例行點名_2025-10-24', '2025-10-24', '16:03:00', 6, '2025-10-24 16:03:12'),
+(7, '例行點名_2025-10-24', '2025-10-24', '16:05:00', 6, '2025-10-24 16:05:22'),
+(8, '例行點名_2025-10-24', '2025-10-24', '16:05:00', 6, '2025-10-24 16:05:50'),
+(9, '例行點名_2025-10-24', '2025-10-24', '16:06:00', 6, '2025-10-24 16:06:04'),
+(10, '例行點名_2025-10-27', '2025-10-27', '19:05:00', 6, '2025-10-26 19:05:03'),
+(11, '例行點名_2025-10-27', '2025-10-27', '19:36:00', 6, '2025-10-26 19:36:52');
 
 -- --------------------------------------------------------
 
@@ -861,6 +1013,48 @@ CREATE TABLE `teachers` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='教師資料表';
 
+--
+-- Dumping data for table `teachers`
+--
+
+INSERT INTO `teachers` (`teacher_id`, `teacher_number`, `teacher_name`, `department`, `phone`, `email`, `user_id`, `created_at`) VALUES
+(1, 'T001', '王老師', '資訊科', '0912-345-678', 'wang@school.edu', NULL, '2025-10-24 05:30:57'),
+(2, 'T002', '李老師', '數學科', '0923-456-789', 'lee@school.edu', NULL, '2025-10-24 05:30:57'),
+(3, 'T003', '張老師', '英文科', '0934-567-890', 'chang@school.edu', NULL, '2025-10-24 05:30:57');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `uploaded_files`
+--
+
+CREATE TABLE `uploaded_files` (
+  `file_id` int(11) NOT NULL,
+  `zone_id` int(11) DEFAULT NULL,
+  `file_name` varchar(255) DEFAULT NULL,
+  `file_size` float DEFAULT NULL,
+  `uploader` varchar(100) DEFAULT NULL,
+  `upload_time` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `upload_zones`
+--
+
+CREATE TABLE `upload_zones` (
+  `zone_id` int(11) NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `deadline` datetime DEFAULT NULL,
+  `max_file_size` int(11) DEFAULT NULL,
+  `max_files` int(11) DEFAULT NULL,
+  `allowed_types` varchar(255) DEFAULT NULL,
+  `status` enum('active','closed') DEFAULT 'active',
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -922,7 +1116,9 @@ CREATE TABLE `work_hours` (
 --
 
 INSERT INTO `work_hours` (`work_id`, `work_date`, `staff_name`, `shift_time`, `check_in_time`, `check_out_time`, `work_hours`, `status`, `notes`, `created_at`, `updated_at`) VALUES
-(1, '2025-10-22', '1', '', NULL, NULL, 1.00, 'present', NULL, '2025-10-22 15:53:23', NULL);
+(7, '2025-10-24', '張老師', '早班 08:00-12:00', '12:00:00', '13:00:00', 1.00, 'present', '', '2025-10-24 15:30:23', NULL),
+(8, '2025-10-24', '王老師', '晚班 18:00-22:00', '18:00:00', '22:00:00', 4.00, 'present', '', '2025-10-24 15:30:56', NULL),
+(9, '2025-10-27', '李老師', '午班 13:00-17:00', '11:01:00', '11:11:00', 0.20, 'present', '', '2025-10-26 19:37:30', NULL);
 
 -- --------------------------------------------------------
 
@@ -947,9 +1143,16 @@ CREATE TABLE `work_schedules` (
 --
 
 INSERT INTO `work_schedules` (`schedule_id`, `week_start_date`, `time_slot`, `day_of_week`, `staff_name`, `shift_type`, `notes`, `created_at`, `updated_at`) VALUES
-(10, '2025-10-22', '08:00-09:00', '星期一', '王老師', 'default', NULL, '2025-10-22 08:41:34', '2025-10-22 08:41:34'),
-(11, '2025-10-22', '09:00-10:00', '星期一', '李老師', 'default', NULL, '2025-10-22 08:41:34', '2025-10-22 08:41:34'),
-(12, '2025-10-22', '08:00-09:00', '星期二', '張老師', 'default', NULL, '2025-10-22 08:41:34', '2025-10-22 08:41:34');
+(10, '2025-10-22', '08:00-09:00', '星期一', '王老師', 'default', '', '2025-10-22 08:41:34', '2025-10-27 02:35:46'),
+(11, '2025-10-22', '09:00-10:00', '星期一', '李老師', 'default', '', '2025-10-22 08:41:34', '2025-10-27 02:35:46'),
+(12, '2025-10-22', '08:00-09:00', '星期二', '張老師', 'default', '', '2025-10-22 08:41:34', '2025-10-27 02:35:46'),
+(33, '2025-10-20', '08:00-09:00', '星期一', 'a', 'default', '', '2025-10-24 08:02:47', '2025-10-24 08:02:47'),
+(34, '2025-10-20', '09:00-10:00', '星期二', 'b', 'default', '', '2025-10-24 08:02:47', '2025-10-24 08:02:47'),
+(35, '2025-10-20', '10:00-11:00', '星期三', 'c', 'default', '', '2025-10-24 08:02:47', '2025-10-24 08:02:47'),
+(36, '2025-10-22', '09:00-10:00', '星期二', 'a', 'default', '', '2025-10-27 02:35:46', '2025-10-27 02:35:46'),
+(37, '2025-10-22', '10:00-11:00', '星期三', 'a', 'default', '', '2025-10-27 02:35:47', '2025-10-27 02:35:47'),
+(38, '2025-10-22', '11:00-12:00', '星期四', 'a', 'default', '', '2025-10-27 02:35:47', '2025-10-27 02:35:47'),
+(39, '2025-10-22', '12:00-13:00', '星期五', 'a', 'default', '', '2025-10-27 02:35:47', '2025-10-27 02:35:47');
 
 --
 -- Indexes for dumped tables
@@ -1147,6 +1350,19 @@ ALTER TABLE `teachers`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `uploaded_files`
+--
+ALTER TABLE `uploaded_files`
+  ADD PRIMARY KEY (`file_id`),
+  ADD KEY `zone_id` (`zone_id`);
+
+--
+-- Indexes for table `upload_zones`
+--
+ALTER TABLE `upload_zones`
+  ADD PRIMARY KEY (`zone_id`);
+
+--
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
@@ -1180,7 +1396,7 @@ ALTER TABLE `work_schedules`
 -- AUTO_INCREMENT for table `activities`
 --
 ALTER TABLE `activities`
-  MODIFY `activity_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=114;
+  MODIFY `activity_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
 
 --
 -- AUTO_INCREMENT for table `admins`
@@ -1192,19 +1408,19 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `album_media`
 --
 ALTER TABLE `album_media`
-  MODIFY `media_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `media_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `announcements`
 --
 ALTER TABLE `announcements`
-  MODIFY `announcement_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `announcement_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `attendance_records`
 --
 ALTER TABLE `attendance_records`
-  MODIFY `record_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `record_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `attendance_sessions`
@@ -1216,19 +1432,19 @@ ALTER TABLE `attendance_sessions`
 -- AUTO_INCREMENT for table `calendar_events`
 --
 ALTER TABLE `calendar_events`
-  MODIFY `event_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `event_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `competition_results`
 --
 ALTER TABLE `competition_results`
-  MODIFY `result_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `result_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `feedback_forms`
 --
 ALTER TABLE `feedback_forms`
-  MODIFY `form_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `form_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `feedback_responses`
@@ -1240,7 +1456,7 @@ ALTER TABLE `feedback_responses`
 -- AUTO_INCREMENT for table `file_upload_zones`
 --
 ALTER TABLE `file_upload_zones`
-  MODIFY `zone_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `zone_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `leave_requests`
@@ -1252,37 +1468,37 @@ ALTER TABLE `leave_requests`
 -- AUTO_INCREMENT for table `meeting_records`
 --
 ALTER TABLE `meeting_records`
-  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=195;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=208;
 
 --
 -- AUTO_INCREMENT for table `photo_albums`
 --
 ALTER TABLE `photo_albums`
-  MODIFY `album_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `album_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `registrations`
 --
 ALTER TABLE `registrations`
-  MODIFY `registration_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=290;
+  MODIFY `registration_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=294;
 
 --
 -- AUTO_INCREMENT for table `rollcall_records`
 --
 ALTER TABLE `rollcall_records`
-  MODIFY `record_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `record_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `rollcall_sessions`
 --
 ALTER TABLE `rollcall_sessions`
-  MODIFY `session_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `session_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `schedules`
@@ -1312,7 +1528,7 @@ ALTER TABLE `student`
 -- AUTO_INCREMENT for table `student_uploads`
 --
 ALTER TABLE `student_uploads`
-  MODIFY `upload_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `upload_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `system_settings`
@@ -1324,7 +1540,19 @@ ALTER TABLE `system_settings`
 -- AUTO_INCREMENT for table `teachers`
 --
 ALTER TABLE `teachers`
-  MODIFY `teacher_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `teacher_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `uploaded_files`
+--
+ALTER TABLE `uploaded_files`
+  MODIFY `file_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `upload_zones`
+--
+ALTER TABLE `upload_zones`
+  MODIFY `zone_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `user`
@@ -1336,13 +1564,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `work_hours`
 --
 ALTER TABLE `work_hours`
-  MODIFY `work_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `work_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `work_schedules`
 --
 ALTER TABLE `work_schedules`
-  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '班表ID', AUTO_INCREMENT=13;
+  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '班表ID', AUTO_INCREMENT=40;
 
 --
 -- Constraints for dumped tables
@@ -1420,6 +1648,12 @@ ALTER TABLE `student_uploads`
 --
 ALTER TABLE `teachers`
   ADD CONSTRAINT `teachers_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `uploaded_files`
+--
+ALTER TABLE `uploaded_files`
+  ADD CONSTRAINT `uploaded_files_ibfk_1` FOREIGN KEY (`zone_id`) REFERENCES `upload_zones` (`zone_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

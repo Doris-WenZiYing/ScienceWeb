@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -19,6 +18,249 @@
       font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
       background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
     }
+
+    .icon-wrapper {
+        position: relative;
+      }
+
+    .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+        color: white;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid white;
+        box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        animation: badgePulse 2s infinite;
+      }
+      .notification-badge.active {
+        display: flex;
+      }
+      @keyframes badgePulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        }
+        50% {
+          transform: scale(1.2);
+          box-shadow: 0 6px 20px rgba(255, 71, 87, 0.8);
+        }
+      }
+      .notification-panel {
+        position: absolute;
+        top: 65px;
+        right: 0;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        display: none;
+        width: 400px;
+        max-height: 550px;
+        z-index: 1001;
+        overflow: hidden;
+        animation: panelFade 0.3s ease;
+        flex-direction: column;
+      }
+      @keyframes panelFade {
+        from {
+          opacity: 0;
+          transform: translateY(-15px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .notification-panel.active {
+        display: flex;
+      }
+      .notification-header {
+        padding: 20px 25px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      }
+      .notification-header h3 {
+        font-size: 17px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .notification-header i {
+        font-size: 20px;
+      }
+      .mark-all-read {
+        background: rgba(255, 255, 255, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 7px 14px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      .mark-all-read:hover {
+        background: rgba(255, 255, 255, 0.35);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+      }
+      .notification-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+      }
+      .notification-item {
+        padding: 16px;
+        margin-bottom: 8px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+        border-left: 4px solid transparent;
+        position: relative;
+      }
+      .notification-item:hover {
+        background: #f0f1f2;
+        transform: translateX(4px);
+      }
+      .notification-item.unread {
+        background: linear-gradient(135deg, #e8f9f8 0%, #f0fffe 100%);
+        border-left-color: #11998e;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.15);
+      }
+      .notification-item.unread::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 10px;
+        height: 10px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border-radius: 50%;
+        animation: unreadPulse 2s infinite;
+      }
+      @keyframes unreadPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.8;
+        }
+      }
+      .notification-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .notification-item-title {
+        font-weight: 700;
+        color: #333;
+        flex: 1;
+        margin-right: 10px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .notification-type-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: white;
+        flex-shrink: 0;
+      }
+      .notification-type-icon.info {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      }
+      .notification-type-icon.warning {
+        background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
+      }
+      .notification-item-time {
+        font-size: 12px;
+        color: #999;
+        white-space: nowrap;
+      }
+      .notification-item-message {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+      .notification-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .notification-btn {
+        font-size: 11px;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .notification-btn-read {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.2);
+      }
+      .notification-btn-read:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+      }
+      .notification-btn-clear {
+        background: #ffe8e8;
+        color: #d32f2f;
+        box-shadow: 0 2px 8px rgba(211, 47, 47, 0.1);
+      }
+      .notification-btn-clear:hover {
+        background: #ffcccb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+      }
+      .empty-notification {
+        padding: 50px 20px;
+        text-align: center;
+        color: #999;
+      }
+      .empty-notification i {
+        font-size: 45px;
+        margin-bottom: 15px;
+        opacity: 0.4;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .empty-notification p {
+        font-weight: 600;
+        font-size: 14px;
+      }
 
     /* 頂部區域 */
     .header {
@@ -638,27 +880,238 @@
     ::-webkit-scrollbar-thumb:hover {
       background: linear-gradient(135deg, #2ebf91 0%, #8360c3 100%);
     }
+
+    /* ==========================================
+       彈窗樣式
+       ========================================== */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 15px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 25px 30px;
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 500;
+    }
+
+    .close-btn {
+      font-size: 32px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      line-height: 1;
+      padding: 0 5px;
+    }
+
+    .close-btn:hover {
+      transform: rotate(90deg);
+      opacity: 0.8;
+    }
+
+    .modal-body {
+      padding: 30px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-footer {
+      padding: 20px 30px;
+      background: #f8f9fa;
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    /* 表單樣式 */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .required {
+      color: #ff4757;
+      margin-left: 3px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="date"],
+    .form-group input[type="time"],
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #8360c3;
+      box-shadow: 0 0 0 3px rgba(131, 96, 195, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    /* 按鈕樣式 */
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(131, 96, 195, 0.4);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    /* 詳情顯示樣式 */
+    .detail-row {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: #8360c3;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .detail-value {
+      color: #333;
+      font-size: 15px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body class="sci-page">
-  <!-- 頂部欄 -->
-  <div class="header">
-    <div class="header-left" onclick="location.href='science_club_activity_calendar.html';">
-      <img src="image/logo1.gif" alt="Logo" class="logo">
-    </div>
-    <div class="header-right">
-      <div class="icon"><i class="fas fa-bell"></i></div>
-      <div class="avatar" id="avatar">
-        <i class="fas fa-user-shield"></i>
+    <div class="header">
+      <a href="science_club_activity_calendar.html">
+        <img src="image/logo1.gif" alt="Logo" class="logo" />
+      </a>
+      <div class="header-right">
+        <div class="icon-wrapper">
+          <div class="icon" id="notificationBell">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="notification-badge" id="notificationBadge">0</div>
+        </div>
+        <div class="notification-panel" id="notificationPanel">
+          <div class="notification-header">
+            <h3><i class="fas fa-bell"></i> 通知中心</h3>
+            <button class="mark-all-read">
+              <i class="fas fa-check-double"></i> 全部已讀
+            </button>
+          </div>
+          <div class="notification-list" id="notificationList">
+            <div class="empty-notification">
+              <i class="fas fa-inbox"></i>
+              <p>沒有通知</p>
+            </div>
+          </div>
+        </div>
+        <div class="avatar" id="avatar">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="dropdown" id="dropdown">
+          <a href="login_teacher.html">
+            <i class="fas fa-sign-out-alt"></i>
+            登出
+          </a>
+        </div>
       </div>
-      <div class="dropdown" id="dropdown">
-        <a href="login_science_club.html">
-          <i class="fas fa-sign-out-alt"></i>
-          登出
-        </a>
-      </div>
     </div>
-  </div>
 
   <!-- 主區塊 -->
   <div class="main">
@@ -761,236 +1214,541 @@
       <div class="toolbar">
         <div class="search-box">
           <i class="fas fa-search"></i>
-          <input type="text" placeholder="搜尋會議記錄...">
+          <input type="text" id="searchInput" placeholder="搜尋會議記錄...">
         </div>
         
         <div class="filter-group">
-          <select class="filter-select">
-            <option>全部狀態</option>
-            <option>已完成</option>
-            <option>已排程</option>
-            <option>已取消</option>
+          <select class="filter-select" id="statusFilter">
+            <option value="all">全部狀態</option>
+            <option value="completed">已完成</option>
+            <option value="scheduled">已排程</option>
+            <option value="cancelled">已取消</option>
           </select>
-          <select class="filter-select">
-            <option>全部月份</option>
-            <option>本月</option>
-            <option>上個月</option>
-            <option>三個月內</option>
+          <select class="filter-select" id="monthFilter">
+            <option value="all">全部月份</option>
+            <option value="current">本月</option>
+            <option value="last">上個月</option>
+            <option value="three">三個月內</option>
           </select>
         </div>
         
-        <button class="add-btn">
+        <button class="add-btn" onclick="openAddMeetingModal()">
           <i class="fas fa-plus"></i>
           新增會議
         </button>
       </div>
 
       <!-- 會議記錄列表 -->
-      <div class="records-container">
-        <div class="record-item completed">
-          <div class="record-header">
-            <div>
-              <div class="record-title">九月份幹部會議</div>
-              <div class="record-meta">
-                <span><i class="fas fa-calendar"></i>2025-09-15</span>
-                <span><i class="fas fa-clock"></i>14:00-16:00</span>
-                <span><i class="fas fa-map-marker-alt"></i>會議室A</span>
-                <span><i class="fas fa-users"></i>18人參與</span>
-              </div>
-            </div>
-            <div class="record-status status-completed">已完成</div>
-          </div>
-          <div class="record-summary">
-            討論本月活動執行狀況，規劃下月重點工作項目，審核預算申請案。主要決議：通過科學實驗競賽提案、確定新生迎新活動時程。
-          </div>
-          <div class="record-actions">
-            <button class="action-btn btn-view">查看詳情</button>
-            <button class="action-btn btn-edit">編輯</button>
-            <button class="action-btn btn-delete">刪除</button>
-          </div>
+      <div class="records-container" id="records-container">
+        <!-- 會議記錄將由 JavaScript 動態加載 -->
+      </div>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <div class="record-item">
-          <div class="record-header">
-            <div>
-              <div class="record-title">學期規劃會議</div>
-              <div class="record-meta">
-                <span><i class="fas fa-calendar"></i>2025-10-01</span>
-                <span><i class="fas fa-clock"></i>15:00-17:00</span>
-                <span><i class="fas fa-map-marker-alt"></i>會議室B</span>
-                <span><i class="fas fa-users"></i>20人參與</span>
-              </div>
+  <!-- 新增/編輯會議彈窗 -->
+  <div class="modal" id="meetingModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">新增會議記錄</h2>
+        <span class="close-btn" onclick="closeMeetingModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="meetingForm">
+          <div class="form-group">
+            <label>會議標題 <span class="required">*</span></label>
+            <input type="text" id="meetingTitle" required>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>會議日期 <span class="required">*</span></label>
+              <input type="date" id="meetingDate" required>
             </div>
-            <div class="record-status status-scheduled">已排程</div>
+            <div class="form-group">
+              <label>開始時間</label>
+              <input type="time" id="startTime">
+            </div>
+            <div class="form-group">
+              <label>結束時間</label>
+              <input type="time" id="endTime">
+            </div>
           </div>
-          <div class="record-summary">
-            規劃下學期重點活動項目，討論預算分配和資源調配，確定各組工作目標和時程規劃。
+          
+          <div class="form-group">
+            <label>會議地點</label>
+            <input type="text" id="meetingLocation" placeholder="例如：會議室A">
           </div>
-          <div class="record-actions">
-            <button class="action-btn btn-view">查看詳情</button>
-            <button class="action-btn btn-edit">編輯</button>
-            <button class="action-btn btn-delete">刪除</button>
+          
+          <div class="form-group">
+            <label>參與人員</label>
+            <input type="text" id="attendees" placeholder="例如：全體幹部">
           </div>
-        </div>
+          
+          <div class="form-group">
+            <label>會議議程</label>
+            <textarea id="agenda" rows="3" placeholder="請輸入會議議程..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>會議內容</label>
+            <textarea id="content" rows="4" placeholder="請輸入會議內容..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>決議事項</label>
+            <textarea id="decisions" rows="3" placeholder="請輸入決議事項..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>待辦事項</label>
+            <textarea id="actionItems" rows="3" placeholder="請輸入待辦事項..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>下次會議</label>
+            <input type="date" id="nextMeeting">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeMeetingModal()">取消</button>
+        <button class="btn btn-primary" id="submitBtn" onclick="submitMeeting()">確定新增</button>
+      </div>
+    </div>
+  </div>
 
-        <div class="record-item urgent">
-          <div class="record-header">
-            <div>
-              <div class="record-title">緊急應變會議</div>
-              <div class="record-meta">
-                <span><i class="fas fa-calendar"></i>2025-09-10</span>
-                <span><i class="fas fa-clock"></i>10:00-11:30</span>
-                <span><i class="fas fa-map-marker-alt"></i>線上會議</span>
-                <span><i class="fas fa-users"></i>12人參與</span>
-              </div>
-            </div>
-            <div class="record-status status-completed">已完成</div>
-          </div>
-          <div class="record-summary">
-            因應突發狀況召開緊急會議，討論應對措施和後續處理方案，確保活動順利進行。
-          </div>
-          <div class="record-actions">
-            <button class="action-btn btn-view">查看詳情</button>
-            <button class="action-btn btn-edit">編輯</button>
-            <button class="action-btn btn-delete">刪除</button>
-          </div>
-        </div>
-
-        <div class="record-item completed">
-          <div class="record-header">
-            <div>
-              <div class="record-title">活動檢討會議</div>
-              <div class="record-meta">
-                <span><i class="fas fa-calendar"></i>2025-09-05</span>
-                <span><i class="fas fa-clock"></i>13:00-15:00</span>
-                <span><i class="fas fa-map-marker-alt"></i>會議室C</span>
-                <span><i class="fas fa-users"></i>16人參與</span>
-              </div>
-            </div>
-            <div class="record-status status-completed">已完成</div>
-          </div>
-          <div class="record-summary">
-            檢討上月舉辦的科學展活動，分析優缺點和改善建議，總結經驗供未來參考。
-          </div>
-          <div class="record-actions">
-            <button class="action-btn btn-view">查看詳情</button>
-            <button class="action-btn btn-edit">編輯</button>
-            <button class="action-btn btn-delete">刪除</button>
-          </div>
-        </div>
+  <!-- 查看詳情彈窗 -->
+  <div class="modal" id="detailModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>會議詳情</h2>
+        <span class="close-btn" onclick="closeDetailModal()">&times;</span>
+      </div>
+      <div class="modal-body" id="detailContent">
+        <!-- 詳情內容將由 JavaScript 動態填充 -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeDetailModal()">關閉</button>
       </div>
     </div>
   </div>
 
   <!-- JavaScript -->
   <script>
-    // 頭像下拉選單控制
-    const avatar = document.getElementById('avatar');
-    const dropdown = document.getElementById('dropdown');
+    const API_URL = 'api.php';
+    let allMeetings = [];
+    let currentMeetingId = null;
+    let isEditMode = false;
 
-    avatar.addEventListener('click', () => {
-      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    // ==========================================
+    // 初始化
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', async function() {
+      setupEventListeners();
+      await loadMeetingRecords();
     });
 
-    window.addEventListener('click', function(e) {
-      if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.style.display = 'none';
-      }
-    });
-
-    // 側邊欄選單控制
-    function toggleMenu(element) {
-      const menuItem = element.parentElement;
-      const submenu = menuItem.querySelector('.submenu');
-      const isExpanded = menuItem.classList.contains('expanded');
-      
-      // 關閉所有其他一級選單
-      document.querySelectorAll('.menu-item').forEach(item => {
-        if (item !== menuItem) {
-          item.classList.remove('expanded');
-          const otherSubmenu = item.querySelector('.submenu');
-          if (otherSubmenu) {
-            otherSubmenu.classList.remove('show');
-          }
+    // ==========================================
+    // 載入會議記錄
+    // ==========================================
+    async function loadMeetingRecords() {
+      try {
+        const response = await fetch(`${API_URL}?action=get_meeting_records`);
+        const result = await response.json();
+        
+        if (result.success) {
+          allMeetings = result.data || [];
+          renderMeetings(allMeetings);
+        } else {
+          showNotification('載入會議記錄失敗', 'error');
         }
-      });
-      
-      // 切換當前選單
-      if (isExpanded) {
-        menuItem.classList.remove('expanded');
-        submenu.classList.remove('show');
-      } else {
-        menuItem.classList.add('expanded');
-        submenu.classList.add('show');
+      } catch (error) {
+        console.error('載入會議記錄失敗:', error);
+        showNotification('載入會議記錄失敗，請稍後再試', 'error');
       }
     }
 
-    // 搜尋功能
-    const searchInput = document.querySelector('.search-box input');
-    searchInput.addEventListener('input', function(e) {
-      const searchTerm = e.target.value.toLowerCase();
-      const recordItems = document.querySelectorAll('.record-item');
+    // ==========================================
+    // 渲染會議記錄
+    // ==========================================
+    function renderMeetings(meetings) {
+      const container = document.getElementById('records-container');
+      container.innerHTML = '';
       
-      recordItems.forEach(item => {
-        const title = item.querySelector('.record-title').textContent.toLowerCase();
-        const summary = item.querySelector('.record-summary').textContent.toLowerCase();
+      if (meetings.length === 0) {
+        container.innerHTML = '<p style="text-align:center; padding:60px; color:#999;">暫無會議記錄</p>';
+        return;
+      }
+      
+      meetings.forEach(meeting => {
+        const today = new Date();
+        const meetingDate = new Date(meeting.meeting_date);
+        const status = meetingDate > today ? 'scheduled' : 'completed';
+        const statusText = status === 'scheduled' ? '已排程' : '已完成';
+        const statusClass = status === 'scheduled' ? 'status-scheduled' : 'status-completed';
         
-        if (title.includes(searchTerm) || summary.includes(searchTerm)) {
-          item.style.display = 'block';
+        const div = document.createElement('div');
+        div.className = `record-item ${status}`;
+        div.innerHTML = `
+          <div class="record-header">
+            <div>
+              <div class="record-title">${meeting.meeting_title}</div>
+              <div class="record-meta">
+                <span><i class="fas fa-calendar"></i>${meeting.meeting_date}</span>
+                <span><i class="fas fa-clock"></i>${meeting.start_time || ''}-${meeting.end_time || ''}</span>
+                <span><i class="fas fa-map-marker-alt"></i>${meeting.location || '未設定'}</span>
+                <span><i class="fas fa-users"></i>${meeting.attendees || '未設定'}</span>
+              </div>
+            </div>
+            <div class="record-status ${statusClass}">${statusText}</div>
+          </div>
+          <div class="record-summary">
+            ${meeting.content || meeting.agenda || '無描述'}
+          </div>
+          <div class="record-actions">
+            <button class="action-btn btn-view" onclick="viewMeetingDetail(${meeting.meeting_id})">查看詳情</button>
+            <button class="action-btn btn-edit" onclick="editMeeting(${meeting.meeting_id})">編輯</button>
+            <button class="action-btn btn-delete" onclick="deleteMeeting(${meeting.meeting_id})">刪除</button>
+          </div>
+        `;
+        
+        container.appendChild(div);
+      });
+    }
+
+    // ==========================================
+    // 新增會議彈窗
+    // ==========================================
+    function openAddMeetingModal() {
+      isEditMode = false;
+      currentMeetingId = null;
+      document.getElementById('modalTitle').textContent = '新增會議記錄';
+      document.getElementById('submitBtn').textContent = '確定新增';
+      document.getElementById('meetingForm').reset();
+      
+      // 設置預設日期為今天
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('meetingDate').value = today;
+      
+      document.getElementById('meetingModal').classList.add('show');
+    }
+
+    // ==========================================
+    // 編輯會議
+    // ==========================================
+    function editMeeting(meetingId) {
+      const meeting = allMeetings.find(m => m.meeting_id == meetingId);
+      if (!meeting) return;
+      
+      isEditMode = true;
+      currentMeetingId = meetingId;
+      document.getElementById('modalTitle').textContent = '編輯會議記錄';
+      document.getElementById('submitBtn').textContent = '確定修改';
+      
+      // 填入資料
+      document.getElementById('meetingTitle').value = meeting.meeting_title;
+      document.getElementById('meetingDate').value = meeting.meeting_date;
+      document.getElementById('startTime').value = meeting.start_time || '';
+      document.getElementById('endTime').value = meeting.end_time || '';
+      document.getElementById('meetingLocation').value = meeting.location || '';
+      document.getElementById('attendees').value = meeting.attendees || '';
+      document.getElementById('agenda').value = meeting.agenda || '';
+      document.getElementById('content').value = meeting.content || '';
+      document.getElementById('decisions').value = meeting.decisions || '';
+      document.getElementById('actionItems').value = meeting.action_items || '';
+      document.getElementById('nextMeeting').value = meeting.next_meeting || '';
+      
+      document.getElementById('meetingModal').classList.add('show');
+    }
+
+    // ==========================================
+    // 提交會議記錄
+    // ==========================================
+    async function submitMeeting() {
+      const title = document.getElementById('meetingTitle').value.trim();
+      const date = document.getElementById('meetingDate').value;
+      
+      if (!title || !date) {
+        showNotification('請填寫必填欄位', 'error');
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append('action', isEditMode ? 'update_meeting_record' : 'add_meeting_record');
+      
+      if (isEditMode) {
+        formData.append('meeting_id', currentMeetingId);
+      }
+      
+      formData.append('meeting_title', title);
+      formData.append('meeting_date', date);
+      formData.append('start_time', document.getElementById('startTime').value || null);
+      formData.append('end_time', document.getElementById('endTime').value || null);
+      formData.append('location', document.getElementById('meetingLocation').value || '');
+      formData.append('attendees', document.getElementById('attendees').value || '');
+      formData.append('agenda', document.getElementById('agenda').value || '');
+      formData.append('content', document.getElementById('content').value || '');
+      formData.append('decisions', document.getElementById('decisions').value || '');
+      formData.append('action_items', document.getElementById('actionItems').value || '');
+      formData.append('next_meeting', document.getElementById('nextMeeting').value || null);
+      
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showNotification(isEditMode ? '會議記錄已更新' : '會議記錄已新增', 'success');
+          closeMeetingModal();
+          await loadMeetingRecords();
         } else {
-          item.style.display = 'none';
+          showNotification('操作失敗: ' + result.message, 'error');
         }
-      });
-    });
+      } catch (error) {
+        console.error('API 請求失敗:', error);
+        showNotification('操作失敗，請稍後再試', 'error');
+      }
+    }
 
-    // 按鈕點擊事件
-    document.querySelectorAll('.action-btn').forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const action = this.textContent.trim();
-        const recordTitle = this.closest('.record-item').querySelector('.record-title').textContent;
+    // ==========================================
+    // 查看會議詳情
+    // ==========================================
+    function viewMeetingDetail(meetingId) {
+      const meeting = allMeetings.find(m => m.meeting_id == meetingId);
+      if (!meeting) return;
+      
+      const detailContent = document.getElementById('detailContent');
+      detailContent.innerHTML = `
+        <div class="detail-row">
+          <div class="detail-label">會議標題：</div>
+          <div class="detail-value">${meeting.meeting_title}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">會議日期：</div>
+          <div class="detail-value">${meeting.meeting_date}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">會議時間：</div>
+          <div class="detail-value">${meeting.start_time || '-'} ~ ${meeting.end_time || '-'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">會議地點：</div>
+          <div class="detail-value">${meeting.location || '未設定'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">參與人員：</div>
+          <div class="detail-value">${meeting.attendees || '未設定'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">會議議程：</div>
+          <div class="detail-value">${meeting.agenda || '無'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">會議內容：</div>
+          <div class="detail-value">${meeting.content || '無'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">決議事項：</div>
+          <div class="detail-value">${meeting.decisions || '無'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">待辦事項：</div>
+          <div class="detail-value">${meeting.action_items || '無'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">下次會議：</div>
+          <div class="detail-value">${meeting.next_meeting || '未定'}</div>
+        </div>
+      `;
+      
+      document.getElementById('detailModal').classList.add('show');
+    }
+
+    function toggleMenu(element) {
+        const menuItem = element.parentElement;
+        const submenu = menuItem.querySelector(".submenu");
+        const isExpanded = menuItem.classList.contains("expanded");
+        document.querySelectorAll(".menu-item").forEach((item) => {
+          if (item !== menuItem) {
+            item.classList.remove("expanded");
+            const other = item.querySelector(".submenu");
+            if (other) other.classList.remove("show");
+          }
+        });
+        if (isExpanded) {
+          menuItem.classList.remove("expanded");
+          submenu.classList.remove("show");
+        } else {
+          menuItem.classList.add("expanded");
+          submenu.classList.add("show");
+        }
+      }
+
+    // ==========================================
+    // 刪除會議記錄
+    // ==========================================
+    async function deleteMeeting(meetingId) {
+      const meeting = allMeetings.find(m => m.meeting_id == meetingId);
+      if (!meeting) return;
+      
+      if (!confirm(`確定要刪除「${meeting.meeting_title}」嗎？\n\n此操作無法復原！`)) {
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append('action', 'delete_meeting_record');
+      formData.append('meeting_id', meetingId);
+      
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          body: formData
+        });
         
-        switch(action) {
-          case '查看詳情':
-            alert(`查看「${recordTitle}」的詳細內容`);
-            break;
-          case '編輯':
-            alert(`編輯「${recordTitle}」`);
-            break;
-          case '刪除':
-            if(confirm(`確定要刪除「${recordTitle}」嗎？`)) {
-              this.closest('.record-item').remove();
-            }
-            break;
+        const result = await response.json();
+        
+        if (result.success) {
+          showNotification('會議記錄已刪除', 'success');
+          await loadMeetingRecords();
+        } else {
+          showNotification('刪除失敗: ' + result.message, 'error');
         }
-      });
-    });
+      } catch (error) {
+        console.error('API 請求失敗:', error);
+        showNotification('刪除失敗，請稍後再試', 'error');
+      }
+    }
 
-    // 新增會議按鈕
-    document.querySelector('.add-btn').addEventListener('click', function() {
-      alert('開啟新增會議表單');
-    });
+    // ==========================================
+    // 關閉彈窗
+    // ==========================================
+    function closeMeetingModal() {
+      document.getElementById('meetingModal').classList.remove('show');
+      document.getElementById('meetingForm').reset();
+    }
 
-    // 篩選功能
-    document.querySelectorAll('.filter-select').forEach(select => {
-      select.addEventListener('change', function() {
-        // 這裡可以實作篩選邏輯
-        console.log('篩選條件已改變:', this.value);
-      });
-    });
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.remove('show');
+    }
 
-    // 點擊其他地方關閉所有選單
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('.menu')) {
-        document.querySelectorAll('.menu-item').forEach(item => {
-          item.classList.remove('expanded');
-          const submenu = item.querySelector('.submenu');
-          if (submenu) {
-            submenu.classList.remove('show');
+    // ==========================================
+    // 設置事件監聽器
+    // ==========================================
+    function setupEventListeners() {
+      // 頭像下拉選單
+      const avatar = document.getElementById('avatar');
+      const dropdown = document.getElementById('dropdown');
+
+      if (avatar && dropdown) {
+        avatar.addEventListener('click', () => {
+          dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        window.addEventListener('click', function(e) {
+          if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.style.display = 'none';
           }
         });
       }
-    });
+
+      // 搜尋功能
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+          const searchTerm = e.target.value.toLowerCase();
+          const recordItems = document.querySelectorAll('.record-item');
+          
+          recordItems.forEach(item => {
+            const title = item.querySelector('.record-title').textContent.toLowerCase();
+            const summary = item.querySelector('.record-summary').textContent.toLowerCase();
+            
+            if (title.includes(searchTerm) || summary.includes(searchTerm)) {
+              item.style.display = 'block';
+            } else {
+              item.style.display = 'none';
+            }
+          });
+        });
+      }
+
+      // 篩選功能
+      const statusFilter = document.getElementById('statusFilter');
+      if (statusFilter) {
+        statusFilter.addEventListener('change', function() {
+          const filterValue = this.value;
+          const recordItems = document.querySelectorAll('.record-item');
+          
+          recordItems.forEach(item => {
+            if (filterValue === 'all') {
+              item.style.display = 'block';
+            } else {
+              const hasClass = item.classList.contains(filterValue);
+              item.style.display = hasClass ? 'block' : 'none';
+            }
+          });
+        });
+      }
+    }
+
+    // ==========================================
+    // 通知提示
+    // ==========================================
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: ${
+          type === 'success' ? 'linear-gradient(135deg, #28a745 0%, #20c997 100%)' :
+          type === 'error' ? 'linear-gradient(135deg, #dc3545 0%, #e83e8c 100%)' :
+          'linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%)'
+        };
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+      `;
+      notification.textContent = message;
+
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // 添加動畫樣式
+    if (!document.querySelector('#notificationStyles')) {
+      const style = document.createElement('style');
+      style.id = 'notificationStyles';
+      style.textContent = `
+        @keyframes slideIn {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+          from { transform: translateX(0); opacity: 1; }
+          to { transform: translateX(100%); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // 登出功能
+    function logout() {
+      if (confirm('確定要登出嗎？')) {
+        window.location.href = 'login.html';
+      }
+    }
   </script>
 </body>
 </html>

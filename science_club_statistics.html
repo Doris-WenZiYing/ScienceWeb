@@ -24,6 +24,249 @@
         overflow: hidden;
       }
 
+      .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+        color: white;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid white;
+        box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        animation: badgePulse 2s infinite;
+      }
+      .notification-badge.active {
+        display: flex;
+      }
+      @keyframes badgePulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        }
+        50% {
+          transform: scale(1.2);
+          box-shadow: 0 6px 20px rgba(255, 71, 87, 0.8);
+        }
+      }
+
+      .icon-wrapper {
+        position: relative;
+      }
+      .notification-panel {
+        position: absolute;
+        top: 65px;
+        right: 0;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        display: none;
+        width: 400px;
+        max-height: 550px;
+        z-index: 1001;
+        overflow: hidden;
+        animation: panelFade 0.3s ease;
+        flex-direction: column;
+      }
+      @keyframes panelFade {
+        from {
+          opacity: 0;
+          transform: translateY(-15px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .notification-panel.active {
+        display: flex;
+      }
+      .notification-header {
+        padding: 20px 25px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      }
+      .notification-header h3 {
+        font-size: 17px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .notification-header i {
+        font-size: 20px;
+      }
+      .mark-all-read {
+        background: rgba(255, 255, 255, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 7px 14px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      .mark-all-read:hover {
+        background: rgba(255, 255, 255, 0.35);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+      }
+      .notification-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+      }
+      .notification-item {
+        padding: 16px;
+        margin-bottom: 8px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+        border-left: 4px solid transparent;
+        position: relative;
+      }
+      .notification-item:hover {
+        background: #f0f1f2;
+        transform: translateX(4px);
+      }
+      .notification-item.unread {
+        background: linear-gradient(135deg, #e8f9f8 0%, #f0fffe 100%);
+        border-left-color: #11998e;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.15);
+      }
+      .notification-item.unread::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 10px;
+        height: 10px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border-radius: 50%;
+        animation: unreadPulse 2s infinite;
+      }
+      @keyframes unreadPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.8;
+        }
+      }
+      .notification-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .notification-item-title {
+        font-weight: 700;
+        color: #333;
+        flex: 1;
+        margin-right: 10px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .notification-type-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: white;
+        flex-shrink: 0;
+      }
+      .notification-type-icon.info {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      }
+      .notification-type-icon.warning {
+        background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
+      }
+      .notification-item-time {
+        font-size: 12px;
+        color: #999;
+        white-space: nowrap;
+      }
+      .notification-item-message {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+      .notification-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .notification-btn {
+        font-size: 11px;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .notification-btn-read {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(17, 153, 142, 0.2);
+      }
+      .notification-btn-read:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+      }
+      .notification-btn-clear {
+        background: #ffe8e8;
+        color: #d32f2f;
+        box-shadow: 0 2px 8px rgba(211, 47, 47, 0.1);
+      }
+      .notification-btn-clear:hover {
+        background: #ffcccb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+      }
+      .empty-notification {
+        padding: 50px 20px;
+        text-align: center;
+        color: #999;
+      }
+      .empty-notification i {
+        font-size: 45px;
+        margin-bottom: 15px;
+        opacity: 0.4;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .empty-notification p {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
       .header {
         height: 70px;
         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -117,7 +360,6 @@
       }
 
       .icon::after {
-        content: "3";
         position: absolute;
         top: -5px;
         right: -5px;
@@ -241,195 +483,6 @@
       .dropdown a i {
         margin-right: 8px;
         width: 16px;
-      }
-
-      .notification-panel {
-        position: absolute;
-        top: 65px;
-        right: 80px;
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        display: none;
-        width: 380px;
-        max-height: 500px;
-        z-index: 1000;
-        animation: dropdownFade 0.3s ease;
-        overflow: hidden;
-      }
-
-      .notification-header {
-        padding: 20px;
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-radius: 15px 15px 0 0;
-      }
-
-      .notification-header h3 {
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0;
-      }
-
-      .notification-actions {
-        display: flex;
-        gap: 10px;
-      }
-
-      .notification-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        padding: 5px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 12px;
-        transition: all 0.3s ease;
-      }
-
-      .notification-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.05);
-      }
-
-      .notification-list {
-        max-height: 400px;
-        overflow-y: auto;
-      }
-
-      .notification-item {
-        padding: 15px 20px;
-        border-bottom: 1px solid #f0f0f0;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        position: relative;
-        display: flex;
-        gap: 12px;
-      }
-
-      .notification-item:hover {
-        background: rgba(131, 96, 195, 0.05);
-      }
-
-      .notification-item.unread {
-        background: rgba(131, 96, 195, 0.08);
-      }
-
-      .notification-item.unread::before {
-        content: "";
-        position: absolute;
-        left: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 8px;
-        height: 8px;
-        background: #e74c3c;
-        border-radius: 50%;
-      }
-
-      .notification-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        flex-shrink: 0;
-      }
-
-      .notification-icon.activity {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        color: white;
-      }
-
-      .notification-icon.deadline {
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-        color: white;
-      }
-
-      .notification-icon.announcement {
-        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-        color: white;
-      }
-
-      .notification-content {
-        flex: 1;
-      }
-
-      .notification-title {
-        font-size: 14px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 4px;
-      }
-
-      .notification-text {
-        font-size: 13px;
-        color: #666;
-        margin-bottom: 4px;
-      }
-
-      .notification-time {
-        font-size: 11px;
-        color: #999;
-      }
-
-      .notification-delete {
-        position: absolute;
-        right: 15px;
-        top: 15px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: rgba(231, 76, 60, 0.1);
-        color: #e74c3c;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        opacity: 0;
-        transition: all 0.3s ease;
-      }
-
-      .notification-item:hover .notification-delete {
-        opacity: 1;
-      }
-
-      .notification-delete:hover {
-        background: #e74c3c;
-        color: white;
-        transform: scale(1.1);
-      }
-
-      .notification-empty {
-        padding: 60px 20px;
-        text-align: center;
-        color: #999;
-      }
-
-      .notification-empty i {
-        font-size: 48px;
-        color: #ddd;
-        margin-bottom: 15px;
-      }
-
-      .notification-list::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      .notification-list::-webkit-scrollbar-track {
-        background: #f0f0f0;
-      }
-
-      .notification-list::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        border-radius: 3px;
       }
 
       .main {
@@ -930,29 +983,31 @@
         <img src="image/logo1.gif" alt="Logo" class="logo" />
       </div>
       <div class="header-right">
-        <div class="icon" id="notificationIcon">
-          <i class="fas fa-bell"></i>
+        <div class="icon-wrapper">
+          <div class="icon" id="notificationBell">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="notification-badge" id="notificationBadge">0</div>
         </div>
         <div class="notification-panel" id="notificationPanel">
           <div class="notification-header">
-            <h3>通知</h3>
-            <div class="notification-actions">
-              <button class="notification-btn">全部已讀</button>
-              <button
-                class="notification-btn"
-                onclick="clearAllNotifications()"
-              >
-                清除全部
-              </button>
+            <h3><i class="fas fa-bell"></i> 通知中心</h3>
+            <button class="mark-all-read">
+              <i class="fas fa-check-double"></i> 全部已讀
+            </button>
+          </div>
+          <div class="notification-list" id="notificationList">
+            <div class="empty-notification">
+              <i class="fas fa-inbox"></i>
+              <p>沒有通知</p>
             </div>
           </div>
-          <div class="notification-list" id="notificationList"></div>
         </div>
         <div class="avatar" id="avatar">
-          <i class="fas fa-user-shield"></i>
+          <i class="fas fa-user"></i>
         </div>
         <div class="dropdown" id="dropdown">
-          <a href="login_science_club.html">
+          <a href="login_teacher.html">
             <i class="fas fa-sign-out-alt"></i>
             登出
           </a>
@@ -1074,7 +1129,7 @@
               <select
                 class="filter-select"
                 id="competitionSelect"
-                onchange="loadRankings()"
+                onchange="loadCompetitionResults()"
               >
                 <option value="">請選擇比賽或活動</option>
                 <!-- 已發佈的活動將由 JavaScript 動態載入 -->
@@ -1131,82 +1186,10 @@
               </tr>
             </thead>
             <tbody id="rankingTableBody">
-              <tr>
-                <td><span class="rank-badge rank-1">1</span></td>
-                <td>王小明</td>
-                <td>A10912345</td>
-                <td>資訊一甲</td>
-                <td><span class="score-badge">95</span></td>
-                <td>金牌</td>
-                <td>2025-09-20</td>
-              </tr>
-              <tr>
-                <td><span class="rank-badge rank-2">2</span></td>
-                <td>李小華</td>
-                <td>A10912346</td>
-                <td>電機二乙</td>
-                <td><span class="score-badge">92</span></td>
-                <td>銀牌</td>
-                <td>2025-09-20</td>
-              </tr>
-              <tr>
-                <td><span class="rank-badge rank-3">3</span></td>
-                <td>張小美</td>
-                <td>A10912347</td>
-                <td>機械三丙</td>
-                <td><span class="score-badge">88</span></td>
-                <td>銅牌</td>
-                <td>2025-09-20</td>
-              </tr>
-              <tr>
-                <td><span class="rank-badge rank-normal">4</span></td>
-                <td>陳小強</td>
-                <td>A10912348</td>
-                <td>化工一甲</td>
-                <td><span class="score-badge">85</span></td>
-                <td>優選</td>
-                <td>2025-09-20</td>
-              </tr>
-              <tr>
-                <td><span class="rank-badge rank-normal">5</span></td>
-                <td>林小芳</td>
-                <td>A10912349</td>
-                <td>土木二乙</td>
-                <td><span class="score-badge">82</span></td>
-                <td>優選</td>
-                <td>2025-09-20</td>
-              </tr>
-              <tr>
-                <td><span class="rank-badge rank-normal">6</span></td>
-                <td>黃小婷</td>
-                <td>A10912350</td>
-                <td>工管三丙</td>
-                <td><span class="score-badge">80</span></td>
-                <td>佳作</td>
-                <td>2025-09-20</td>
-              </tr>
-              <tr>
-                <td><span class="rank-badge rank-normal">7</span></td>
-                <td>吳小龍</td>
-                <td>A10912351</td>
-                <td>資訊二甲</td>
-                <td><span class="score-badge">78</span></td>
-                <td>佳作</td>
-                <td>2025-09-20</td>
-              </tr>
-              <tr>
-                <td><span class="rank-badge rank-normal">8</span></td>
-                <td>劉小娟</td>
-                <td>A10912352</td>
-                <td>電機一乙</td>
-                <td><span class="score-badge">75</span></td>
-                <td>佳作</td>
-                <td>2025-09-20</td>
-              </tr>
+              <!-- 資料將由 JavaScript 動態載入 -->
             </tbody>
           </table>
         </div>
-
         <div class="chart-section">
           <div class="chart-container">
             <div class="chart-title">
@@ -1231,81 +1214,137 @@
     </div>
 
     <script>
-      let scoreDistChart, awardDistChart;
+      const API_URL = "api.php";
+      let allResults = [];
+      let scoreDistChart = null;
+      let awardDistChart = null;
 
-      document.addEventListener("DOMContentLoaded", function () {
-        updateTime();
-        setInterval(updateTime, 1000);
-        initCharts();
-        loadPublishedActivities();
+      // ==========================================
+      // 初始化
+      // ==========================================
+      document.addEventListener("DOMContentLoaded", async function () {
+        setupEventListeners();
+        await loadCompetitions();
+        initializeCharts();
       });
 
-      // 更新時間
-      function updateTime() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, "0");
-        const date = String(now.getDate()).padStart(2, "0");
-        const hours = String(now.getHours()).padStart(2, "0");
-        const minutes = String(now.getMinutes()).padStart(2, "0");
-        const seconds = String(now.getSeconds()).padStart(2, "0");
-        const weekdays = [
-          "星期日",
-          "星期一",
-          "星期二",
-          "星期三",
-          "星期四",
-          "星期五",
-          "星期六",
-        ];
-        const weekday = weekdays[now.getDay()];
-        const period = now.getHours() >= 12 ? "下午" : "上午";
-        const timeString = `${year}年${month}月${date}日 ${weekday} ${period}${hours}:${minutes}:${seconds}`;
-        document.getElementById("timeText").textContent = timeString;
-      }
+      // ==========================================
+      // 載入比賽（活動）列表
+      // ==========================================
+      async function loadCompetitions() {
+        try {
+          const response = await fetch(`${API_URL}?action=get_activities`);
+          const result = await response.json();
 
-      function toggleMenu(element) {
-        const menuItem = element.parentElement;
-        const submenu = menuItem.querySelector(".submenu");
-        const isExpanded = menuItem.classList.contains("expanded");
+          if (result.success && result.data) {
+            const select = document.getElementById("competitionSelect");
+            select.innerHTML = '<option value="">請選擇比賽或活動</option>';
 
-        document.querySelectorAll(".menu-item").forEach((item) => {
-          if (item !== menuItem) {
-            item.classList.remove("expanded");
-            const otherSubmenu = item.querySelector(".submenu");
-            if (otherSubmenu) {
-              otherSubmenu.classList.remove("show");
-            }
+            // 只顯示活動類型為 "competition" 的項目
+            const competitions = result.data.filter(a => a.activity_type === "competition");
+
+            competitions.forEach((comp) => {
+              const option = document.createElement("option");
+              option.value = comp.activity_id;
+              option.textContent = `${comp.activity_name} (${comp.start_date})`;
+              select.appendChild(option);
+            });
+
+            // 預設綁定載入事件
+            select.addEventListener("change", loadCompetitionResults);
           }
-        });
-
-        if (isExpanded) {
-          menuItem.classList.remove("expanded");
-          submenu.classList.remove("show");
-        } else {
-          menuItem.classList.add("expanded");
-          submenu.classList.add("show");
+        } catch (error) {
+          console.error("載入比賽列表失敗:", error);
+          showNotification("載入比賽列表失敗", "error");
         }
       }
 
-      function initCharts() {
-        const scoreDistCtx = document
-          .getElementById("scoreDistChart")
-          .getContext("2d");
-        scoreDistChart = new Chart(scoreDistCtx, {
+      // ==========================================
+      // 載入比賽成績
+      // ==========================================
+      async function loadCompetitionResults() {
+        const select = document.getElementById("competitionSelect");
+        const activityId = select.value;
+
+        if (!activityId) {
+          allResults = [];
+          renderRankings([]);
+          updateCharts([]);
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_URL}?action=get_competition_results&activity_id=${activityId}`);
+          const result = await response.json();
+
+          if (result.success) {
+            allResults = result.data || [];
+            renderRankings(allResults);
+            updateCharts(allResults);
+            showNotification(`已載入 ${allResults.length} 筆成績`, "success");
+          } else {
+            showNotification("載入成績失敗: " + result.message, "error");
+          }
+        } catch (error) {
+          console.error("載入成績失敗:", error);
+          showNotification("載入成績失敗，請稍後再試", "error");
+        }
+      }
+
+      // ==========================================
+      // 渲染排名表格
+      // ==========================================
+      function renderRankings(results) {
+        const tbody = document.getElementById("rankingTableBody");
+        tbody.innerHTML = "";
+
+        if (results.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="7" style="text-align:center;padding:60px;color:#999;">暫無成績資料</td></tr>';
+          return;
+        }
+
+        results.forEach((r) => {
+          const row = document.createElement("tr");
+
+          let rankClass = "rank-normal";
+          if (r.rank == 1) rankClass = "rank-1";
+          else if (r.rank == 2) rankClass = "rank-2";
+          else if (r.rank == 3) rankClass = "rank-3";
+
+          row.innerHTML = `
+            <td><span class="rank-badge ${rankClass}">${r.rank}</span></td>
+            <td>${r.student_name}</td>
+            <td>${r.student_number}</td>
+            <td>${r.student_class}</td>
+            <td><span class="score-badge">${r.score ?? "-"}</span></td>
+            <td>${r.award || "參加獎"}</td>
+            <td>${r.created_at ? r.created_at.split(" ")[0] : "-"}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+
+      // ==========================================
+      // 初始化圖表
+      // ==========================================
+      function initializeCharts() {
+        // 分數分布圖
+        const ctx1 = document.getElementById("scoreDistChart").getContext("2d");
+        scoreDistChart = new Chart(ctx1, {
           type: "bar",
           data: {
-            labels: ["0-60", "60-70", "70-80", "80-90", "90-100"],
+            labels: ["0-60分", "60-70分", "70-80分", "80-90分", "90-100分"],
             datasets: [
               {
                 label: "人數",
-                data: [8, 15, 42, 58, 33],
+                data: [0, 0, 0, 0, 0],
                 backgroundColor: [
-                  "rgba(220, 53, 69, 0.8)",
-                  "rgba(255, 193, 7, 0.8)",
-                  "rgba(23, 162, 184, 0.8)",
-                  "rgba(40, 167, 69, 0.8)",
-                  "rgba(131, 96, 195, 0.8)",
+                  "rgba(220, 53, 69, 0.7)",
+                  "rgba(255, 193, 7, 0.7)",
+                  "rgba(23, 162, 184, 0.7)",
+                  "rgba(40, 167, 69, 0.7)",
+                  "rgba(131, 96, 195, 0.7)",
                 ],
                 borderColor: [
                   "rgb(220, 53, 69)",
@@ -1329,38 +1368,38 @@
             scales: {
               y: {
                 beginAtZero: true,
-                grid: {
-                  color: "rgba(0,0,0,0.1)",
-                },
-              },
-              x: {
-                grid: {
-                  color: "rgba(0,0,0,0.1)",
+                ticks: {
+                  stepSize: 1,
                 },
               },
             },
           },
         });
 
-        const awardDistCtx = document
-          .getElementById("awardDistChart")
-          .getContext("2d");
-        awardDistChart = new Chart(awardDistCtx, {
+        // 獎項分布圖
+        const ctx2 = document.getElementById("awardDistChart").getContext("2d");
+        awardDistChart = new Chart(ctx2, {
           type: "doughnut",
           data: {
-            labels: ["金牌", "銀牌", "銅牌", "優選", "佳作", "參加獎"],
+            labels: [],
             datasets: [
               {
-                data: [3, 5, 8, 12, 17, 111],
+                data: [],
                 backgroundColor: [
+                  "rgba(255, 215, 0, 0.7)",
+                  "rgba(192, 192, 192, 0.7)",
+                  "rgba(205, 127, 50, 0.7)",
+                  "rgba(131, 96, 195, 0.7)",
+                  "rgba(46, 191, 145, 0.7)",
+                ],
+                borderColor: [
                   "rgb(255, 215, 0)",
                   "rgb(192, 192, 192)",
                   "rgb(205, 127, 50)",
                   "rgb(131, 96, 195)",
                   "rgb(46, 191, 145)",
-                  "rgb(108, 117, 125)",
                 ],
-                borderWidth: 0,
+                borderWidth: 2,
               },
             ],
           },
@@ -1369,115 +1408,80 @@
             maintainAspectRatio: false,
             plugins: {
               legend: {
-                position: "bottom",
-                labels: {
-                  padding: 15,
-                  usePointStyle: true,
-                },
+                position: "right",
               },
             },
           },
         });
       }
 
-      function loadRankings() {
-        const select = document.getElementById("competitionSelect");
-        const selectedCompetition = select.options[select.selectedIndex].text;
-        const selectedValue = select.value;
+      // ==========================================
+      // 更新圖表
+      // ==========================================
+      function updateCharts(results) {
+        // 計算分數分布
+        const scoreRanges = {
+          "0-60": 0,
+          "60-70": 0,
+          "70-80": 0,
+          "80-90": 0,
+          "90-100": 0,
+        };
 
-        if (selectedValue) {
-          console.log("載入比賽排名:", selectedCompetition);
-          showNotification(
-            `正在載入「${selectedCompetition}」的排名資料...`,
-            "info"
-          );
-
-          // 如果是已發佈的活動，顯示相應的排名資料
-          if (selectedValue.startsWith("published_")) {
-            console.log("載入已發佈活動的排名資料:", selectedCompetition);
-          }
-        }
-      }
-
-      function updateRankings() {
-        // 自動按名次排序
-        document.getElementById("sortBy").value = "rank";
-        sortRankings();
-      }
-
-      // 排序功能
-      function sortRankings() {
-        const sortBy = document.getElementById("sortBy").value;
-        const table = document.querySelector(".ranking-table tbody");
-        const rows = Array.from(table.querySelectorAll("tr"));
-
-        if (rows.length === 0) return;
-
-        // 根據排序方式排序
-        rows.sort((a, b) => {
-          const cellsA = a.querySelectorAll("td");
-          const cellsB = b.querySelectorAll("td");
-
-          switch (sortBy) {
-            case "rank":
-              // 依名次排序（數字排序）
-              const rankA = parseInt(cellsA[0].textContent.trim());
-              const rankB = parseInt(cellsB[0].textContent.trim());
-              return rankA - rankB;
-
-            case "score":
-              // 依分數排序（數字排序，降序）
-              const scoreA = parseInt(cellsA[4].textContent.trim());
-              const scoreB = parseInt(cellsB[4].textContent.trim());
-              return scoreB - scoreA;
-
-            case "class":
-              // 依班級排序（字母排序）
-              const classA = cellsA[3].textContent.trim();
-              const classB = cellsB[3].textContent.trim();
-              return classA.localeCompare(classB, "zh-TW");
-
-            default:
-              return 0;
-          }
+        results.forEach((result) => {
+          const score = parseInt(result.score);
+          if (score < 60) scoreRanges["0-60"]++;
+          else if (score < 70) scoreRanges["60-70"]++;
+          else if (score < 80) scoreRanges["70-80"]++;
+          else if (score < 90) scoreRanges["80-90"]++;
+          else scoreRanges["90-100"]++;
         });
 
-        // 重新排列表格行
-        rows.forEach((row) => table.appendChild(row));
+        // 更新分數分布圖
+        scoreDistChart.data.datasets[0].data = Object.values(scoreRanges);
+        scoreDistChart.update();
 
-        // 更新序號（如果是按分數排序，需要重新計算名次）
-        if (sortBy === "score") {
-          updateRankNumbers();
+        // 計算獎項分布
+        const awardCounts = {};
+        results.forEach((result) => {
+          const award = result.award || "參加獎";
+          awardCounts[award] = (awardCounts[award] || 0) + 1;
+        });
+
+        // 更新獎項分布圖
+        awardDistChart.data.labels = Object.keys(awardCounts);
+        awardDistChart.data.datasets[0].data = Object.values(awardCounts);
+        awardDistChart.update();
+      }
+
+      // ==========================================
+      // 排序功能
+      // ==========================================
+      function sortRankings() {
+        const sortBy = document.getElementById("sortBy").value;
+
+        if (allResults.length === 0) return;
+
+        let sortedResults = [...allResults];
+
+        switch (sortBy) {
+          case "rank":
+            sortedResults.sort((a, b) => parseInt(a.rank) - parseInt(b.rank));
+            break;
+          case "score":
+            sortedResults.sort((a, b) => parseInt(b.score) - parseInt(a.score));
+            break;
+          case "class":
+            sortedResults.sort((a, b) =>
+              a.student_class.localeCompare(b.student_class, "zh-TW")
+            );
+            break;
         }
 
+        renderRankings(sortedResults);
         showNotification(`已按${getSortTypeText(sortBy)}重新排序`, "success");
       }
 
-      // 更新名次編號
-      function updateRankNumbers() {
-        const rows = document.querySelectorAll(".ranking-table tbody tr");
-        rows.forEach((row, index) => {
-          const rankCell = row.querySelector("td:first-child");
-          const rankBadge = rankCell.querySelector(".rank-badge");
-          const newRank = index + 1;
-
-          // 更新徽章樣式
-          rankBadge.className = "rank-badge";
-          if (newRank === 1) {
-            rankBadge.classList.add("rank-1");
-          } else if (newRank === 2) {
-            rankBadge.classList.add("rank-2");
-          } else if (newRank === 3) {
-            rankBadge.classList.add("rank-3");
-          } else {
-            rankBadge.classList.add("rank-normal");
-          }
-
-          rankBadge.textContent = newRank;
-        });
-      }
-
-      // 取得排序方式文字
       function getSortTypeText(sortBy) {
         const sortTypes = {
           rank: "名次",
@@ -1487,18 +1491,22 @@
         return sortTypes[sortBy] || "名次";
       }
 
+      // ==========================================
       // 查詢功能
+      // ==========================================
       function searchRankings() {
         const searchTerm = document
           .getElementById("searchInput")
           .value.toLowerCase();
-        const rows = document.querySelectorAll(".ranking-table tbody tr");
+        const rows = document.querySelectorAll("#rankingTableBody tr");
 
         rows.forEach((row) => {
           const cells = row.querySelectorAll("td");
-          const name = cells[1].textContent.toLowerCase(); // 姓名
-          const studentId = cells[2].textContent.toLowerCase(); // 學號
-          const className = cells[3].textContent.toLowerCase(); // 班級
+          if (cells.length < 3) return;
+
+          const name = cells[1].textContent.toLowerCase();
+          const studentId = cells[2].textContent.toLowerCase();
+          const className = cells[3].textContent.toLowerCase();
 
           const matches =
             name.includes(searchTerm) ||
@@ -1509,6 +1517,9 @@
         });
       }
 
+      // ==========================================
+      // 匯出功能
+      // ==========================================
       function exportRankings() {
         const select = document.getElementById("competitionSelect");
         const selectedCompetition = select.options[select.selectedIndex].text;
@@ -1517,10 +1528,9 @@
           return;
         }
 
-        // 取得表格資料（按照當前排序順序，只匯出顯示的資料）
         const table = document.querySelector(".ranking-table");
         const rows = Array.from(table.querySelectorAll("tbody tr")).filter(
-          (row) => row.style.display !== "none"
+          (row) => row.style.display !== "none" && row.cells.length > 1
         );
 
         if (rows.length === 0) {
@@ -1528,7 +1538,6 @@
           return;
         }
 
-        // 取得當前排序方式和查詢條件
         const sortBy = document.getElementById("sortBy").value;
         const searchTerm = document.getElementById("searchInput").value;
         const sortTypeText = {
@@ -1537,182 +1546,150 @@
           class: "依班級排序",
         }[sortBy];
 
-        // 建立檔案名稱
         let fileName = `${selectedCompetition}_排名報表_${sortTypeText}`;
         if (searchTerm) {
           fileName += `_查詢_${searchTerm}`;
         }
 
-        // 建立Excel XML格式內容
         let title = `${selectedCompetition} - 排名報表 (${sortTypeText})`;
         if (searchTerm) {
           title += ` [查詢: ${searchTerm}]`;
         }
 
         let excelContent = `<?xml version="1.0"?>
-      <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
-       xmlns:o="urn:schemas-microsoft-com:office:office"
-       xmlns:x="urn:schemas-microsoft-com:office:excel"
-       xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
-       xmlns:html="http://www.w3.org/TR/REC-html40">
-       <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
-        <Title>${title}</Title>
-       </DocumentProperties>
-       <Styles>
-        <Style ss:ID="Header">
-         <Font ss:Bold="1"/>
-         <Interior ss:Color="#CCCCCC" ss:Pattern="Solid"/>
-        </Style>
-       </Styles>
-       <Worksheet ss:Name="排名報表">
-        <Table>
-         <Row>
-          <Cell ss:StyleID="Header"><Data ss:Type="String">名次</Data></Cell>
-          <Cell ss:StyleID="Header"><Data ss:Type="String">姓名</Data></Cell>
-          <Cell ss:StyleID="Header"><Data ss:Type="String">學號</Data></Cell>
-          <Cell ss:StyleID="Header"><Data ss:Type="String">班級</Data></Cell>
-          <Cell ss:StyleID="Header"><Data ss:Type="String">分數</Data></Cell>
-          <Cell ss:StyleID="Header"><Data ss:Type="String">獎項</Data></Cell>
-          <Cell ss:StyleID="Header"><Data ss:Type="String">比賽時間</Data></Cell>
-         </Row>`;
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Title>${title}</Title>
+ </DocumentProperties>
+ <Styles>
+  <Style ss:ID="Header">
+   <Font ss:Bold="1"/>
+   <Interior ss:Color="#CCCCCC" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="排名報表">
+  <Table>
+   <Row>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">名次</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">姓名</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">學號</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">班級</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">分數</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">獎項</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">比賽時間</Data></Cell>
+   </Row>`;
 
         rows.forEach((row) => {
           const cells = row.querySelectorAll("td");
           excelContent += `
-         <Row>
-          <Cell><Data ss:Type="String">${cells[0].textContent.trim()}</Data></Cell>
-          <Cell><Data ss:Type="String">${cells[1].textContent.trim()}</Data></Cell>
-          <Cell><Data ss:Type="String">${cells[2].textContent.trim()}</Data></Cell>
-          <Cell><Data ss:Type="String">${cells[3].textContent.trim()}</Data></Cell>
-          <Cell><Data ss:Type="String">${cells[4].textContent.trim()}</Data></Cell>
-          <Cell><Data ss:Type="String">${cells[5].textContent.trim()}</Data></Cell>
-          <Cell><Data ss:Type="String">${cells[6].textContent.trim()}</Data></Cell>
-         </Row>`;
+   <Row>
+    <Cell><Data ss:Type="String">${cells[0].textContent.trim()}</Data></Cell>
+    <Cell><Data ss:Type="String">${cells[1].textContent.trim()}</Data></Cell>
+    <Cell><Data ss:Type="String">${cells[2].textContent.trim()}</Data></Cell>
+    <Cell><Data ss:Type="String">${cells[3].textContent.trim()}</Data></Cell>
+    <Cell><Data ss:Type="String">${cells[4].textContent.trim()}</Data></Cell>
+    <Cell><Data ss:Type="String">${cells[5].textContent.trim()}</Data></Cell>
+    <Cell><Data ss:Type="String">${cells[6].textContent.trim()}</Data></Cell>
+   </Row>`;
         });
 
         excelContent += `
-        </Table>
-       </Worksheet>
-      </Workbook>`;
+  </Table>
+ </Worksheet>
+</Workbook>`;
 
-        // 下載Excel檔案
         const blob = new Blob([excelContent], {
           type: "application/vnd.ms-excel",
         });
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", `${fileName}.xls`);
-        link.style.visibility = "hidden";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${fileName}.xls`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
 
-        let successMessage = `已匯出「${selectedCompetition}」的Excel排名報表 (${sortTypeText})`;
-        if (searchTerm) {
-          successMessage += ` [查詢: ${searchTerm}]`;
-        }
-        successMessage += `!`;
-        showNotification(successMessage, "success");
+        showNotification("報表已成功匯出！", "success");
       }
 
+      // ==========================================
+      // 設置事件監聽器
+      // ==========================================
+      function setupEventListeners() {
+        const avatar = document.getElementById("avatar");
+        const dropdown = document.getElementById("dropdown");
+
+        if (avatar && dropdown) {
+          avatar.addEventListener("click", () => {
+            dropdown.style.display =
+              dropdown.style.display === "block" ? "none" : "block";
+          });
+
+          window.addEventListener("click", function (e) {
+            if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+              dropdown.style.display = "none";
+            }
+          });
+        }
+      }
+
+      // ==========================================
+      // 通知提示
+      // ==========================================
       function showNotification(message, type = "info") {
         const notification = document.createElement("div");
         notification.style.cssText = `
-              position: fixed;
-              top: 20px;
-              right: 20px;
-              background: ${
-                type === "success"
-                  ? "linear-gradient(135deg, #28a745 0%, #20c997 100%)"
-                  : type === "info"
-                  ? "linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%)"
-                  : "linear-gradient(135deg, #dc3545 0%, #e83e8c 100%)"
-              };
-              color: white;
-              padding: 15px 25px;
-              border-radius: 10px;
-              box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-              z-index: 10000;
-              font-weight: 500;
-              animation: slideIn 0.3s ease;
-              cursor: pointer;
-            `;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: ${
+          type === "success"
+            ? "linear-gradient(135deg, #28a745 0%, #20c997 100%)"
+            : type === "error"
+            ? "linear-gradient(135deg, #dc3545 0%, #e83e8c 100%)"
+            : "linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%)"
+        };
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+      `;
         notification.textContent = message;
-
-        notification.addEventListener("click", () => {
-          notification.style.animation = "slideOut 0.3s ease";
-          setTimeout(() => notification.remove(), 300);
-        });
-
-        if (!document.querySelector("#notificationStyles")) {
-          const style = document.createElement("style");
-          style.id = "notificationStyles";
-          style.textContent = `
-                @keyframes slideIn {
-                  from { transform: translateX(100%); opacity: 0; }
-                  to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes slideOut {
-                  from { transform: translateX(0); opacity: 1; }
-                  to { transform: translateX(100%); opacity: 0; }
-                }
-              `;
-          document.head.appendChild(style);
-        }
 
         document.body.appendChild(notification);
 
         setTimeout(() => {
-          if (notification.parentNode) {
-            notification.style.animation = "slideOut 0.3s ease";
-            setTimeout(() => notification.remove(), 300);
-          }
+          notification.style.animation = "slideOut 0.3s ease";
+          setTimeout(() => notification.remove(), 300);
         }, 3000);
       }
 
-      // 從活動發佈頁面載入已發佈的活動
-      function loadPublishedActivities() {
-        try {
-          // 從 localStorage 讀取已發佈的活動
-          const publishedActivities = JSON.parse(
-            localStorage.getItem("sc_published_activities") || "[]"
-          );
-          const competitionSelect =
-            document.getElementById("competitionSelect");
+      if (!document.querySelector("#notificationStyles")) {
+        const style = document.createElement("style");
+        style.id = "notificationStyles";
+        style.textContent = `
+        @keyframes slideIn {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+          from { transform: translateX(0); opacity: 1; }
+          to { transform: translateX(100%); opacity: 0; }
+        }
+      `;
+        document.head.appendChild(style);
+      }
 
-          // 清空現有選項（保留第一個預設選項）
-          competitionSelect.innerHTML =
-            '<option value="">請選擇比賽或活動</option>';
-
-          // 添加已發佈的活動
-          publishedActivities.forEach((activity, index) => {
-            const option = document.createElement("option");
-            option.value = `published_${activity.id || index}`;
-            option.textContent = activity.title || "未命名活動";
-            competitionSelect.appendChild(option);
-          });
-
-          // 如果沒有已發佈的活動，顯示預設活動
-          if (publishedActivities.length === 0) {
-            const defaultActivities = [
-              { value: "1", text: "化學實驗競賽" },
-              { value: "2", text: "物理闖關遊戲" },
-              { value: "3", text: "生物知識競賽" },
-              { value: "4", text: "科學週競賽" },
-              { value: "5", text: "數學建模大賽" },
-            ];
-
-            defaultActivities.forEach((activity) => {
-              const option = document.createElement("option");
-              option.value = activity.value;
-              option.textContent = activity.text;
-              if (activity.value === "1") option.selected = true; // 預設選中化學實驗競賽
-              competitionSelect.appendChild(option);
-            });
-          }
-        } catch (error) {
-          console.error("載入已發佈活動時發生錯誤:", error);
+      function logout() {
+        if (confirm("確定要登出嗎？")) {
+          window.location.href = "login.html";
         }
       }
     </script>

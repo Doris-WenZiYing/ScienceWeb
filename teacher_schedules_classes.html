@@ -1058,7 +1058,7 @@
           </div>
 
           <div class="btn-group">
-            <button class="btn btn-primary" onclick="generateSchedule()">
+            <button class="btn btn-primary" onclick="loadSchedule()">
               <i class="fas fa-sync-alt"></i>
               生成班表
             </button>
@@ -1066,7 +1066,7 @@
               <i class="fas fa-save"></i>
               保存班表
             </button>
-            <button class="btn btn-secondary" onclick="exportToExcel()">
+            <button class="btn btn-secondary" onclick="exportSchedule()">
               <i class="fas fa-file-excel"></i>
               匯出Excel
             </button>
@@ -1161,7 +1161,7 @@
             });
             
             generateSchedule();
-            showToast('載入成功');
+            
           } else {
             generateSchedule();
             showToast(data.message, 'info');
@@ -1248,22 +1248,21 @@
           const dayOfWeek = input.dataset.day;
           const staffName = input.value.trim();
           
-          if (staffName) {
-            const formData = new FormData();
-            formData.append('action', 'save_schedule_cell');
-            formData.append('week_start', currentWeekStart);
-            formData.append('day_of_week', dayOfWeek);
-            formData.append('time_slot', timeSlot);
-            formData.append('staff_name', staffName);
-            formData.append('notes', '');
-            
-            savePromises.push(
-              fetch(API_URL, {
-                method: 'POST',
-                body: formData
-              })
-            );
-          }
+          const formData = new FormData();
+          formData.append('action', 'save_schedule_cell');
+          formData.append('week_start', currentWeekStart);
+          formData.append('day_of_week', dayOfWeek);
+          formData.append('time_slot', timeSlot);
+          formData.append('staff_name', staffName);
+          formData.append('notes', '');
+          
+          savePromises.push(
+            fetch(API_URL, {
+              method: 'POST',
+              body: formData
+            })
+          );
+          
         });
 
         if (savePromises.length === 0) {
@@ -1371,14 +1370,14 @@
 
       // 顯示 Toast 通知
       function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toastMessage');
-
-        toast.className = `toast show ${type}`;
-        toastMessage.textContent = message;
-
+        const colors = {success: '#28a745', info: '#17a2b8', warning: '#ffc107', error: '#dc3545'};
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.style.cssText = `position: fixed; top: 100px; right: 30px; background: ${colors[type] || colors.info}; color: white; padding: 15px 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10001; animation: slideIn 0.3s ease; font-size: 15px;`;
+        document.body.appendChild(notification);
         setTimeout(() => {
-          toast.classList.remove('show');
+          notification.style.animation = 'slideOut 0.3s ease';
+          setTimeout(() => document.body.removeChild(notification), 300);
         }, 3000);
       }
     </script>

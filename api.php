@@ -1,12 +1,13 @@
 <?php
-
-session_start();
 include("pdo.php");
 
-// header('Content-Type: application/json; charset=utf-8');
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('log_errors', 1);
+// 設定 JSON 回應
+header('Content-Type: application/json; charset=utf-8');
+
+// 錯誤處理 (已在 pdo.php 設定，這裡不要重複)
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+// session_start(); // 已在 pdo.php 執行，不要重複
 
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
@@ -590,7 +591,7 @@ function handleLogin() {
     if (empty($account) || empty($password) || empty($role)) {
         ?>
         <script>
-            alert("請輸入完整帳號、密碼與身分");
+            alert("請輸入完整帳號、密碼與身份");
             history.back();
         </script>
         <?php
@@ -606,7 +607,7 @@ function handleLogin() {
         $user = $stmt->fetch();
         
         if ($user) {
-            // 重新生成 Session ID
+            // 清除舊的 Session 並重新生成
             session_regenerate_id(true);
             
             // 設置 Session
@@ -615,15 +616,10 @@ function handleLogin() {
             $_SESSION['role'] = $user['role'];
             $_SESSION['login_time'] = time();
             
-            // ⭐ 關鍵修正：強制寫入 Session 數據
-            session_write_close();
-            
             // 記錄成功登入
             error_log("Login successful - User ID: {$user['id']}, Account: {$user['account']}, Role: {$user['role']}");
-            error_log("Session data saved: " . json_encode($_SESSION));
-            
-            // 重新啟動 Session（因為我們調用了 write_close）
-            session_start();
+            error_log("Session ID: " . session_id());
+            error_log("Session data: " . json_encode($_SESSION));
             
             $redirect_map = [
                 'admin' => 'admin_index.html',
@@ -637,7 +633,7 @@ function handleLogin() {
             ?>
             <script>
                 alert("✅ 登入成功！歡迎使用科學會管理系統");
-                location.href = "<?php echo $redirect; ?>";
+                window.location.href = "<?php echo $redirect; ?>";
             </script>
             <?php
             
@@ -645,7 +641,7 @@ function handleLogin() {
             error_log("Login failed - Invalid credentials");
             ?>
             <script>
-                alert("❌ 帳號、密碼或身分錯誤，請重新輸入");
+                alert("❌ 帳號、密碼或身份錯誤，請重新輸入");
                 history.back();
             </script>
             <?php

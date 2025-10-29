@@ -1,38 +1,30 @@
 <?php
-/**
- * 學生專用 API - 修正版
- * 處理所有學生相關的功能請求
- */
-
-session_start();
 include("pdo.php");
 
-// 設定JSON回應
 header('Content-Type: application/json; charset=utf-8');
 
-// 🔧 開啟錯誤顯示以便除錯
-error_reporting(E_ALL);
-ini_set('display_errors', 0); // 改為 0 避免破壞 JSON 格式
-ini_set('log_errors', 1);
+// 不要重複設定錯誤處理和 session
+// error_reporting(E_ALL);
+// ini_set('display_errors', 0);
+// session_start();
 
-// 獲取action參數
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
-// ⚠️ 測試模式：暫時關閉登入檢查
-$test_mode = true; // 正式上線後改為 false
+// 測試模式
+$test_mode = true;
 
-// 檢查登入狀態（除了某些公開API）
 $public_actions = ['get_events', 'get_albums', 'get_album_photos', 'get_activities', 'get_announcements'];
+
 if (!$test_mode && !in_array($action, $public_actions) && !isStudentLoggedIn()) {
     jsonResponse(false, '請先登入系統');
 }
 
-// 🔧 測試模式下設定假的 Session
 if ($test_mode && !isset($_SESSION['account'])) {
     $_SESSION['account'] = 'student001';
     $_SESSION['student_name'] = '測試學生';
     $_SESSION['role'] = 'student';
 }
+
 
 // 路由處理
 switch ($action) {
@@ -120,9 +112,235 @@ switch ($action) {
     case 'get_announcements':
         getAnnouncements();
         break;
+
+    case 'get_notifications':
+        getNotifications();
+        break;
+    case 'mark_notification_read':
+        markNotificationRead();
+        break;
+    case 'mark_all_notifications_read':
+        markAllNotificationsRead();
+        break;
+    case 'delete_notification':
+        deleteNotification();
+        break;
     
     default:
         jsonResponse(false, '未知的操作: ' . $action);
+}
+
+function getNotifications() {
+    global $pdo;
+    
+    $student_account = $_SESSION['account'] ?? 'student';
+    $limit = $_GET['limit'] ?? 20;
+    
+    try {
+        $stmt = $pdo->prepare("
+            SELECT 
+                notification_id,
+                recipient_type,
+                recipient_account,
+                notification_type,
+                title,
+                message,
+                related_type,
+                related_id,
+                is_read,
+                read_at,
+                created_at
+            FROM notifications
+            WHERE (
+                (recipient_type = 'student' AND (recipient_account = ? OR recipient_account IS NULL))
+                OR recipient_type = 'all'
+            )
+            AND is_deleted = 0
+            ORDER BY created_at DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$student_account, $limit]);
+        $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // 處理通知數據，添加更多信息
+        foreach ($notifications as &$notification) {
+            // 格式化時間
+            $notification['time_ago'] = formatTimeAgo($notification['created_at']);
+            
+            // 根據類型添加圖標、連結和標籤
+            switch ($notification['notification_type']) {
+                case 'registration':
+                    $notification['icon'] = 'user-plus';
+                    $notification['link'] = 'student_registration.html';
+                    $notification['type_label'] = '活動報名';
+                    break;
+                case 'announcement':
+                    $notification['icon'] = 'bullhorn';
+                    $notification['link'] = 'student_index.html';
+                    $notification['type_label'] = '公告';
+                    break;
+                case 'reminder':
+                    $notification['icon'] = 'clock';
+                    $notification['link'] = 'student_activities.html';
+                    $notification['type_label'] = '提醒';
+                    break;
+                case 'deadline':
+                    $notification['icon'] = 'exclamation-triangle';
+                    $notification['link'] = 'student_upload.html';
+                    $notification['type_label'] = '截止提醒';
+                    break;
+                case 'approval':
+                    $notification['icon'] = 'check-circle';
+                    $notification['link'] = 'student_profile.html';
+                    $notification['type_label'] = '審核通知';
+                    break;
+                case 'system':
+                    $notification['icon'] = 'cog';
+                    $notification['link'] = '';
+                    $notification['type_label'] = '系統通知';
+                    break;
+                default:
+                    $notification['icon'] = 'bell';
+                    $notification['link'] = '';
+                    $notification['type_label'] = '系統通知';
+            }
+            
+            // 如果有 related_type 和 related_id，生成更具體的連結
+            if ($notification['related_type'] && $notification['related_id']) {
+                switch ($notification['related_type']) {
+                    case 'activity':
+                        $notification['link'] = "student_registration.html?activity_id={$notification['related_id']}";
+                        break;
+                    case 'competition':
+                        $notification['link'] = "student_profile.html?competition_id={$notification['related_id']}";
+                        break;
+                }
+            }
+        }
+        
+        echo json_encode([
+            'success' => true,
+            'data' => $notifications
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+        
+    } catch (Exception $e) {
+        error_log("Student getNotifications Error: " . $e->getMessage());
+        jsonResponse(false, '獲取通知失敗: ' . $e->getMessage());
+    }
+}
+/**
+ * 格式化時間為相對時間
+ */
+function formatTimeAgo($datetime) {
+    if (!$datetime) return '剛剛';
+    
+    $timestamp = strtotime($datetime);
+    $diff = time() - $timestamp;
+    
+    if ($diff < 60) {
+        return '剛剛';
+    } elseif ($diff < 3600) {
+        $minutes = floor($diff / 60);
+        return $minutes . '分鐘前';
+    } elseif ($diff < 86400) {
+        $hours = floor($diff / 3600);
+        return $hours . '小時前';
+    } elseif ($diff < 604800) {
+        $days = floor($diff / 86400);
+        return $days . '天前';
+    } else {
+        return date('Y-m-d', $timestamp);
+    }
+}
+
+/**
+ * 標記單個通知為已讀
+ */
+function markNotificationRead() {
+    global $pdo;
+    
+    $notification_id = $_POST['notification_id'] ?? 0;
+    $student_account = $_SESSION['account'] ?? '';
+    
+    try {
+        // 只能標記屬於自己的通知
+        $stmt = $pdo->prepare("
+            UPDATE notifications 
+            SET is_read = 1, read_at = NOW()
+            WHERE notification_id = ?
+            AND (
+                (recipient_type = 'student' AND (recipient_account = ? OR recipient_account IS NULL))
+                OR recipient_type = 'all'
+            )
+        ");
+        $result = $stmt->execute([$notification_id, $student_account]);
+        
+        jsonResponse($result, $result ? '已標記為已讀' : '操作失敗');
+        
+    } catch (Exception $e) {
+        error_log("markNotificationRead Error: " . $e->getMessage());
+        jsonResponse(false, '操作失敗: ' . $e->getMessage());
+    }
+}
+
+/**
+ * 標記所有通知為已讀
+ */
+function markAllNotificationsRead() {
+    global $pdo;
+    
+    $student_account = $_SESSION['account'] ?? '';
+    
+    try {
+        $stmt = $pdo->prepare("
+            UPDATE notifications 
+            SET is_read = 1, read_at = NOW()
+            WHERE (
+                (recipient_type = 'student' AND (recipient_account = ? OR recipient_account IS NULL))
+                OR recipient_type = 'all'
+            )
+            AND is_read = 0
+            AND is_deleted = 0
+        ");
+        $result = $stmt->execute([$student_account]);
+        
+        jsonResponse($result, $result ? '全部已標記為已讀' : '操作失敗');
+        
+    } catch (Exception $e) {
+        error_log("markAllNotificationsRead Error: " . $e->getMessage());
+        jsonResponse(false, '操作失敗: ' . $e->getMessage());
+    }
+}
+
+/**
+ * 刪除通知（軟刪除）
+ */
+function deleteNotification() {
+    global $pdo;
+    
+    $notification_id = $_POST['notification_id'] ?? 0;
+    $student_account = $_SESSION['account'] ?? '';
+    
+    try {
+        // 使用軟刪除，不真正從資料庫移除
+        $stmt = $pdo->prepare("
+            UPDATE notifications 
+            SET is_deleted = 1, deleted_at = NOW()
+            WHERE notification_id = ?
+            AND (
+                (recipient_type = 'student' AND (recipient_account = ? OR recipient_account IS NULL))
+                OR recipient_type = 'all'
+            )
+        ");
+        $result = $stmt->execute([$notification_id, $student_account]);
+        
+        jsonResponse($result, $result ? '通知已刪除' : '刪除失敗');
+        
+    } catch (Exception $e) {
+        error_log("deleteNotification Error: " . $e->getMessage());
+        jsonResponse(false, '刪除失敗: ' . $e->getMessage());
+    }
 }
 
 // ==========================================

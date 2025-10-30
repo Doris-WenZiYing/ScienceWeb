@@ -677,33 +677,21 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       }
 
-      .tab-nav {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-      }
+        .notification-empty {
+            padding: 60px 20px;
+            text-align: center;
+            color: #999;
+        }
 
-      .tab-btn {
-        padding: 12px 24px;
-        border: none;
-        border-radius: 10px;
-        background: transparent;
-        color: #666;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 14px;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
+        .notification-empty i {
+            font-size: 48px;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
 
-      .tab-btn.active {
-        background: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(131, 96, 195, 0.3);
-      }
+        .notification-list::-webkit-scrollbar {
+            width: 6px;
+        }
 
       .tab-content {
         display: none;

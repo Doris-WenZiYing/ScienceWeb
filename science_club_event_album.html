@@ -1032,9 +1032,10 @@
         right: 10px;
       }
 
-      .form-group {
-        margin-bottom: 20px;
-      }
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
 
         .modal-body {
             padding: 30px;
@@ -1745,7 +1746,6 @@
           video.style.display = "block";
           document.getElementById("previewTitle").textContent = "影片預覽";
         }
-      }
 
       function previewNext() {
         if (!previewList.length) return;

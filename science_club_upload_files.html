@@ -41,15 +41,15 @@
         position: relative;
       }
 
-      .header::before {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
-      }
+        .header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8360c3 0%, #2ebf91 100%);
+        }
 
       .header-left {
         display: flex;
@@ -1612,7 +1612,6 @@
         } finally {
           hideLoading();
         }
-      }
 
       // 載入特定上傳區的檔案數量
       async function loadZoneFileCount(zone) {

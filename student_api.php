@@ -459,16 +459,36 @@ function getAnnouncements() {
 function registerActivity() {
     global $pdo;
     
+    // 詳細的日誌記錄
+    error_log("=== 開始報名流程 ===");
+    error_log("Session account: " . ($_SESSION['account'] ?? 'not set'));
+    
     // 支援 POST 或 JSON 格式
     $input = json_decode(file_get_contents('php://input'), true);
+    error_log("POST data: " . print_r($_POST, true));
+    error_log("JSON input: " . print_r($input, true));
     
     $activity_id = $_POST['eventId'] ?? $_POST['activity_id'] ?? $input['eventId'] ?? $input['activity_id'] ?? 0;
     $name = trim($_POST['name'] ?? $input['name'] ?? '');
     $class = trim($_POST['class'] ?? $input['class'] ?? '');
     $email = trim($_POST['email'] ?? $input['email'] ?? '');
     
+    error_log("解析後的數據 - activity_id: $activity_id, name: $name, class: $class, email: $email");
+    
+    // 檢查 session
+    if (!isset($_SESSION['account'])) {
+        error_log("錯誤：Session account 未設置");
+        jsonResponse(false, 'Session 未設置，請重新登入');
+    }
+    
     if (empty($name) || empty($class)) {
+        error_log("錯誤：姓名或班級為空");
         jsonResponse(false, '請填寫完整報名資料');
+    }
+    
+    if ($activity_id == 0) {
+        error_log("錯誤：活動 ID 為 0");
+        jsonResponse(false, '請選擇報名活動');
     }
     
     try {
@@ -481,6 +501,7 @@ function registerActivity() {
         $stmt->execute([$activity_id, $_SESSION['account']]);
         
         if ($stmt->fetch()) {
+            error_log("錯誤：已經報名過");
             jsonResponse(false, '您已經報名過此活動');
         }
         
@@ -490,20 +511,25 @@ function registerActivity() {
         $activity = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$activity) {
+            error_log("錯誤：活動不存在 - ID: $activity_id");
             jsonResponse(false, '找不到此活動');
         }
+        
+        error_log("找到活動: " . print_r($activity, true));
         
         // 檢查人數限制
         if ($activity['max_participants'] && 
             $activity['current_participants'] >= $activity['max_participants']) {
+            error_log("錯誤：報名人數已滿");
             jsonResponse(false, '報名人數已滿');
         }
         
         // 新增報名
+        error_log("準備插入報名記錄...");
         $stmt = $pdo->prepare("
             INSERT INTO registrations 
-            (activity_id, student_number, student_name, student_class, status)
-            VALUES (?, ?, ?, ?, 'registered')
+            (activity_id, student_number, student_name, student_class, status, registration_time)
+            VALUES (?, ?, ?, ?, 'registered', NOW())
         ");
         
         $result = $stmt->execute([
@@ -513,22 +539,34 @@ function registerActivity() {
             $class
         ]);
         
-        if ($result) {
+        error_log("插入結果: " . ($result ? '成功' : '失敗'));
+        error_log("影響行數: " . $stmt->rowCount());
+        
+        if ($result && $stmt->rowCount() > 0) {
+            $registration_id = $pdo->lastInsertId();
+            error_log("報名成功，ID: $registration_id");
+            
             // 更新活動參與人數
-            $pdo->prepare("
+            $updateStmt = $pdo->prepare("
                 UPDATE activities 
                 SET current_participants = current_participants + 1 
                 WHERE activity_id = ?
-            ")->execute([$activity_id]);
+            ");
+            $updateStmt->execute([$activity_id]);
+            error_log("更新參與人數完成");
             
             jsonResponse(true, '報名成功！', [
-                'registration_id' => $pdo->lastInsertId()
+                'registration_id' => $registration_id
             ]);
         } else {
+            error_log("錯誤：插入失敗或沒有影響任何行");
+            error_log("PDO Error Info: " . print_r($stmt->errorInfo(), true));
             jsonResponse(false, '報名失敗，請稍後再試');
         }
         
     } catch (Exception $e) {
+        error_log("例外錯誤: " . $e->getMessage());
+        error_log("Stack trace: " . $e->getTraceAsString());
         jsonResponse(false, '報名失敗: ' . $e->getMessage());
     }
 }

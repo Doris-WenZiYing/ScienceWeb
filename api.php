@@ -585,16 +585,8 @@ function handleLogin() {
     $password = trim($_POST['password'] ?? '');
     $role = trim($_POST['role'] ?? '');
     
-    // 記錄登入嘗試
-    error_log("Login attempt - Account: $account, Role: $role");
-    
     if (empty($account) || empty($password) || empty($role)) {
-        ?>
-        <script>
-            alert("請輸入完整帳號、密碼與身份");
-            history.back();
-        </script>
-        <?php
+        echo "<script>alert('請輸入完整帳號、密碼與身份'); history.back();</script>";
         exit;
     }
     
@@ -607,19 +599,12 @@ function handleLogin() {
         $user = $stmt->fetch();
         
         if ($user) {
-            // 清除舊的 Session 並重新生成
             session_regenerate_id(true);
             
-            // 設置 Session
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['account'] = $user['account'];
             $_SESSION['role'] = $user['role'];
             $_SESSION['login_time'] = time();
-            
-            // 記錄成功登入
-            error_log("Login successful - User ID: {$user['id']}, Account: {$user['account']}, Role: {$user['role']}");
-            error_log("Session ID: " . session_id());
-            error_log("Session data: " . json_encode($_SESSION));
             
             $redirect_map = [
                 'admin' => 'admin_index.html',
@@ -630,30 +615,18 @@ function handleLogin() {
             
             $redirect = $redirect_map[$role] ?? 'index.html';
             
-            ?>
-            <script>
-                alert("✅ 登入成功！歡迎使用科學會管理系統");
-                window.location.href = "<?php echo $redirect; ?>";
-            </script>
-            <?php
+            // 使用 PHP header 重定向 (更佳)
+            header("Location: $redirect");
+            exit;
             
         } else {
-            error_log("Login failed - Invalid credentials");
-            ?>
-            <script>
-                alert("❌ 帳號、密碼或身份錯誤，請重新輸入");
-                history.back();
-            </script>
-            <?php
+            echo "<script>alert('❌ 帳號、密碼或身份錯誤，請重新輸入'); history.back();</script>";
+            exit;
         }
     } catch (Exception $e) {
         error_log("Login error: " . $e->getMessage());
-        ?>
-        <script>
-            alert("❌ 登入發生錯誤，請聯絡管理員");
-            history.back();
-        </script>
-        <?php
+        echo "<script>alert('❌ 登入發生錯誤，請聯絡管理員'); history.back();</script>";
+        exit;
     }
 }
 

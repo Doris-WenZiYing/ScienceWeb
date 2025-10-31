@@ -1,15 +1,12 @@
 <?php
-/**
- * 教師專用 API - 修復版
- */
-
-session_start();
 include("pdo.php");
 
 header('Content-Type: application/json; charset=utf-8');
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
+
+// 不要重複設定錯誤處理和 session
+// error_reporting(E_ALL);
+// ini_set('display_errors', 0);
+// session_start();
 
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 

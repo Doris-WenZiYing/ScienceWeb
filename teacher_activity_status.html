@@ -1121,8 +1121,9 @@
       async function pauseActivityAPI(activityId) {
         try {
           const formData = new FormData();
-          formData.append("action", "pause_activity");
+          formData.append("action", "update_activity_status");
           formData.append("activity_id", activityId);
+          formData.append("status", "closed");
 
           const response = await fetch(API_BASE_URL, {
             method: "POST",
@@ -1150,8 +1151,9 @@
       async function cancelActivityAPI(activityId) {
         try {
           const formData = new FormData();
-          formData.append("action", "cancel_activity");
+          formData.append("action", "update_activity_status");
           formData.append("activity_id", activityId);
+          formData.append("status", "cancelled");
 
           const response = await fetch(API_BASE_URL, {
             method: "POST",

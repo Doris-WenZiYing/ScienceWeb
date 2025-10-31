@@ -1,38 +1,30 @@
 <?php
-/**
- * 學生專用 API - 修正版
- * 處理所有學生相關的功能請求
- */
-
-session_start();
 include("pdo.php");
 
-// 設定JSON回應
 header('Content-Type: application/json; charset=utf-8');
 
-// 🔧 開啟錯誤顯示以便除錯
-error_reporting(E_ALL);
-ini_set('display_errors', 0); // 改為 0 避免破壞 JSON 格式
-ini_set('log_errors', 1);
+// 不要重複設定錯誤處理和 session
+// error_reporting(E_ALL);
+// ini_set('display_errors', 0);
+// session_start();
 
-// 獲取action參數
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
-// ⚠️ 測試模式：暫時關閉登入檢查
-$test_mode = true; // 正式上線後改為 false
+// 測試模式
+$test_mode = true;
 
-// 檢查登入狀態（除了某些公開API）
 $public_actions = ['get_events', 'get_albums', 'get_album_photos', 'get_activities', 'get_announcements'];
+
 if (!$test_mode && !in_array($action, $public_actions) && !isStudentLoggedIn()) {
     jsonResponse(false, '請先登入系統');
 }
 
-// 🔧 測試模式下設定假的 Session
 if ($test_mode && !isset($_SESSION['account'])) {
     $_SESSION['account'] = 'student001';
     $_SESSION['student_name'] = '測試學生';
     $_SESSION['role'] = 'student';
 }
+
 
 // 路由處理
 switch ($action) {

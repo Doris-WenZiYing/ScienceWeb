@@ -197,6 +197,10 @@
         border-left-color: #11998e;
         box-shadow: 0 2px 8px rgba(17, 153, 142, 0.15);
       }
+
+      .icon-wrapper {
+        position: relative;
+      }
       .notification-item.unread::after {
         content: "";
         position: absolute;
@@ -361,31 +365,6 @@
         cursor: pointer;
       }
 
-      /* 下拉選單 */
-      .dropdown-menu {
-        position: absolute;
-        top: 70px;
-        right: 0;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-        display: none;
-        flex-direction: column;
-        min-width: 140px;
-        z-index: 200;
-      }
-      .dropdown-menu a {
-        padding: 10px 15px;
-        text-decoration: none;
-        color: #333;
-        display: block;
-        font-size: 14px;
-      }
-      .dropdown-menu a:hover {
-        background: #f5f5f5;
-        color: #667eea;
-      }
-
       /* 側邊欄 */
       .sidebar {
         width: 250px;
@@ -497,6 +476,43 @@
         margin-top: 30px;
       }
 
+      .icon,
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 70px;
+        right: 0;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        display: none;
+        flex-direction: column;
+        min-width: 140px;
+        z-index: 200;
+      }
+      .dropdown-menu a {
+        padding: 10px 15px;
+        text-decoration: none;
+        color: #333;
+        display: block;
+        font-size: 14px;
+      }
+      .dropdown-menu a:hover {
+        background: #f5f5f5;
+        color: #667eea;
+      }
+
       @media (max-width: 768px) {
         .main {
           flex-direction: column;
@@ -542,10 +558,10 @@
             </div>
           </div>
         </div>
-        <div class="avatar" onclick="toggleMenu()">
+        <div class="avatar" id="avatar">
           <i class="fas fa-user"></i>
         </div>
-        <div class="dropdown" id="dropdown">
+        <div class="dropdown-menu" id="dropdown">
           <a href="login_student.html">
             <i class="fas fa-sign-out-alt"></i>
             登出
@@ -677,17 +693,45 @@
           return;
         }
 
+        const apiUrl = "student_api.php?action=update_registration";
+        const payload = { id: selectedId, name: newName, email: newEmail };
+        console.log("🚀 [修改活動] 開始送出請求");
+        console.log("🔗 API URL:", apiUrl);
+        console.log("📤 傳送內容:", payload);
+
         try {
-          const res = await fetch(UPDATE_REGISTRATION_API + selectedId, {
-            method: "PUT",
+          const res = await fetch(apiUrl, {
+            method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: newName, email: newEmail }),
+            body: JSON.stringify(payload),
           });
-          if (!res.ok) throw new Error("修改失敗");
-          alert("修改成功！");
-          form.reset();
+
+          console.log("📡 回應狀態碼:", res.status);
+          const resultText = await res.text();
+          console.log("🧾 原始回應文字:", resultText);
+
+          let result;
+          try {
+            result = JSON.parse(resultText);
+          } catch {
+            console.warn("⚠️ 回應不是合法 JSON");
+            alert("伺服器回傳非 JSON，請查看 console。");
+            return;
+          }
+
+          console.log("✅ 解析後結果:", result);
+
+          if (result.success) {
+            alert("修改成功！");
+            form.reset();
+            // 🧩 關鍵：重新載入報名清單
+            registrationSelect.innerHTML = "";
+            await fetchRegistrations();
+          } else {
+            alert("修改失敗：" + (result.message || "未知錯誤"));
+          }
         } catch (err) {
-          console.error(err);
+          console.error("❌ 發送請求錯誤:", err);
           alert("修改時發生錯誤，請稍後再試。");
         }
       });

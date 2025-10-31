@@ -459,16 +459,36 @@ function getAnnouncements() {
 function registerActivity() {
     global $pdo;
     
+    // 詳細的日誌記錄
+    error_log("=== 開始報名流程 ===");
+    error_log("Session account: " . ($_SESSION['account'] ?? 'not set'));
+    
     // 支援 POST 或 JSON 格式
     $input = json_decode(file_get_contents('php://input'), true);
+    error_log("POST data: " . print_r($_POST, true));
+    error_log("JSON input: " . print_r($input, true));
     
     $activity_id = $_POST['eventId'] ?? $_POST['activity_id'] ?? $input['eventId'] ?? $input['activity_id'] ?? 0;
     $name = trim($_POST['name'] ?? $input['name'] ?? '');
     $class = trim($_POST['class'] ?? $input['class'] ?? '');
     $email = trim($_POST['email'] ?? $input['email'] ?? '');
     
+    error_log("解析後的數據 - activity_id: $activity_id, name: $name, class: $class, email: $email");
+    
+    // 檢查 session
+    if (!isset($_SESSION['account'])) {
+        error_log("錯誤：Session account 未設置");
+        jsonResponse(false, 'Session 未設置，請重新登入');
+    }
+    
     if (empty($name) || empty($class)) {
+        error_log("錯誤：姓名或班級為空");
         jsonResponse(false, '請填寫完整報名資料');
+    }
+    
+    if ($activity_id == 0) {
+        error_log("錯誤：活動 ID 為 0");
+        jsonResponse(false, '請選擇報名活動');
     }
     
     try {
@@ -481,6 +501,7 @@ function registerActivity() {
         $stmt->execute([$activity_id, $_SESSION['account']]);
         
         if ($stmt->fetch()) {
+            error_log("錯誤：已經報名過");
             jsonResponse(false, '您已經報名過此活動');
         }
         
@@ -490,20 +511,25 @@ function registerActivity() {
         $activity = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$activity) {
+            error_log("錯誤：活動不存在 - ID: $activity_id");
             jsonResponse(false, '找不到此活動');
         }
+        
+        error_log("找到活動: " . print_r($activity, true));
         
         // 檢查人數限制
         if ($activity['max_participants'] && 
             $activity['current_participants'] >= $activity['max_participants']) {
+            error_log("錯誤：報名人數已滿");
             jsonResponse(false, '報名人數已滿');
         }
         
         // 新增報名
+        error_log("準備插入報名記錄...");
         $stmt = $pdo->prepare("
             INSERT INTO registrations 
-            (activity_id, student_number, student_name, student_class, status)
-            VALUES (?, ?, ?, ?, 'registered')
+            (activity_id, student_number, student_name, student_class, status, registration_time)
+            VALUES (?, ?, ?, ?, 'registered', NOW())
         ");
         
         $result = $stmt->execute([
@@ -513,22 +539,34 @@ function registerActivity() {
             $class
         ]);
         
-        if ($result) {
+        error_log("插入結果: " . ($result ? '成功' : '失敗'));
+        error_log("影響行數: " . $stmt->rowCount());
+        
+        if ($result && $stmt->rowCount() > 0) {
+            $registration_id = $pdo->lastInsertId();
+            error_log("報名成功，ID: $registration_id");
+            
             // 更新活動參與人數
-            $pdo->prepare("
+            $updateStmt = $pdo->prepare("
                 UPDATE activities 
                 SET current_participants = current_participants + 1 
                 WHERE activity_id = ?
-            ")->execute([$activity_id]);
+            ");
+            $updateStmt->execute([$activity_id]);
+            error_log("更新參與人數完成");
             
             jsonResponse(true, '報名成功！', [
-                'registration_id' => $pdo->lastInsertId()
+                'registration_id' => $registration_id
             ]);
         } else {
+            error_log("錯誤：插入失敗或沒有影響任何行");
+            error_log("PDO Error Info: " . print_r($stmt->errorInfo(), true));
             jsonResponse(false, '報名失敗，請稍後再試');
         }
         
     } catch (Exception $e) {
+        error_log("例外錯誤: " . $e->getMessage());
+        error_log("Stack trace: " . $e->getTraceAsString());
         jsonResponse(false, '報名失敗: ' . $e->getMessage());
     }
 }
@@ -580,21 +618,47 @@ function getMyRegistrations() {
 function updateRegistration() {
     global $pdo;
     
-    // 支援多種格式
-    $input = json_decode(file_get_contents('php://input'), true);
+    // 詳細的日誌記錄
+    error_log("=== 開始修改報名流程 ===");
+    error_log("Session account: " . ($_SESSION['account'] ?? 'not set'));
+    error_log("Session student_name: " . ($_SESSION['student_name'] ?? 'not set'));
     
-    $registration_id = $_POST['id'] ?? $_GET['id'] ?? $input['id'] ?? 0;
+    // 支援多種格式（POST、GET、JSON）
+    $input = json_decode(file_get_contents('php://input'), true);
+    error_log("POST data: " . print_r($_POST, true));
+    error_log("GET data: " . print_r($_GET, true));
+    error_log("JSON input: " . print_r($input, true));
+    
+    // 參數解析 - 支援多種命名方式
+    $registration_id = $_POST['id'] ?? $_GET['id'] ?? $input['id'] ?? 
+                       $_POST['registration_id'] ?? $input['registration_id'] ?? 0;
     $name = trim($_POST['name'] ?? $input['name'] ?? '');
+    $class = trim($_POST['class'] ?? $input['class'] ?? '');
     $email = trim($_POST['email'] ?? $input['email'] ?? '');
     
+    error_log("解析後的數據 - id: $registration_id, name: '$name', class: '$class', email: '$email'");
+    
+    // 驗證必填欄位
+    if ($registration_id == 0) {
+        error_log("錯誤：報名 ID 為 0 或未提供");
+        jsonResponse(false, '無效的報名 ID');
+    }
+    
     if (empty($name)) {
+        error_log("錯誤：姓名為空");
         jsonResponse(false, '請填寫姓名');
+    }
+    
+    // 檢查 Session
+    if (!isset($_SESSION['account'])) {
+        error_log("錯誤：Session account 未設置");
+        jsonResponse(false, '請重新登入');
     }
     
     try {
         // 檢查是否為自己的報名記錄
         $stmt = $pdo->prepare("
-            SELECT r.*, a.modify_deadline 
+            SELECT r.*, a.modify_deadline, a.activity_name
             FROM registrations r
             JOIN activities a ON r.activity_id = a.activity_id
             WHERE r.registration_id = ? AND r.student_number = ?
@@ -603,22 +667,125 @@ function updateRegistration() {
         $registration = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$registration) {
-            jsonResponse(false, '找不到此報名記錄');
+            error_log("錯誤：找不到報名記錄或不屬於此學生");
+            error_log("查詢條件 - registration_id: $registration_id, student_number: " . $_SESSION['account']);
+            jsonResponse(false, '找不到此報名記錄或無權限修改');
         }
         
-        // 更新報名資料
-        $stmt = $pdo->prepare("
-            UPDATE registrations 
-            SET student_name = ?,
-                modified_time = NOW()
-            WHERE registration_id = ?
-        ");
+        error_log("找到報名記錄: " . print_r($registration, true));
         
-        $result = $stmt->execute([$name, $registration_id]);
+        // 檢查修改截止日期
+        if ($registration['modify_deadline']) {
+            $deadline = strtotime($registration['modify_deadline']);
+            $now = time();
+            if ($now > $deadline) {
+                $deadline_str = date('Y-m-d H:i', $deadline);
+                error_log("錯誤：已超過修改截止日期 - 截止: $deadline_str");
+                jsonResponse(false, '已超過修改截止日期（' . $deadline_str . '）');
+            }
+            error_log("通過截止日期檢查 - 截止: " . date('Y-m-d H:i', $deadline) . ", 現在: " . date('Y-m-d H:i', $now));
+        }
         
-        jsonResponse($result, $result ? '修改成功' : '修改失敗');
+        // 準備動態更新的欄位
+        $update_fields = [];
+        $update_values = [];
+        $updated_info = [];
         
+        // 檢查姓名是否有變化
+        if (!empty($name) && $name !== $registration['student_name']) {
+            $update_fields[] = "student_name = ?";
+            $update_values[] = $name;
+            $updated_info[] = "姓名: {$registration['student_name']} -> $name";
+            error_log("將更新姓名: {$registration['student_name']} -> $name");
+        }
+        
+        // 檢查班級是否有變化
+        if (!empty($class) && $class !== $registration['student_class']) {
+            $update_fields[] = "student_class = ?";
+            $update_values[] = $class;
+            $updated_info[] = "班級: {$registration['student_class']} -> $class";
+            error_log("將更新班級: {$registration['student_class']} -> $class");
+        }
+        
+        // Email 更新（如果資料表有此欄位）
+        // 先檢查欄位是否存在
+        try {
+            $checkStmt = $pdo->query("SHOW COLUMNS FROM registrations LIKE 'student_email'");
+            $hasEmailColumn = $checkStmt->fetch();
+            
+            if ($hasEmailColumn && !empty($email) && 
+                (!isset($registration['student_email']) || $email !== $registration['student_email'])) {
+                $update_fields[] = "student_email = ?";
+                $update_values[] = $email;
+                $updated_info[] = "Email: " . ($registration['student_email'] ?? '(無)') . " -> $email";
+                error_log("將更新 Email: " . ($registration['student_email'] ?? '(無)') . " -> $email");
+            }
+        } catch (Exception $e) {
+            error_log("檢查 email 欄位時發生錯誤（可忽略）: " . $e->getMessage());
+        }
+        
+        // 如果沒有任何欄位需要更新
+        if (empty($update_fields)) {
+            error_log("警告：沒有任何欄位需要更新");
+            jsonResponse(true, '資料未變更', [
+                'registration_id' => $registration_id,
+                'updated_fields' => 0,
+                'message' => '提交的資料與現有資料相同'
+            ]);
+        }
+        
+        // 總是更新修改時間
+        $update_fields[] = "modified_time = NOW()";
+        
+        // 加上 WHERE 條件的值
+        $update_values[] = $registration_id;
+        
+        // 組合 SQL
+        $sql = "UPDATE registrations SET " . implode(", ", $update_fields) . " WHERE registration_id = ?";
+        error_log("執行 SQL: " . $sql);
+        error_log("參數值: " . print_r($update_values, true));
+        
+        // 執行更新
+        $stmt = $pdo->prepare($sql);
+        $result = $stmt->execute($update_values);
+        $affected_rows = $stmt->rowCount();
+        
+        error_log("更新結果: " . ($result ? '成功' : '失敗'));
+        error_log("影響行數: " . $affected_rows);
+        
+        if ($result) {
+            if ($affected_rows > 0) {
+                error_log("修改成功！更新內容: " . implode(", ", $updated_info));
+                jsonResponse(true, '修改成功！', [
+                    'registration_id' => $registration_id,
+                    'updated_fields' => count($update_fields) - 1,  // 扣除 modified_time
+                    'changes' => $updated_info,
+                    'activity_name' => $registration['activity_name']
+                ]);
+            } else {
+                // 執行成功但沒有影響行數（資料未變化或其他原因）
+                error_log("警告：SQL 執行成功但沒有影響任何行");
+                jsonResponse(true, '資料更新完成', [
+                    'registration_id' => $registration_id,
+                    'updated_fields' => 0,
+                    'message' => '資料已是最新狀態'
+                ]);
+            }
+        } else {
+            // 執行失敗
+            error_log("錯誤：SQL 執行失敗");
+            error_log("PDO Error Info: " . print_r($stmt->errorInfo(), true));
+            jsonResponse(false, '修改失敗，請稍後再試');
+        }
+        
+    } catch (PDOException $e) {
+        error_log("資料庫錯誤: " . $e->getMessage());
+        error_log("SQL State: " . $e->getCode());
+        error_log("Stack trace: " . $e->getTraceAsString());
+        jsonResponse(false, '資料庫錯誤: ' . $e->getMessage());
     } catch (Exception $e) {
+        error_log("一般錯誤: " . $e->getMessage());
+        error_log("Stack trace: " . $e->getTraceAsString());
         jsonResponse(false, '修改失敗: ' . $e->getMessage());
     }
 }

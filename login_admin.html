@@ -47,7 +47,8 @@
             <p class="text-sm text-gray-500 mt-2">請輸入您的管理帳號密碼</p>
         </div>
         <!-- Login Form -->
-        <form id="loginForm" class="space-y-6">
+        <!-- <form id="loginForm" class="space-y-6"> -->
+        <form action="api.php?action=login" method="post" class="space-y-6">
             <input type="hidden" name="role" value="admin">
             <!-- Account Input -->
             <div class="space-y-2">
@@ -112,90 +113,5 @@
             <p class="text-xs text-gray-400">康寧大學資訊管理系活動系統 v1.0</p>
         </div>
     </div>
-
-    <script>
-        const API_URL = 'api.php';
-
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const account = document.querySelector('input[name="account"]').value.trim();
-            const password = document.querySelector('input[name="password"]').value.trim();
-            const role = 'admin';
-            
-            if (!account || !password) {
-                alert('請輸入帳號和密碼');
-                return;
-            }
-            
-            // 顯示載入狀態
-            const loginBtn = document.getElementById('loginBtn');
-            const btnText = document.getElementById('btnText');
-            const btnLoading = document.getElementById('btnLoading');
-            
-            loginBtn.disabled = true;
-            btnText.textContent = '登入中...';
-            btnLoading.classList.remove('hidden');
-            
-            try {
-                // 建立表單數據
-                const formData = new FormData();
-                formData.append('account', account);
-                formData.append('password', password);
-                formData.append('role', role);
-                
-                // 發送登入請求
-                const response = await fetch(`${API_URL}?action=login`, {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'same-origin' // 重要：確保 Cookie 被傳送
-                });
-                
-                const text = await response.text();
-                console.log('Login response:', text);
-                
-                // 檢查是否登入成功
-                if (text.includes('登入成功')) {
-                    // 登入成功，跳轉到管理頁面
-                    window.location.href = 'admin_index.html';
-                } else if (text.includes('錯誤')) {
-                    // 登入失敗
-                    alert('❌ 帳號或密碼錯誤，請重新輸入');
-                    
-                    // 恢復按鈕狀態
-                    loginBtn.disabled = false;
-                    btnText.textContent = '登入';
-                    btnLoading.classList.add('hidden');
-                } else {
-                    // 其他錯誤
-                    alert('❌ 登入發生錯誤，請稍後再試');
-                    console.error('Unexpected response:', text);
-                    
-                    // 恢復按鈕狀態
-                    loginBtn.disabled = false;
-                    btnText.textContent = '登入';
-                    btnLoading.classList.add('hidden');
-                }
-                
-            } catch (error) {
-                console.error('Login error:', error);
-                alert('❌ 連接失敗：' + error.message);
-                
-                // 恢復按鈕狀態
-                loginBtn.disabled = false;
-                btnText.textContent = '登入';
-                btnLoading.classList.add('hidden');
-            }
-        });
-
-        // 按 Enter 鍵提交表單
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    document.getElementById('loginForm').dispatchEvent(new Event('submit'));
-                }
-            });
-        });
-    </script>
 </body>
 </html>
